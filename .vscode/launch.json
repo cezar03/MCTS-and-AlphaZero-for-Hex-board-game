@@ -1,0 +1,12 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Maven JavaFX (F5)",
+      "type": "java",
+      "request": "launch",
+      "mainClass": "",
+      "preLaunchTask": "Run JavaFX (Maven)"
+    }
+  ]
+}

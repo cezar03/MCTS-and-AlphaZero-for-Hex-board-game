@@ -1,1 +1,9 @@
-nl/unimaas/dsai/team04/App.class
+UI\Buttons.class
+SlotMachineApp.class
+UI\MainMenu.class
+UI\CaseOpeningView.class
+UI\CaseOpeningView$Item.class
+SlotMachineApp$Reel.class
+UI\NavigationService.class
+SlotMachineApp$Reel$1.class
+UI\CaseOpeningView$Rarity.class
