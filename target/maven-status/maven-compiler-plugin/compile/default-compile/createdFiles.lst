@@ -1,9 +1,10 @@
 UI\Buttons.class
-SlotMachineApp.class
+Main.class
 UI\MainMenu.class
+Board.class
+Player.class
 UI\CaseOpeningView.class
 UI\CaseOpeningView$Item.class
-SlotMachineApp$Reel.class
 UI\NavigationService.class
-SlotMachineApp$Reel$1.class
+Rules.class
 UI\CaseOpeningView$Rarity.class
