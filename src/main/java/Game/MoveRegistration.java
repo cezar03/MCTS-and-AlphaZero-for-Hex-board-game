@@ -1,3 +1,4 @@
+package Game;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -14,10 +15,7 @@ public boolean registerMove (int[][] board, int row, int col){ // verify that th
         System.out.println("This movement is out of the board!");
         return false; // not valid movement 
     }
-    if (row > col || col - row > 10){ // check of the cell follows the hexagonal board shape rules
-        System.out.println("Not valid cell!");
-        return false; // not valid movement 
-    }
+
     if (board[row][col] != 0){ // verify that the cell is empty. 
         System.out.println("This cell is already taken!");
         return false; // not valid movement  
