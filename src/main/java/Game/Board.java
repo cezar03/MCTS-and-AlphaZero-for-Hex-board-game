@@ -144,5 +144,11 @@ public final class Board {
         return row * n + column;
     }
 
+    //Helper for undoing move (removes stone from a cell)
+    public void clearCell(int row, int column) {
+    if (inBounds(row, column)) {
+        cells[idx(row, column)] = Color.EMPTY;
+    }
+}
 }
 

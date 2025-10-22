@@ -2,6 +2,13 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "type": "java",
+      "name": "MainMenu",
+      "request": "launch",
+      "mainClass": "UI.MainMenu",
+      "projectName": "team04-app"
+    },
+    {
       "name": "Maven JavaFX (F5)",
       "type": "java",
       "request": "launch",
