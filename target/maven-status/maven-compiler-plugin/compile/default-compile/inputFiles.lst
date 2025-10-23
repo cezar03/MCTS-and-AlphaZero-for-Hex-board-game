@@ -1,14 +1,13 @@
-/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04-1/src/main/java/Game/Color.java
-/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04-1/src/main/java/UI/MainTestUI.java
-/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04-1/src/main/java/Game/MoveRegistration.java
-/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04-1/src/main/java/UI/CaseOpeningView.java
-/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04-1/src/main/java/UI/NavigationService.java
-/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04-1/src/main/java/UI/MainMenu.java
-/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04-1/src/main/java/UI/MockBoardAdapter.java
-/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04-1/src/main/java/UI/Buttons.java
-/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04-1/src/main/java/Game/Rules.java
-/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04-1/src/main/java/UI/BoardView.java
-/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04-1/src/main/java/Game/UnionFind.java
-/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04-1/src/main/java/Game/Player.java
-/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04-1/src/main/java/Game/Board.java
-/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04-1/src/main/java/UI/GameController.java
+C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\UI\BoardView.java
+C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\UI\NavigationService.java
+C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\UI\CaseOpeningView.java
+C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\Game\Board.java
+C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\Game\BoardAdapter.java
+C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\Game\MoveRegistration.java
+C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\Game\Color.java
+C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\UI\Buttons.java
+C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\UI\GameController.java
+C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\Game\Rules.java
+C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\Game\UnionFind.java
+C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\Game\Player.java
+C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\UI\MainMenu.java

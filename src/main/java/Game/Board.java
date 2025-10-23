@@ -146,9 +146,14 @@ public final class Board {
 
     //Helper for undoing move (removes stone from a cell)
     public void clearCell(int row, int column) {
-    if (inBounds(row, column)) {
-        cells[idx(row, column)] = Color.EMPTY;
+        if (inBounds(row, column)) {
+            cells[idx(row, column)] = Color.EMPTY;
+        }
     }
-}
+
+    public void reset() {
+        Arrays.fill(cells, Color.EMPTY); // clear stones
+        uf.reset();                      // clear connectivity
+    }
 }
 

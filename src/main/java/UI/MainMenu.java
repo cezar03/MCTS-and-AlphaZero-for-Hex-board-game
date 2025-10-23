@@ -41,7 +41,7 @@ public class MainMenu extends Application {
         Button skinsBtn = new Button("SKINS"); skinsBtn.getStyleClass().add("btn-secondary");
         Button aboutBtn = new Button("ABOUT"); aboutBtn.getStyleClass().add("btn-ghost");
 
-        playBtn.setOnAction(e -> nav.info("Play", "Start Game", "Hook your game scene here."));
+        playBtn.setOnAction(e -> nav.showGame(11, 64));
         skinsBtn.setOnAction(e -> nav.showSkins());
         aboutBtn.setOnAction(e -> nav.info("About Connections", "About the Game","Put the link to the game's rules here."));
 

@@ -9,6 +9,9 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import Game.Board;
+import Game.BoardAdapter;
+
 public final class NavigationService {
     private final Stage stage;
 
@@ -23,6 +26,22 @@ public final class NavigationService {
         attachCss(scene);
         stage.setTitle("Connections — Main Menu");
         stage.setScene(scene);
+    }
+
+    public void showGame(int size, double hexSize) {
+        Board board = new Board(size);
+        BoardAdapter adapter = new BoardAdapter(board);
+        BoardView boardView = new BoardView(size, hexSize);
+        GameController controller = new GameController(adapter, boardView);
+        boardView.setController(controller); // (controller also sets itself in ctor)
+
+        Scene scene = new Scene(boardView, 900, 900);
+        attachCss(scene);
+        stage.setTitle("Hex — Game");
+        stage.setScene(scene);
+
+        // initial paint
+        boardView.update(adapter);
     }
 
     //GAMBLIIIIIIIIIIIIING

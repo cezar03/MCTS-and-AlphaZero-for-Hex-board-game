@@ -25,21 +25,15 @@ public class BoardAdapter {
 
     //Updates the board within the changes in the matrix
     public void updateBoard() {
+        board.reset();
         int n = board.getsize();
         for (int row = 0; row < n; row++) {
             for (int col = 0; col < n; col++) {
-                Color currentColor = board.getcell(row, col);
-                Color matrixColor = intToColor(matrix[row][col]);
-
-                // Only update if smth is different
-                if (currentColor != matrixColor) {
-                    if (matrixColor == Color.RED) {
-                        board.getmovered(row, col, Color.RED);
-                    } else if (matrixColor == Color.BLACK) {
-                        board.getmoveblack(row, col, Color.BLACK);
-                    } else if (matrixColor == Color.EMPTY) {
-                        board.clearCell(row, col);
-                    }
+                int v = matrix[row][col];
+                if (v == 1) {
+                    board.getmovered(row, col, Color.RED);
+                } else if (v == 2) {
+                    board.getmoveblack(row, col, Color.BLACK);
                 }
             }
         }
@@ -55,7 +49,7 @@ public class BoardAdapter {
 
 
      //Converts Color enum to integer representation for matrix
-     //Where 0 = empty, 1 = red, 2 = bleck
+     //Where 0 = empty, 1 = red, 2 = blsck
 
     private int colorToInt(Color color) {
         switch (color) {
@@ -97,7 +91,7 @@ public class BoardAdapter {
 
     public void undoMove(int row, int col) {
         matrix[row][col] = 0;
-        board.clearCell(row, col);
+        updateBoard();
     }
 
 
@@ -121,8 +115,12 @@ public class BoardAdapter {
         for (int row = 0; row < n; row++) {
             for (int col = 0; col < n; col++) {
                 matrix[row][col] = 0;
-                board.clearCell(row, col);
             }
         }
+        board.reset();
+    }
+
+    public Color getCellColor(int row, int col) {
+        return board.getcell(row, col);
     }
 }

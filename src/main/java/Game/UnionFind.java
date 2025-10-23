@@ -1,5 +1,7 @@
 package Game;
 
+import java.util.Arrays;
+
 public class UnionFind {
     private int[] parent; // Parent[i] points to the parent of i, or to itself if i is the root.
     private int[] rank; // rank[i] is an estimate of the tree height for root i.
@@ -44,6 +46,13 @@ public class UnionFind {
     // CONNECTED: checks if a and b are in the same set. If that is the case, the method will return True.
     public boolean connected(int a, int b) {
         return find(a) == find(b);
+    }
+
+    public void reset() {
+        Arrays.fill(rank, 0);
+        for (int i = 0; i < parent.length; i++) {
+            parent[i] = i;
+        }
     }
 }
 
