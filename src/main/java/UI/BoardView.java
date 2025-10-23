@@ -1,7 +1,7 @@
 package UI;
 
 import Game.Board;
-import UI.MockBoardAdapter;
+import Game.BoardAdapter;
 import UI.GameController;
 import Game.Color;
 import javafx.scene.shape.Line;
@@ -28,7 +28,7 @@ public class BoardView extends Pane{
         this.controller = controller;
     }
 
-    public void update(MockBoardAdapter adapter){
+    public void update(BoardAdapter adapter){
         for(int row = 0; row < boardSize; row++){
             for(int col = 0; col < boardSize; col++){
                 Color cellColor = adapter.getCellColor(row, col);
