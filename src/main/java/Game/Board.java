@@ -7,7 +7,7 @@ import java.util.List;
 public final class Board {
     private final int n;
     private final Color[] cells;
-    private final UnionFind uf;   
+    private final UnionFind uf;
     private final int redTop, redBottom, blackLeft, blackRight;
 
     public Board(int n) {
