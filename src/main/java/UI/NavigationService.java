@@ -1,12 +1,12 @@
 package UI;
 
+import java.awt.Desktop;
+import java.io.File;
 import java.util.Objects;
 
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import Game.Board;
@@ -55,15 +55,17 @@ public final class NavigationService {
 
     //About button
     public void info(String title, String header, String content) {
-        Alert a = new Alert(AlertType.INFORMATION);
-        a.initOwner(stage);
-        a.initModality(Modality.WINDOW_MODAL);
-        a.setTitle(title);
-        a.setHeaderText(header);
-        a.setContentText(content);
-        styleDialog(a);
-        a.showAndWait();
+        try {
+            var url = MainMenu.class.getResource("/HEX_RULES.pdf");
+            File pdf = new File(url.toURI());
+            Desktop.getDesktop().open(pdf);
+        } catch (Exception ex) {
+            Alert a = new Alert(Alert.AlertType.ERROR, "No files was found");
+            styleDialog(a);
+            a.showAndWait();
+        }
     }
+
 
     //CSS methods that helps to style our UI
     private void attachCss(Scene scene) {

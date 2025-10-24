@@ -5,7 +5,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
-import javafx.scene.control.Hyperlink;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -49,10 +48,7 @@ public class MainMenu extends Application {
         buttons.setAlignment(Pos.CENTER_LEFT);
         buttons.setPadding(new Insets(20, 0, 0, 0));
 
-        Hyperlink rulesLink = new Hyperlink("How to play (rules)");
-        rulesLink.setOnAction(e -> nav.info("Rules", "How to Play","Link your rules pagehere."));
-
-        HBox footer = new HBox(12, rulesLink, spacer());
+        HBox footer = new HBox(12, spacer());
         footer.setAlignment(Pos.CENTER_LEFT);
         footer.setPadding(new Insets(24, 0, 0, 0));
 
