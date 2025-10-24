@@ -58,5 +58,7 @@ public class GameController {
 
         // No win yet, switch players
         currentPlayer = currentPlayer.other();
+        // For debugging: print current player which how we could pop a dialog
+        System.out.println("Current player: " + currentPlayer);
     }
 }
