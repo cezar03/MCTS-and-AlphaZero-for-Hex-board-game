@@ -29,14 +29,12 @@ public class GameController {
         if (gameOver) {
             return;
         }
-        if (!adapter.getBoard().isEmpty(row, col)) {
-            return;
-        }
         // Make the move on the board
         boolean ok = adapter.makeMove(row, col, currentPlayer);
-        if (ok == false) {
+        if (!ok) {
             return;
         }
+
         // Update the BoardView to reflect the move
         // This might be wrong - check
         boardView.update(adapter);
@@ -45,19 +43,20 @@ public class GameController {
             gameOver = true;
             // Determine winner
             String winText;
-            if (adapter.getBoard().redWins()) {                             
-                winText = "RED wins!";
-            } else if (adapter.getBoard().blackWins()) {                    
-                winText = "BLACK wins!";
-            } else {
-                winText = "Game over!";
+            switch (adapter.getWinner()) {
+                case RED:
+                    winText = "RED wins!";
+                    break;
+                case BLACK:
+                    winText = "BLACK wins!";
+                    break;
+                default:
+                    winText = "It's a draw!";
             }
             System.out.println(winText);
-            //boardView.show(winText); possible future feature
-            return;
         }
 
         // No win yet, switch players
         currentPlayer = currentPlayer.other();
-}
+    }
 }

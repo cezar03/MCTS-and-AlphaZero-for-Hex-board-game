@@ -10,6 +10,7 @@ UI\CaseOpeningView$Rarity.class
 Game\MoveRegistration.class
 UI\BoardView.class
 UI\Buttons.class
+UI\GameController$1.class
 UI\CaseOpeningView.class
 UI\CaseOpeningView$Item.class
 UI\NavigationService.class
