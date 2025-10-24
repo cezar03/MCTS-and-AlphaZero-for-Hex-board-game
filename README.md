@@ -25,7 +25,7 @@ To run this application, ensure that the following are installed:
 
 
 ## Usage
-To run the app (make sure installation is done), run the following in the terminal: " mvn clean javafx:run " 
+To run the app (make sure installation is done), run the following in the terminal: " mvn clean javafx:run ". 
 This command will open our application and you will see the main menu of our application. This menu consists of the buttons 'Play' and 'About'. 
 To start playing the game, click the 'Play' button. If you do not know the rules of the game, the 'About' button will navigate you to the pdf document that contains the rules of the game Hex.
 
