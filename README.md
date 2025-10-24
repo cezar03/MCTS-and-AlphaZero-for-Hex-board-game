@@ -31,3 +31,14 @@ To start playing the game, click the 'Play' button. If you do not know the rules
 
 ## Support
 All project members could help you with support when necessary. Please do not hesitate to reach out to our team if you have questions.
+
+
+## Authors
+
+- Lara Oriol (i6440973)
+- Noortje van Maldegem (i6374487)
+- Bartlomiej Kaczor (i6395982)
+- Jan Nguyen (i6391425)
+- Ceausescu Cezar (i6442579)
+- Arda Ayyildizbayraktar (i6300529)
+- Elena Gostiukhina (i6401819)
