@@ -12,7 +12,7 @@ We will also research on which AI agent performs best on which board size of the
 
 ## Visuals
 ### Main Menu
-![alt text](Mainpanel.png)
+![alt text](MainPanel.png)
 
 ### Game Board
 ![alt text](Board.png)
