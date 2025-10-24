@@ -28,19 +28,19 @@ public final class Board {
     /* Get methods */
 
     // Gets board size
-    public int getsize() {
+    public int getSize() {
         return n;
     }
     // Gets cell color
-    public Color getcell(int row, int column) {
+    public Color getCell(int row, int column) {
         return cells[idx(row, column)];
     }
     // Place red stone
-    public void getmovered(int row, int column, Color _ignored) {
+    public void getMoveRed(int row, int column, Color _ignored) {
         placeStone(row, column, Color.RED);
     }
     // Place black stone
-    public void getmoveblack(int row, int column, Color _ignored) {
+    public void getMoveBlack(int row, int column, Color _ignored) {
         placeStone(row, column, Color.BLACK);
     }
 
@@ -53,7 +53,7 @@ public final class Board {
 
     // Check if cell is empty
     public boolean isEmpty(int row, int column) {
-        return inBounds(row, column) && getcell(row, column) == Color.EMPTY;
+        return inBounds(row, column) && getCell(row, column) == Color.EMPTY;
     }
 
     // Check for win-condition for RED (top ↔ bottom connected)

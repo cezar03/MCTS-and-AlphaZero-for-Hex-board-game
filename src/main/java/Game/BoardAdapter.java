@@ -6,7 +6,7 @@ public class BoardAdapter {
 
     public BoardAdapter(Board board) {
         this.board = board;
-        this.matrix = new int[board.getsize()][board.getsize()];
+        this.matrix = new int[board.getSize()][board.getSize()];
         updateMatrix();
     }
 
@@ -14,10 +14,10 @@ public class BoardAdapter {
 
     //Updates the 2D matrix  based on the current state of the board
     public void updateMatrix() {
-        int n = board.getsize();
+        int n = board.getSize();
         for (int row = 0; row < n; row++) {
             for (int col = 0; col < n; col++) {
-                Color cellColor = board.getcell(row, col);
+                Color cellColor = board.getCell(row, col);
                 matrix[row][col] = colorToInt(cellColor);
             }
         }
@@ -26,14 +26,14 @@ public class BoardAdapter {
     //Updates the board within the changes in the matrix
     public void updateBoard() {
         board.reset();
-        int n = board.getsize();
+        int n = board.getSize();
         for (int row = 0; row < n; row++) {
             for (int col = 0; col < n; col++) {
                 int v = matrix[row][col];
                 if (v == 1) {
-                    board.getmovered(row, col, Color.RED);
+                    board.getMoveRed(row, col, Color.RED);
                 } else if (v == 2) {
-                    board.getmoveblack(row, col, Color.BLACK);
+                    board.getMoveBlack(row, col, Color.BLACK);
                 }
             }
         }
@@ -80,9 +80,9 @@ public class BoardAdapter {
 
         // Update board
         if (player == Player.RED) {
-            board.getmovered(row, col, Color.RED);
+            board.getMoveRed(row, col, Color.RED);
         } else {
-            board.getmoveblack(row, col, Color.BLACK);
+            board.getMoveBlack(row, col, Color.BLACK);
         }
 
         return true;
@@ -111,7 +111,7 @@ public class BoardAdapter {
 
      //Resets both the matrix and the board
     public void reset() {
-        int n = board.getsize();
+        int n = board.getSize();
         for (int row = 0; row < n; row++) {
             for (int col = 0; col < n; col++) {
                 matrix[row][col] = 0;
@@ -121,6 +121,6 @@ public class BoardAdapter {
     }
 
     public Color getCellColor(int row, int col) {
-        return board.getcell(row, col);
+        return board.getCell(row, col);
     }
 }
