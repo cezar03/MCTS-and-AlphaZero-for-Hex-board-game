@@ -3,6 +3,9 @@ package UI;
 import Game.BoardAdapter;
 import Game.Player;
 
+/** Controller class to manage game logic and interactions between the BoardAdapter and BoardView 
+ * @author Team 04
+*/
 public class GameController {
     private BoardView boardView;
     private Player currentPlayer;

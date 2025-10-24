@@ -10,10 +10,16 @@ In this project, our team aims to discover the game (Hex). In the next step of t
 ...
 
 ## Visuals
-![alt text](MainMenu.png) --> this is how main menu looks like
-![alt text](Board.png)  --> this is how board looks like
+### Main Menu
+![Main Menu Screenshot](MainMenu.png)
+
+### Game Board
+![Game Board Screenshot](Board.png)
 ## Installation
-To run this app, user needs Maven, JavafxSDK > 17 and JavaSDK > 21.
+To run this application, ensure that the following are installed:
+- **Java SDK 21** or higher  
+- **JavaFX SDK 17** or higher  
+- **Maven**
 
 
 ## Usage
