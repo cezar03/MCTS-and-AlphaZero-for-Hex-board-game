@@ -12,6 +12,8 @@ public class GameController {
     private final Player BLACK = Player.BLACK;
     /*
      * Constructor for GameController
+     * @param adapter0 The BoardAdapter to interact with the game board.
+     * @param boardView The BoardView to update the UI.
      */
     public GameController(BoardAdapter adapter0,BoardView boardView) {
         this.boardView = boardView;

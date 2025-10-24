@@ -4,14 +4,18 @@ import Game.Board;
 import Game.BoardAdapter;
 import UI.GameController;
 import Game.Color;
+import Game.Player;
 import javafx.scene.shape.Line;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Polyline;
 import javafx.scene.paint.Paint;
+import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 
+
 public class BoardView extends Pane{
+    private Label statusLabel = new Label(); // Label to show current player's turn
     private final int boardSize; // Number of hexagons along one edge of the board
     private final double hexSize; // Size of each hexagon
     private final Polygon[][] hexCells; // 2D array to hold hexagon shapes
@@ -206,4 +210,5 @@ public class BoardView extends Pane{
         rightBorder.setStrokeWidth(3);
         getChildren().add(rightBorder);
     }
+   
 }
