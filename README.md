@@ -12,10 +12,10 @@ We will also research on which AI agent performs best on which board size of the
 
 ## Visuals
 ### Main Menu
-![Main Menu Screenshot](MainMenu.png)
+![alt text](Mainpanel.png)
 
 ### Game Board
-![Game Board Screenshot](Board.png)
+![alt text](Board.png)
 
 ## Installation
 To run this application, ensure that the following are installed:
