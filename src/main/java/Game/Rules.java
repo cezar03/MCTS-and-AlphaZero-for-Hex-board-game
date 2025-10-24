@@ -15,7 +15,7 @@ public final class Rules {
 
     /* Pie rule hook if you want it later. */
     public static boolean pieRuleAvailable(int plyCount, Player toMove) {
-        return plyCount == 1;
+        return plyCount <= 1;
     }
 }
 

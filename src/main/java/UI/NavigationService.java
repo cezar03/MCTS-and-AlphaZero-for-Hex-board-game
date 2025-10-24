@@ -4,9 +4,15 @@ import java.awt.Desktop;
 import java.io.File;
 import java.util.Objects;
 
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 import Game.Board;
@@ -35,13 +41,36 @@ public final class NavigationService {
         GameController controller = new GameController(adapter, boardView);
         boardView.setController(controller); // (controller also sets itself in ctor)
 
-        Scene scene = new Scene(boardView, 900, 900);
+        // Create turn label
+        Label turnLabel = new Label();
+        turnLabel.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px;");
+
+        // Set the label in the view
+        boardView.setTurnLabel(turnLabel);
+
+        // Wrap BoardView in a BorderPane to add controls
+        BorderPane root = new BorderPane();
+        root.setStyle("-fx-background-color: linear-gradient(to bottom, #DEB887, #D2A679, #C8A882);");
+        root.setCenter(boardView);
+
+        // Create a back button
+        Button backBtn = Buttons.primary("← Back to Menu");
+        backBtn.setOnAction(e -> showMenu());
+
+        // Add button to the top
+        HBox topBar = new HBox(12, backBtn, turnLabel);
+        topBar.setPadding(new Insets(12));
+        topBar.setAlignment(Pos.CENTER_LEFT);
+        root.setTop(topBar);
+
+        Scene scene = new Scene(root, 900, 900);
         attachCss(scene);
         stage.setTitle("Hex — Game");
         stage.setScene(scene);
 
         // initial paint
         boardView.update(adapter);
+        boardView.updateTurnDisplay(controller.getCurrentPlayer());
     }
 
     //GAMBLIIIIIIIIIIIIING

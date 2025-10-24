@@ -37,10 +37,10 @@ public class MainMenu extends Application {
         VBox header = new VBox(6, title);
         header.setAlignment(Pos.CENTER_LEFT);
         Button playBtn  = new Button("PLAY");  playBtn.getStyleClass().add("btn-primary");
-        Button skinsBtn = new Button("SKINS"); skinsBtn.getStyleClass().add("btn-secondary");
+        Button skinsBtn = new Button("GAMBLING"); skinsBtn.getStyleClass().add("btn-secondary");
         Button aboutBtn = new Button("ABOUT"); aboutBtn.getStyleClass().add("btn-ghost");
 
-        playBtn.setOnAction(e -> nav.showGame(11, 64));
+        playBtn.setOnAction(e -> nav.showGame(11, 55));
         skinsBtn.setOnAction(e -> nav.showSkins());
         aboutBtn.setOnAction(e -> nav.info("About Connections", "About the Game","Put the link to the game's rules here."));
 
