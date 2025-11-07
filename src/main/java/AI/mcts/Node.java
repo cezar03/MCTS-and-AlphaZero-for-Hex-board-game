@@ -1,3 +1,4 @@
+package AI.mcts;
 import java.util.*;
 public class Node { // this is not a final version. it's just a skeleton to compile and try the selection class
     // fields 

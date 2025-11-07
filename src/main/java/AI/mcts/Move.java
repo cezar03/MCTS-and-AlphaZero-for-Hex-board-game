@@ -1,3 +1,4 @@
+package AI.mcts;
 public class Move {
     public String coordinate; // move coordinate
 
