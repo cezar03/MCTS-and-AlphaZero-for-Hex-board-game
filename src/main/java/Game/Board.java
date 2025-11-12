@@ -56,6 +56,28 @@ public final class Board {
         return inBounds(row, column) && getCell(row, column) == Color.EMPTY;
     }
 
+    /**
+     * Creates a copy of the board for simulation in MCTS
+    */
+    public Board copyBoard(Board original) {
+        int n = original.getSize();
+        Board copy = new Board(n);
+        
+        // Copy all placed stones
+        for (int row = 0; row < n; row++) {
+            for (int col = 0; col < n; col++) {
+                Color cellColor = original.getCell(row, col);
+                if (cellColor == Color.RED) {
+                    copy.getMoveRed(row, col, Color.RED);
+                } else if (cellColor == Color.BLACK) {
+                    copy.getMoveBlack(row, col, Color.BLACK);
+                }
+            }
+        }
+        
+        return copy;
+    }
+
     // Check for win-condition for RED (top ↔ bottom connected)
     public boolean redWins() {
         return uf.find(redTop) == uf.find(redBottom);
