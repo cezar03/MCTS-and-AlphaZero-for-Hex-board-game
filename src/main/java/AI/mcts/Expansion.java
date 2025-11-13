@@ -1,3 +1,4 @@
+package AI.mcts;
 import java.util.*;
 
 public class Expansion {
@@ -14,9 +15,9 @@ public class Expansion {
 
         // find moves that have not been tried yet
         List<Move> untriedMoves = new ArrayList<>();
-        for (Move m : legalMoves) {
-            if (!node.children.containsKey(m)) {
-                untriedMoves.add(m);
+        for (Move moves : legalMoves) {
+            if (!node.children.containsKey(moves)) {
+                untriedMoves.add(moves);
             }
         }
 

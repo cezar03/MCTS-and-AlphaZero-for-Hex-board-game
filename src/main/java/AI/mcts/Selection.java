@@ -27,33 +27,39 @@ Where:
     - or is terminal (end of game) -> as explained previously 
      */
     public Node select(Node node, GameState state){
-        while (!state.isTerminal() && node.isFullyExpanded()) { // while the game is not over and the node is fully expanded
+        while (!state.isTerminal() && isFullyExpanded(node, state)) { // while the game is not over and the node is fully expanded
             node = bestChild(node); // choose the child that gives the best UCT. See the method below
             state.doMove(node.move); // apply the move of the selected child to the game state
             }
         return node; // return the nodes where the expansion will happen
 
     }
-    private Node bestChild(Node node) { 
-        Node best = null; // here we will store the child with the best uct value (highest)
-        double bestValue = Double.NEGATIVE_INFINITY; // initialize with a very low value
-        for (Node child : node.children.values()) { // loop through all the children of the current node
+
+    private boolean isFullyExpanded(Node node, GameState state) {
+        int legal = state.getLegalMoves().size();
+        return !state.isTerminal() && node.children.size() >= legal;
+    }
+
+    private Node bestChild(Node node) {
+        Node best = null;
+        double bestValue = Double.NEGATIVE_INFINITY;
+
+        for (Node child : node.children.values()) {
             double uctValue;
-            if (child.visits == 0) { // if the child has never been visited before, we will prioritize it  with infinite value
-                uctValue = Double.POSITIVE_INFINITY; 
-            } else { // calculate the uct value for the child 
-            uctValue = (child.wins / (child.visits + 1e-6)) + // win rate
-                c * Math.sqrt(Math.log(node.visits + 1) / (child.visits + 1e-6) // the 1e-6 prevents the division by zero, to make it safe
-            );
-            // if this child has the highest uct value so far update the best variable
+            if (child.visits == 0) {
+                uctValue = Double.POSITIVE_INFINITY;
+            } else {
+                double eps = 1e-9;
+                double winRate = child.wins / (child.visits + eps);
+                double explore = c * Math.sqrt(Math.log(node.visits + 1.0) / (child.visits + eps));
+                uctValue = winRate + explore;
+            }
             if (uctValue > bestValue) {
                 bestValue = uctValue;
                 best = child;
             }
-             }
-             
+        }
+        return best;
     }
-    return best; // finally return the child with the highest uct 
-}
 }
 
