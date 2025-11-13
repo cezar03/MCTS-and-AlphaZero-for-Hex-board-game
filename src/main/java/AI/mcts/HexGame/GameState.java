@@ -1,5 +1,5 @@
 // AI/mcts/GameState.java
-package AI.mcts;
+package AI.mcts.HexGame;
 
 import Game.*;
 import java.util.ArrayList;

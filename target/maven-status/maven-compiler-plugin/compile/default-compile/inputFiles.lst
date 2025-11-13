@@ -1,17 +1,22 @@
-/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/UI/BoardView.java
-/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/Game/Rules.java
-/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/Game/BoardAdapter.java
-/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/mcts/Move.java
-/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/mcts/Node.java
-/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/Game/Player.java
-/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/mcts/Selection.java
-/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/UI/NavigationService.java
-/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/UI/MainMenu.java
-/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/Game/Color.java
-/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/mcts/GameState.java
-/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/Game/Board.java
-/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/Game/UnionFind.java
-/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/Game/MoveRegistration.java
-/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/UI/CaseOpeningView.java
-/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/UI/Buttons.java
-/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/UI/GameController.java
+C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\AI\mcts\Node.java
+C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\UI\BoardView.java
+C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\AI\mcts\Expansion.java
+C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\AI\mcts\Move.java
+C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\UI\NavigationService.java
+C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\UI\CaseOpeningView.java
+C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\AI\mcts\MCTS.java
+C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\Game\Board.java
+C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\Game\BoardAdapter.java
+C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\AI\RunMctsDemo.java
+C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\Game\MoveRegistration.java
+C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\Game\Color.java
+C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\UI\Buttons.java
+C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\UI\GameController.java
+C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\AI\mcts\GameState.java
+C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\Game\Rules.java
+C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\Game\UnionFind.java
+C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\AI\mcts\Backpropagation.java
+C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\Game\Player.java
+C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\AI\mcts\Selection.java
+C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\AI\mcts\Simulation.java
+C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\UI\MainMenu.java

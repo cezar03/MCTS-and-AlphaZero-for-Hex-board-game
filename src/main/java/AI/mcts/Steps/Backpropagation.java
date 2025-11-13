@@ -1,4 +1,7 @@
-package AI.mcts;
+package AI.mcts.Steps;
+
+import AI.mcts.Node;
+
 public class Backpropagation {
     /*
     This method is in charge of updating the statistics (like wins and visits) for each node and bring them up to the root. 

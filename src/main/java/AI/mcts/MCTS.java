@@ -2,7 +2,13 @@ package AI.mcts;
 
 import java.util.*;
 
-public class MCTS {
+import AI.mcts.HexGame.GameState;
+import AI.mcts.Steps.Backpropagation;
+import AI.mcts.Steps.Expansion;
+import AI.mcts.Steps.Selection;
+import AI.mcts.Steps.Simulation;
+
+public final class MCTS {
     private final Selection selection = new Selection();
     private final Expansion expansion = new Expansion();
     private final Backpropagation backprop = new Backpropagation();
@@ -16,28 +22,23 @@ public class MCTS {
 
     public Node search(Node root, GameState rootState) {
         for (int i = 0; i < iterations; i++) {
-            GameState simState = rootState.copy();
-            Node leaf = selection.select(root, simState);
-            Node expanded = expansion.expand(leaf, simState);
-            if (expanded != leaf) {
-                simState.doMove(expanded.move);
-            }
+            GameState state = rootState.copy();
+            Node leaf = selection.select(root, state);
+            Node child = expansion.expand(leaf, state);
+            if (child != leaf) state.doMove(child.move);
 
-            int winner;
-            if (simState.isTerminal()) {
-                winner = simState.getWinnerId();
-            } else {
-                winner = simulation.simulate(simState);
-            }
-            backprop.backpropagate(expanded, winner);
+            int winner = state.isTerminal() ? state.getWinnerId()
+                                            : simulation.simulate(state);
+            backprop.backpropagate(child, winner);
         }
+        return bestChildByVisits(root);
+    }
 
-        Node best = null;
-        int bestVisits = -1;
+    private Node bestChildByVisits(Node root) {
+        Node best = null; int bestV = -1;
         for (Node child : root.children.values()) {
-            if (child.visits > bestVisits) {
-                bestVisits = child.visits;
-                best = child;
+            if (child.visits > bestV) {
+                bestV = child.visits; best = child;
             }
         }
         return best;

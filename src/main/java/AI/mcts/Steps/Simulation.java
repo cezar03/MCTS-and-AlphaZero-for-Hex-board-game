@@ -1,7 +1,10 @@
-package AI.mcts;
+package AI.mcts.Steps;
 
 import Game.*;
 import java.util.*;
+
+import AI.mcts.HexGame.GameState;
+import AI.mcts.HexGame.Move;
 
 public class Simulation {
     private Random random = new Random();

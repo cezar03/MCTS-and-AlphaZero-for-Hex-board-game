@@ -1,4 +1,4 @@
-package AI.mcts;
+package AI.mcts.HexGame;
 
 import java.util.Objects;
 

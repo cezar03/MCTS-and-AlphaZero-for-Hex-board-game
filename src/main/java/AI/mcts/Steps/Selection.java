@@ -1,4 +1,8 @@
-package AI.mcts;
+package AI.mcts.Steps;
+
+import AI.mcts.Node;
+import AI.mcts.HexGame.GameState;
+
 public class Selection{
 /*
  Selection Class: 

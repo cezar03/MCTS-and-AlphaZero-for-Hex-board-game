@@ -1,5 +1,9 @@
-package AI.mcts;
+package AI.mcts.Steps;
 import java.util.*;
+
+import AI.mcts.Node;
+import AI.mcts.HexGame.GameState;
+import AI.mcts.HexGame.Move;
 
 public class Expansion {
 
