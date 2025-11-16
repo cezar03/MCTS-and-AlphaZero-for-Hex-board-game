@@ -37,14 +37,16 @@ public class MainMenu extends Application {
         VBox header = new VBox(6, title);
         header.setAlignment(Pos.CENTER_LEFT);
         Button playBtn  = new Button("PLAY");  playBtn.getStyleClass().add("btn-primary");
+        Button aiBtn    = new Button("VS COMPUTER"); aiBtn.getStyleClass().add("btn-primary");
         //Button skinsBtn = new Button("GAMBLING"); skinsBtn.getStyleClass().add("btn-secondary");
         Button aboutBtn = new Button("ABOUT"); aboutBtn.getStyleClass().add("btn-ghost");
 
-        playBtn.setOnAction(e -> nav.showGame(11, 55));
+        playBtn.setOnAction(e -> nav.showGame(11, 55, null));
+        aiBtn.setOnAction(e -> nav.showDifficultySelection());
         //skinsBtn.setOnAction(e -> nav.showSkins());
         aboutBtn.setOnAction(e -> nav.info("About Connections", "About the Game","Put the link to the game's rules here."));
 
-        VBox buttons = new VBox(12, playBtn, aboutBtn);
+        VBox buttons = new VBox(12, playBtn, aiBtn, aboutBtn);
         buttons.setAlignment(Pos.CENTER_LEFT);
         buttons.setPadding(new Insets(20, 0, 0, 0));
 

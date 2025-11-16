@@ -13,10 +13,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import Game.Board;
 import Game.BoardAdapter;
+import Game.Player;
 
 public final class NavigationService {
     private final Stage stage;
@@ -73,6 +75,56 @@ public final class NavigationService {
         boardView.updateTurnDisplay(controller.getCurrentPlayer());
     }
 
+    public void showGame(int size, double hexSize, Integer aiIterations) {
+        Board board = new Board(size);
+        BoardAdapter adapter = new BoardAdapter(board);
+        BoardView boardView = new BoardView(size, hexSize);
+        GameController controller = new GameController(adapter, boardView);
+        boardView.setController(controller); // (controller also sets itself in ctor)
+
+        // Create turn label
+        Label turnLabel = new Label();
+        turnLabel.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px;");
+
+        // Set the label in the view
+        boardView.setTurnLabel(turnLabel);
+
+        // Wrap BoardView in a BorderPane to add controls
+        BorderPane root = new BorderPane();
+        root.setStyle("-fx-background-color: linear-gradient(to bottom, #DEB887, #D2A679, #C8A882);");
+        root.setCenter(boardView);
+
+        // Create a back button
+        Button backBtn = Buttons.primary("← Back to Menu");
+        backBtn.setOnAction(e -> {
+            if (controller.hasAIPlayer()) {
+                controller.removeAIPlayer();
+            }
+            showMenu();
+        });
+
+        // Add button to the top
+        HBox topBar = new HBox(12, backBtn, turnLabel);
+        topBar.setPadding(new Insets(12));
+        topBar.setAlignment(Pos.CENTER_LEFT);
+        root.setTop(topBar);
+
+        Scene scene = new Scene(root, 900, 900);
+        attachCss(scene);
+        stage.setTitle("Hex — Game");
+        stage.setScene(scene);
+
+        // initial paint
+        boardView.update(adapter);
+        boardView.updateTurnDisplay(controller.getCurrentPlayer());
+
+        // Setup AI if iterations provided
+        if (aiIterations != null && aiIterations > 0) {
+            stage.setTitle("Hex — Game vs Computer");
+            controller.setupAIPlayer(Player.BLACK, aiIterations);
+        }
+    }
+
     //GAMBLIIIIIIIIIIIIING
     public void showSkins() {
         Parent root = new CaseOpeningView().createContent();
@@ -93,6 +145,58 @@ public final class NavigationService {
             styleDialog(a);
             a.showAndWait();
         }
+    }
+
+    /**
+     * Shows a difficulty selection dialog for playing against the AI.
+     */
+    public void showDifficultySelection() {
+        Alert dialog = new Alert(Alert.AlertType.INFORMATION);
+        dialog.setTitle("AI Difficulty");
+        dialog.setHeaderText("Select Difficulty Level");
+        dialog.setContentText("Choose how strong the AI opponent should be:");
+        styleDialog(dialog);
+
+        Button easyBtn = new Button("Easy (500 iterations)");
+        Button mediumBtn = new Button("Medium (1000 iterations)");
+        Button hardBtn = new Button("Hard (2000 iterations)");
+        Button expertBtn = new Button("Expert (5000 iterations)");
+        Button cancelBtn = new Button("Cancel");
+
+        easyBtn.setStyle("-fx-font-size: 12px; -fx-padding: 10px;");
+        mediumBtn.setStyle("-fx-font-size: 12px; -fx-padding: 10px;");
+        hardBtn.setStyle("-fx-font-size: 12px; -fx-padding: 10px;");
+        expertBtn.setStyle("-fx-font-size: 12px; -fx-padding: 10px;");
+        cancelBtn.setStyle("-fx-font-size: 12px; -fx-padding: 10px;");
+
+        easyBtn.setOnAction(e -> {
+            dialog.close();
+            showGame(11, 55, 500);
+        });
+
+        mediumBtn.setOnAction(e -> {
+            dialog.close();
+            showGame(11, 55, 1000);
+        });
+
+        hardBtn.setOnAction(e -> {
+            dialog.close();
+            showGame(11, 55, 2000);
+        });
+
+        expertBtn.setOnAction(e -> {
+            dialog.close();
+            showGame(11, 55, 5000);
+        });
+
+        cancelBtn.setOnAction(e -> dialog.close());
+
+        VBox buttonBox = new VBox(10, easyBtn, mediumBtn, hardBtn, expertBtn, cancelBtn);
+        buttonBox.setAlignment(Pos.CENTER);
+        buttonBox.setPadding(new Insets(10));
+
+        dialog.getDialogPane().setContent(buttonBox);
+        dialog.showAndWait();
     }
 
 
