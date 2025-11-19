@@ -13,22 +13,23 @@ import Game.Player;
  * 
  * @author Team 04
  */
-public class AIPlayer {
+public class MCTSPlayer implements AIAgent {
     private final MCTS mcts;
-    private final Player aiPlayer;
+    private final Player mctsPlayer;
     private final int iterations;
 
     /**
-     * Constructor for AIPlayer
-     * @param aiPlayer The player this AI represents (RED or BLACK)
+     * Constructor for MCTSPlayer
+     * @param mctsPlayer The player this AI represents (RED or BLACK)
      * @param iterations The number of MCTS iterations to perform
      */
-    public AIPlayer(Player aiPlayer, int iterations) {
-        this.aiPlayer = aiPlayer;
+    public MCTSPlayer(Player mctsPlayer, int iterations) {
+        this.mctsPlayer = mctsPlayer;
         this.iterations = iterations;
         this.mcts = new MCTS(iterations);
     }
 
+    @Override
     /**
      * Determines the best move for the AI player using MCTS.
      * 
@@ -54,12 +55,23 @@ public class AIPlayer {
         return bestNode.move;
     }
 
+    @Override
     /**
      * Gets the player this AI represents.
      * @return The player (RED or BLACK)
      */
-    public Player getAIPlayer() {
-        return aiPlayer;
+    public Player getPlayer() {
+        return mctsPlayer;
+    }
+
+    @Override
+    /**
+     * Checks if the given player is controlled by this AI.
+     * @param player The player to check
+     * @return true if this AI controls the player, false otherwise
+     */
+    public boolean controlsPlayer(Player player) {
+        return this.mctsPlayer == player;
     }
 
     /**
@@ -68,14 +80,5 @@ public class AIPlayer {
      */
     public int getIterations() {
         return iterations;
-    }
-
-    /**
-     * Checks if the given player is controlled by this AI.
-     * @param player The player to check
-     * @return true if this AI controls the player, false otherwise
-     */
-    public boolean controlsPlayer(Player player) {
-        return this.aiPlayer == player;
     }
 }
