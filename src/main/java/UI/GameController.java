@@ -244,13 +244,14 @@ public class GameController {
         currentPlayer = currentPlayer.other();
         boardView.updateTurnDisplay(currentPlayer);
 
-        // If the next player is also AI, continue
-        if (isAIControlled(currentPlayer)) {
-            // Add a small delay to make the game more watchable
-            Timer timer = new Timer(200, e -> makeAIMove());
-            timer.setRepeats(false);
-            timer.start();
-        }
+
+        // // If the next player is also AI, continue
+        // if (isAIControlled(currentPlayer)) {
+        //     // Add a small delay to make the game more watchable
+        //     Timer timer = new Timer(200, e -> makeAIMove());
+        //     timer.setRepeats(false);
+        //     timer.start();
+        // }
     }
 
 }
