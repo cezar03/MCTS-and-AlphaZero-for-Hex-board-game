@@ -44,10 +44,9 @@ public class MCTSPlayer implements AIAgent {
             return null;
         }
 
-        GameState simState = gameState.copy();
-        Node root = new Node(null, null, currentPlayer.other().id);
+        Node root = new Node(null, null, currentPlayer.id);
 
-        Node bestNode = mcts.search(root, simState);
+        Node bestNode = mcts.search(root, gameState);
 
         if (bestNode == null || bestNode.move == null) {
             return gameState.getLegalMoves().get(0);
