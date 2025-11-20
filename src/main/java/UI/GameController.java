@@ -4,10 +4,16 @@ import Game.BoardAdapter;
 import Game.Color;
 import Game.Player;
 import Game.Rules;
-import AI.AIPlayer;
+import AI.AIAgent;
+import AI.MCTSPlayer;
+import AI.RandomPlayer;
 import AI.mcts.HexGame.Move;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.swing.Timer;
 
 /** Controller class to manage game logic and interactions between the BoardAdapter and BoardView 
@@ -20,9 +26,11 @@ public class GameController {
     private BoardAdapter adapter;
     private int moveCount = 0;
     
-    private AIPlayer aiPlayer;
+    // Map with AI player(s) (can be more than one when testing performance of agents)
+    private Map<Player, AIAgent> aiAgents = new HashMap<>();
     private boolean aiThinking = false;
-    /*
+
+    /**
      * Constructor for GameController
      * @param adapter0 The BoardAdapter to interact with the game board.
      * @param boardView The BoardView to update the UI.
@@ -32,9 +40,63 @@ public class GameController {
         this.currentPlayer = Player.RED; // can switch to Player.BLACK to let black start
         this.gameOver = false;
         this.adapter = adapter0; // Initialize the adapter
-        this.aiPlayer = null;
+        this.aiAgents = new HashMap<>();
         boardView.setController(this);
         boardView.updateTurnDisplay(currentPlayer);
+    }
+
+    /**
+     * Sets up an AI agent for a specific player.
+     * @param player The player this AI will control (RED or BLACK).
+     * @param agent The AI agent to use.
+     */
+    public void setupAIAgent(Player player, AIAgent agent) {
+        aiAgents.put(player, agent);
+        System.out.println("AI Agent set up for: " + player);
+        
+        // If it's this player's turn, make the AI move
+        if (aiAgents.get(currentPlayer) != null && !gameOver) {
+            makeAIMove();
+        }
+    }
+
+    /**
+     * Removes the AI agent for a specific player.
+     * @param player The player whose AI should be removed
+     */
+    public void removeAIAgent(Player player) {
+        aiAgents.remove(player);
+        System.out.println("AI Agent removed for: " + player);
+    }
+
+    /**
+     * Removes all AI agents from the game.
+     */
+    public void removeAllAIAgents() {
+        aiAgents.clear();
+        this.aiThinking = false;
+        System.out.println("All AI Agents removed");
+    }
+
+    /**
+     * Checks if any AI agents are active.
+     */
+    public boolean hasAnyAIAgent() {
+        return !aiAgents.isEmpty();
+    }
+
+    /**
+     * Checks if a specific player is controlled by an AI.
+     */
+    public boolean isAIControlled(Player player) {
+        return aiAgents.containsKey(player);
+    }
+
+    /**
+     * Gets the AI agent for a specific player, if one exists.
+     */
+    public AIAgent getAIAgent(Player player) {
+        return aiAgents.get(player);
     }
 
     /**
@@ -55,8 +117,8 @@ public class GameController {
             return;
         }
         
-        // Check if AI should make a move
-        if (aiPlayer != null && aiPlayer.controlsPlayer(currentPlayer)) {
+        // Block clicks if current player is AI-controlled
+        if(isAIControlled(currentPlayer)){
             return;
         }
         
@@ -74,9 +136,6 @@ public class GameController {
                 currentPlayer = currentPlayer.other();
                 boardView.updateTurnDisplay(currentPlayer);
 
-                if (aiPlayer != null && aiPlayer.controlsPlayer(currentPlayer)) {
-                    makeAIMove();
-                }
                 return;
             }
         }
@@ -91,19 +150,8 @@ public class GameController {
 
         if (adapter.isGameOver()) {
             gameOver = true;
-            String winText;
             Player winner = adapter.getWinner();
-            switch (winner) {
-                case RED:
-                    winText = "RED wins!";
-                    break;
-                case BLACK:
-                    winText = "BLACK wins!";
-                    break;
-                default:
-                    winText = "It's a draw!";
-            }
-            System.out.println(winText);
+            System.out.println("Player " + winner + " wins!");
             boardView.updateWinDisplay(winner);
             return;
         }
@@ -113,33 +161,10 @@ public class GameController {
         boardView.updateTurnDisplay(currentPlayer);
         System.out.println("Current player: " + currentPlayer);
         
-        // Check if AI should move
-        if (aiPlayer != null && aiPlayer.controlsPlayer(currentPlayer)) {
+        // Check if the new current player is AI-controlled
+        if (isAIControlled(currentPlayer)) {
             makeAIMove();
         }
-    }
-
-    /**
-     * Sets up an AI player for the specified player type.
-     * @param player The player to control with AI (RED or BLACK)
-     * @param iterations The number of MCTS iterations to perform
-     */
-    public void setupAIPlayer(Player player, int iterations) {
-        this.aiPlayer = new AIPlayer(player, iterations);
-        System.out.println("AI Player set up for: " + player + " with " + iterations + " iterations");
-        
-        if (aiPlayer.controlsPlayer(currentPlayer) && !gameOver) {
-            makeAIMove();
-        }
-    }
-
-    /**
-     * Removes the AI player from the game (returns to player vs player).
-     */
-    public void removeAIPlayer() {
-        this.aiPlayer = null;
-        this.aiThinking = false;
-        System.out.println("AI Player removed");
     }
 
     /**
@@ -150,6 +175,11 @@ public class GameController {
             return;
         }
 
+        AIAgent currentAIAgent = aiAgents.get(currentPlayer);
+        if (currentAIAgent == null) {
+            return; // No AI agent for current player
+        }
+
         aiThinking = true;
         
         // Run AI move calculation on a background thread
@@ -157,7 +187,7 @@ public class GameController {
             @Override
             protected Move call() throws Exception {
                 // Get the best move from the AI
-                return aiPlayer.getBestMove(adapter.getBoard(), currentPlayer);
+                return currentAIAgent.getBestMove(adapter.getBoard(), currentPlayer);
             }
         };
 
@@ -187,7 +217,7 @@ public class GameController {
      * @param col The column of the move
      */
     private void handleAIMove(int row, int col) {
-        System.out.println("AI makes move at: (" + row + ", " + col + ")");
+        System.out.println("AI (" + currentPlayer + ") makes move at: (" + row + ", " + col + ")");
         
         // Make the move
         boolean ok = adapter.makeMove(row, col, currentPlayer);
@@ -205,18 +235,7 @@ public class GameController {
         if (adapter.isGameOver()) {
             gameOver = true;
             Player winner = adapter.getWinner();
-            String winText;
-            switch (winner) {
-                case RED:
-                    winText = "RED wins!";
-                    break;
-                case BLACK:
-                    winText = "BLACK wins!";
-                    break;
-                default:
-                    winText = "It's a draw!";
-            }
-            System.out.println(winText);
+            System.out.println("Player " + winner + " wins!");
             boardView.updateWinDisplay(winner);
             return;
         }
@@ -225,28 +244,14 @@ public class GameController {
         currentPlayer = currentPlayer.other();
         boardView.updateTurnDisplay(currentPlayer);
 
-        // If the next player is also AI, continue
-        if (aiPlayer != null && aiPlayer.controlsPlayer(currentPlayer)) {
-            // Add a small delay to make the game more watchable
-            Timer timer = new Timer(500, e -> makeAIMove());
-            timer.setRepeats(false);
-            timer.start();
-        }
+
+        // // If the next player is also AI, continue
+        // if (isAIControlled(currentPlayer)) {
+        //     // Add a small delay to make the game more watchable
+        //     Timer timer = new Timer(200, e -> makeAIMove());
+        //     timer.setRepeats(false);
+        //     timer.start();
+        // }
     }
 
-    /**
-     * Checks if an AI player is currently active.
-     * @return true if an AI player is set up, false otherwise
-     */
-    public boolean hasAIPlayer() {
-        return aiPlayer != null;
-    }
-
-    /**
-     * Gets the current AI player.
-     * @return The AIPlayer instance, or null if no AI is set up
-     */
-    public AIPlayer getAIPlayer() {
-        return aiPlayer;
-    }
 }

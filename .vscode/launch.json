@@ -3,6 +3,13 @@
   "configurations": [
     {
       "type": "java",
+      "name": "TestRunner",
+      "request": "launch",
+      "mainClass": "AI.TestRunner",
+      "projectName": "team04-app"
+    },
+    {
+      "type": "java",
       "name": "MainMenu",
       "request": "launch",
       "mainClass": "UI.MainMenu",

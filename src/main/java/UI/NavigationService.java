@@ -19,6 +19,9 @@ import javafx.stage.Stage;
 import Game.Board;
 import Game.BoardAdapter;
 import Game.Player;
+import AI.AIAgent;
+import AI.RandomPlayer;
+import AI.MCTSPlayer;
 
 public final class NavigationService {
     private final Stage stage;
@@ -27,7 +30,7 @@ public final class NavigationService {
         this.stage = stage;
     }
 
-    //Builds the menu
+    // Builds the menu
     public void showMenu() {
         Parent root = MainMenu.createRoot(this);
         Scene scene = new Scene(root, 720, 480);
@@ -36,6 +39,11 @@ public final class NavigationService {
         stage.setScene(scene);
     }
 
+    /**
+     * Shows the game when no AI is involved, so a human plays against a human.
+     * @param size size of the Hex board
+     * @param hexSize size of the hexagons
+     */
     public void showGame(int size, double hexSize) {
         Board board = new Board(size);
         BoardAdapter adapter = new BoardAdapter(board);
@@ -75,6 +83,12 @@ public final class NavigationService {
         boardView.updateTurnDisplay(controller.getCurrentPlayer());
     }
 
+    /**
+     * Shows the game when one AI agent is involved, so a human plays against the computer.
+     * @param size size of the Hex board
+     * @param hexSize size of the hexagons
+     * @param aiIterations number of iterations for the AI's Monte Carlo Tree Search
+     */
     public void showGame(int size, double hexSize, Integer aiIterations) {
         Board board = new Board(size);
         BoardAdapter adapter = new BoardAdapter(board);
@@ -97,9 +111,7 @@ public final class NavigationService {
         // Create a back button
         Button backBtn = Buttons.primary("← Back to Menu");
         backBtn.setOnAction(e -> {
-            if (controller.hasAIPlayer()) {
-                controller.removeAIPlayer();
-            }
+            controller.removeAllAIAgents();
             showMenu();
         });
 
@@ -118,11 +130,94 @@ public final class NavigationService {
         boardView.update(adapter);
         boardView.updateTurnDisplay(controller.getCurrentPlayer());
 
-        // Setup AI if iterations provided
-        if (aiIterations != null && aiIterations > 0) {
-            stage.setTitle("Hex — Game vs Computer");
-            controller.setupAIPlayer(Player.BLACK, aiIterations);
-        }
+        // Setup single AI agent for BLACK player
+        MCTSPlayer mctsPlayer = new MCTSPlayer(Player.BLACK, aiIterations);
+        controller.setupAIAgent(Player.BLACK, mctsPlayer);
+    }
+
+    /**
+     * Shows AI vs AI testing interface.
+     */
+    public void showAITesting() {
+        Alert dialog = new Alert(Alert.AlertType.INFORMATION);
+        dialog.setTitle("AI Testing");
+        dialog.setHeaderText("AI Agent Testing");
+        dialog.setContentText("Choose which agents to test:");
+        styleDialog(dialog);
+
+        Button mctsVsRandomBtn = new Button("MCTS vs Random");
+        Button mctsVsMctsBtn = new Button("MCTS vs MCTS");
+        Button randomVsRandomBtn = new Button("Random vs Random");
+        Button cancelBtn = new Button("Cancel");
+
+        mctsVsRandomBtn.setOnAction(e -> {
+            dialog.close();
+            showGameAIvsAI(
+                new MCTSPlayer(Player.RED, 5000),
+                new RandomPlayer(Player.BLACK)
+            );
+        });
+
+        mctsVsMctsBtn.setOnAction(e -> {
+            dialog.close();
+            showGameAIvsAI(
+                new MCTSPlayer(Player.RED, 2000),
+                new MCTSPlayer(Player.BLACK, 2000)
+            );
+        });
+
+        cancelBtn.setOnAction(e -> dialog.close());
+
+        VBox buttonBox = new VBox(10, mctsVsRandomBtn, mctsVsMctsBtn, randomVsRandomBtn, cancelBtn);
+        buttonBox.setAlignment(Pos.CENTER);
+        buttonBox.setPadding(new Insets(10));
+
+        dialog.getDialogPane().setContent(buttonBox);
+        dialog.showAndWait();
+    }
+
+    /**
+     * Shows a game where two AI agents play against each other.
+     */
+    private void showGameAIvsAI(AIAgent redAgent, AIAgent blackAgent) {
+        Board board = new Board(11);
+        BoardAdapter adapter = new BoardAdapter(board);
+        BoardView boardView = new BoardView(11, 55);
+        GameController controller = new GameController(adapter, boardView);
+        boardView.setController(controller);
+
+        // Setup UI
+        Label turnLabel = new Label();
+        turnLabel.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px;");
+        boardView.setTurnLabel(turnLabel);
+
+        BorderPane root = new BorderPane();
+        root.setStyle("-fx-background-color: linear-gradient(to bottom, #DEB887, #D2A679, #C8A882);");
+        root.setCenter(boardView);
+
+        Button backBtn = Buttons.primary("← Back to Menu");
+        backBtn.setOnAction(e -> {
+            controller.removeAllAIAgents();
+            showMenu();
+        });
+
+        HBox topBar = new HBox(12, backBtn, turnLabel);
+        topBar.setPadding(new Insets(12));
+        topBar.setAlignment(Pos.CENTER_LEFT);
+        root.setTop(topBar);
+
+        Scene scene = new Scene(root, 900, 900);
+        attachCss(scene);
+        stage.setTitle("Hex – AI vs AI Testing");
+        stage.setScene(scene);
+
+        boardView.update(adapter);
+        boardView.updateTurnDisplay(controller.getCurrentPlayer());
+
+        // Setup BOTH AI agents
+        controller.setupAIAgent(Player.RED, redAgent);
+        controller.setupAIAgent(Player.BLACK, blackAgent);
+        // The first agent will automatically start playing
     }
 
     //GAMBLIIIIIIIIIIIIING
