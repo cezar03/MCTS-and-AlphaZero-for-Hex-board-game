@@ -148,7 +148,7 @@ public final class Board {
     }
 
     /** Neighbor coordinates for a pointy-top hex grid laid out as an n×n rhombus. */
-    private List<int[]> neighbors(int row, int column) {
+    public List<int[]> neighbors(int row, int column) {
         int[][] neighbor_deltas = { {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}};
         List<int[]> neighbors = new ArrayList<>(6);
         for (var delta : neighbor_deltas) {

@@ -1,4 +1,4 @@
-package AI.mcts.Steps;
+package AI.mcts;
 
 import AI.mcts.HexGame.GameState;
 import AI.mcts.HexGame.Move;
