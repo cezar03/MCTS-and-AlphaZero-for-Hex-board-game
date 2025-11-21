@@ -1,4 +1,4 @@
-package AI;
+package AI.AiPlayer;
 
 import AI.mcts.HexGame.Move;
 import Game.Board;

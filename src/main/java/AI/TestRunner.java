@@ -1,5 +1,9 @@
 package AI;
 
+import AI.AiPlayer.AIAgent;
+import AI.AiPlayer.AITester;
+import AI.AiPlayer.MCTSPlayer;
+import AI.AiPlayer.RandomPlayer;
 import Game.Player;
 
 /**

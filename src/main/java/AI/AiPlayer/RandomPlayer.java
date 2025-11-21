@@ -1,4 +1,4 @@
-package AI;
+package AI.AiPlayer;
 
 import java.util.List;
 

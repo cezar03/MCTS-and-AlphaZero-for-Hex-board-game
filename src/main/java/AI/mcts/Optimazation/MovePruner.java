@@ -1,4 +1,4 @@
-package AI.mcts;
+package AI.mcts.Optimazation;
 
 import AI.mcts.HexGame.GameState;
 import AI.mcts.HexGame.Move;

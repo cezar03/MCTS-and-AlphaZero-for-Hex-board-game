@@ -19,9 +19,9 @@ import javafx.stage.Stage;
 import Game.Board;
 import Game.BoardAdapter;
 import Game.Player;
-import AI.AIAgent;
-import AI.RandomPlayer;
-import AI.MCTSPlayer;
+import AI.AiPlayer.AIAgent;
+import AI.AiPlayer.MCTSPlayer;
+import AI.AiPlayer.RandomPlayer;
 
 public final class NavigationService {
     private final Stage stage;

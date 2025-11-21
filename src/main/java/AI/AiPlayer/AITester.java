@@ -1,4 +1,4 @@
-package AI;
+package AI.AiPlayer;
 
 import Game.Board;
 import Game.BoardAdapter;
