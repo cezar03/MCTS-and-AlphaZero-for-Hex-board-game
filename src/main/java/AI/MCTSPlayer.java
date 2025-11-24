@@ -4,13 +4,14 @@ import AI.mcts.MCTS;
 import AI.mcts.Node;
 import AI.mcts.HexGame.GameState;
 import AI.mcts.HexGame.Move;
+import AI.mcts.MovePruner;
 import Game.Board;
 import Game.Player;
 
 /**
  * AIPlayer class that uses Monte Carlo Tree Search (MCTS) to determine the best move.
  * Integrates the AI system with the game.
- * 
+ *
  * @author Team 04
  */
 public class MCTSPlayer implements AIAgent {
@@ -32,7 +33,7 @@ public class MCTSPlayer implements AIAgent {
     @Override
     /**
      * Determines the best move for the AI player using MCTS.
-     * 
+     *
      * @param board The current game board state
      * @param currentPlayer The player whose turn it is
      * @return The best move found by the MCTS algorithm, or null if no moves are available
@@ -43,7 +44,6 @@ public class MCTSPlayer implements AIAgent {
         if (gameState.getLegalMoves().isEmpty()) {
             return null;
         }
-
 
         GameState simState = gameState.copy();
         Node root = new Node(null, null, currentPlayer.other().id);
@@ -82,5 +82,10 @@ public class MCTSPlayer implements AIAgent {
      */
     public int getIterations() {
         return iterations;
+    }
+
+    //added accessor
+    public MovePruner getPruner() {
+        return mcts.getPruner();
     }
 }

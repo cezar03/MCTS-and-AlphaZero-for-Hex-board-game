@@ -11,14 +11,14 @@ import java.util.*;
 
 public class MovePruner {
 
-//set thershold to represent how many moves we want to keep (smaller=fewer)
+    //set thershold to represent how many moves we want to keep (smaller=fewer)
     private final double threshold;
 
     public MovePruner(double threshold) {
         this.threshold = threshold;
     }
 
-//scores each move based on the heuristic, find max among legal moves and creates a minimum score for being kept
+    //scores each move based on the heuristic, find max among legal moves and creates a minimum score for being kept
     public List<Move> pruneMoves(GameState state, List<Move> legalMoves) {
         if (legalMoves.isEmpty()) return legalMoves;
 
@@ -46,7 +46,8 @@ public class MovePruner {
         // if we pruned everything, just return all moves
         return pruned.isEmpty() ? legalMoves : pruned;
     }
-// our heursitic based on centrality and how connected a move is to other friendly stones
+
+    // our heursitic based on centrality and how connected a move is to other friendly stones
     private double heuristic(GameState state, Move move) {
         Board board = state.getBoard();
         int n = board.getSize();
@@ -86,4 +87,19 @@ public class MovePruner {
         // i ve set the importance to centrality and connection to 50/50(equal) but we can tune it to value centrality or connectivtity more, i think connectivity would be better in most situations
         return 0.5 * centrality + 0.5 * connection;
     }
+
+    //getters for reports
+
+    public double getThreshold() {
+        return threshold;
+    }
+
+    public double getCentralityWeight() {
+        return 0.5;
+    }
+
+    public double getConnectivityWeight() {
+        return 0.5;
+    }
 }
+

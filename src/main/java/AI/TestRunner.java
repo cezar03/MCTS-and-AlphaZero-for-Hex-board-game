@@ -18,7 +18,7 @@ public class TestRunner {
         // Example 3: Tournament format (eliminates first-player bias)
         AIAgent mctsAgent1 = new MCTSPlayer(Player.RED, 1000);
         AIAgent randomAgent = new RandomPlayer(Player.BLACK);
-        runTournament(mctsAgent1, randomAgent, 20, 11, false);
+        runTournament(mctsAgent1, randomAgent, 50, 11, false);
     }
     
     /**
@@ -28,7 +28,7 @@ public class TestRunner {
         AIAgent mcts = new MCTSPlayer(Player.RED, 1000);
         AIAgent random = new RandomPlayer(Player.BLACK);
         
-        AITester.runMatch(mcts, random, 50, 11, false);
+        AITester.runMatch(mcts, random, 3, 11, false);
     }
     
     /**

@@ -29,10 +29,11 @@ public class Expansion {
             }
         }
 
-        //  prune only untriedMoves
+        // pruning added
         List<Move> prunedUntried = pruner.pruneMoves(currentState, untriedMoves);
-
-
+        if (prunedUntried.isEmpty()) {
+            prunedUntried = untriedMoves;
+        }
 
         // if all moves are already tried, the node is fully expanded
         if (prunedUntried.isEmpty()) {
@@ -51,5 +52,9 @@ public class Expansion {
 
         // return the newly created child
         return child;
+    }
+    //accessor for reports
+    public MovePruner getPruner() {
+        return pruner;
     }
 }
