@@ -8,7 +8,7 @@ import AI.mcts.MovePruner;
 
 public class Expansion {
 
-    // added pruner (smallest possible addition)
+    // added pruner
     private final MovePruner pruner = new MovePruner(0.25);
 
     //Expands a node by creating one new child for an untried move
@@ -29,15 +29,12 @@ public class Expansion {
             }
         }
 
-        // *** minimal insertion: prune only untriedMoves ***
+        //  prune only untriedMoves
         List<Move> prunedUntried = pruner.pruneMoves(currentState, untriedMoves);
 
-        // optional debug
-        System.out.println("Untried moves: " + untriedMoves.size() +
-                "  → After pruning: " + prunedUntried.size());
+
 
         // if all moves are already tried, the node is fully expanded
-        // (this logic stays EXACTLY as you had it)
         if (prunedUntried.isEmpty()) {
             return node;
         }
