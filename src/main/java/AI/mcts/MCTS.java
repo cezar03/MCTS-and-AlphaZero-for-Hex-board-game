@@ -21,6 +21,7 @@ public final class MCTS {
     }
 
     public Node search(Node root, GameState rootState) {
+
         for (int i = 0; i < iterations; i++) {
             GameState state = rootState.copy();
             Node leaf = selection.select(root, state);
@@ -28,7 +29,7 @@ public final class MCTS {
             if (child != leaf) state.doMove(child.move);
 
             int winner = state.isTerminal() ? state.getWinnerId()
-                                            : simulation.simulate(state);
+                    : simulation.simulate(state);
             backprop.backpropagate(child, winner);
         }
         return bestChildByVisits(root);
@@ -43,4 +44,10 @@ public final class MCTS {
         }
         return best;
     }
+
+    // accessor
+    public MovePruner getPruner() {
+        return expansion.getPruner();
+    }
 }
+

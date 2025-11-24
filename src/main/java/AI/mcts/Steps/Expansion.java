@@ -4,10 +4,14 @@ import java.util.*;
 import AI.mcts.Node;
 import AI.mcts.HexGame.GameState;
 import AI.mcts.HexGame.Move;
+import AI.mcts.MovePruner;
 
 public class Expansion {
 
-     //Expands a node by creating one new child for an untried move
+    // added pruner
+    private final MovePruner pruner = new MovePruner(0.25);
+
+    //Expands a node by creating one new child for an untried move
     public Node expand(Node node, GameState currentState) {
         // in case  the game is over there is nothing to expand
         if (currentState.isTerminal()) {
@@ -25,13 +29,19 @@ public class Expansion {
             }
         }
 
+        // pruning added
+        List<Move> prunedUntried = pruner.pruneMoves(currentState, untriedMoves);
+        if (prunedUntried.isEmpty()) {
+            prunedUntried = untriedMoves;
+        }
+
         // if all moves are already tried, the node is fully expanded
-        if (untriedMoves.isEmpty()) {
+        if (prunedUntried.isEmpty()) {
             return node;
         }
 
         // pick a random untried move
-        Move chosenMove = untriedMoves.get(new Random().nextInt(untriedMoves.size()));
+        Move chosenMove = prunedUntried.get(new Random().nextInt(prunedUntried.size()));
 
         // switch the player (1 ↔ 2)
         int nextPlayer = 3 - node.playerThatMoved;
@@ -42,5 +52,9 @@ public class Expansion {
 
         // return the newly created child
         return child;
+    }
+    //accessor for reports
+    public MovePruner getPruner() {
+        return pruner;
     }
 }
