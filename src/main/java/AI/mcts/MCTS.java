@@ -21,6 +21,7 @@ public final class MCTS {
     }
 
     public Node search(Node root, GameState rootState) {
+        
         for (int i = 0; i < iterations; i++) {
             GameState state = rootState.copy();
             Node leaf = selection.select(root, state);
