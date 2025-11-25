@@ -77,6 +77,78 @@ public final class Board {
         
         return copy;
     }
+    //find shortest path with bfs
+    public int shortestPath(Color player) {
+    int INF = 1_000_000;
+    int[][] dist = new int[n][n];
+
+    for (int i = 0; i < n; i++)
+        Arrays.fill(dist[i], INF);
+
+    List<int[]> queue = new ArrayList<>();
+    int head = 0;
+
+    //initialize start edge
+    if (player == Color.RED) {
+        // top row
+        for (int col = 0; col < n; col++) {
+            Color c = cells[idx(0, col)];
+            if (c == player) dist[0][col] = 0;
+            else if (c == Color.EMPTY) dist[0][col] = 1;
+            else continue;
+            queue.add(new int[]{0, col});
+        }
+    } else {
+        // left column
+        for (int row = 0; row < n; row++) {
+            Color c = cells[idx(row, 0)];
+            if (c == player) dist[row][0] = 0;
+            else if (c == Color.EMPTY) dist[row][0] = 1;
+            else continue;
+            queue.add(new int[]{row, 0});
+        }
+    }
+
+    //BFS / dijkstra 
+    while (head < queue.size()) {
+        int[] cur = queue.get(head++);
+        int r = cur[0], c = cur[1];
+        int currentDist = dist[r][c];
+
+
+        for (int[] nb : neighbors(r, c)) {
+            int nr = nb[0], nc = nb[1];
+            Color cellColor = cells[idx(nr, nc)];
+            int cost;
+
+            if (cellColor == player) cost = 0;
+            else if (cellColor == Color.EMPTY) cost = 1;
+            else continue;
+
+
+            if (currentDist + cost < dist[nr][nc]) {
+                dist[nr][nc] = currentDist + cost;
+                queue.add(new int[]{nr, nc});
+            }
+        }
+    }
+
+    //check target edge
+    int best = INF;
+
+    if (player == Color.RED) {
+        // bottom row
+        for (int col = 0; col < n; col++)
+            best = Math.min(best, dist[n - 1][col]);
+    } else {
+        // right col
+        for (int row = 0; row < n; row++)
+            best = Math.min(best, dist[row][n - 1]);
+    }
+
+    return best;
+}
+
 
     // Check for win-condition for RED (top ↔ bottom connected)
     public boolean redWins() {
