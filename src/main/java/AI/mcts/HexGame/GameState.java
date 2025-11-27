@@ -57,6 +57,7 @@ public class GameState {
         }
         recomputeTerminal();
     }
+    
 
     public GameState copy() {
         Board b2 = board.copyBoard(board);
@@ -72,5 +73,33 @@ public class GameState {
             terminal = true;
             winnerId = 2;
         }
+    }
+    
+    //helper to convert Player to Color
+    private Color toColor(Player p) {
+        return (p == Player.RED ? Color.RED : Color.BLACK);
+    }
+
+    
+    //Main heuristic for simulation rollouts , evaluates board after applying move m
+    public int estimateAfterMove(Move m) {
+    Player mover = toMove;          // remember who is about to move
+    GameState copy = this.copy();
+    copy.doMove(m);                 // applies move and flips turn
+    return copy.estimateShortestPathForPlayer(mover); // score the move
+    }
+
+
+
+    //shortest path distance for the player whose turn it is now.
+     
+    public int estimateShortestPathForCurrentPlayer() {
+        return board.shortestPath(toColor(toMove));
+    }
+
+    //optional helper if you  need path for a specific player
+    
+    public int estimateShortestPathForPlayer(Player p) {
+        return board.shortestPath(toColor(p));
     }
 }

@@ -7,6 +7,7 @@ import AI.mcts.Steps.Backpropagation;
 import AI.mcts.Steps.Expansion;
 import AI.mcts.Steps.Selection;
 import AI.mcts.Steps.Simulation;
+import AI.mcts.Optimazation.*;
 
 public final class MCTS {
     private final Selection selection = new Selection();

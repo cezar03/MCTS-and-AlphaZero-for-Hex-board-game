@@ -4,7 +4,7 @@ import AI.mcts.MCTS;
 import AI.mcts.Node;
 import AI.mcts.HexGame.GameState;
 import AI.mcts.HexGame.Move;
-import AI.mcts.MovePruner;
+import AI.mcts.Optimazation.*;
 import Game.Board;
 import Game.Player;
 
