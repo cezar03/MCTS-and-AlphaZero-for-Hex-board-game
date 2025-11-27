@@ -35,6 +35,7 @@ Where:
             node = bestChild(node); // choose the child that gives the best UCT. See the method below
             state.doMove(node.move); // apply the move of the selected child to the game state
             }
+
         return node; // return the nodes where the expansion will happen
 
     }

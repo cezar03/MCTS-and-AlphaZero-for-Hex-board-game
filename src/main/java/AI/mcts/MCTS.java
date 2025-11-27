@@ -7,20 +7,25 @@ import AI.mcts.Steps.Backpropagation;
 import AI.mcts.Steps.Expansion;
 import AI.mcts.Steps.Selection;
 import AI.mcts.Steps.Simulation;
+import AI.mcts.Optimazation.*;
 
 public final class MCTS {
     private final Selection selection = new Selection();
-    private final Expansion expansion = new Expansion();
+    private final Expansion expansion;
     private final Backpropagation backprop = new Backpropagation();
-    private final Simulation simulation = new Simulation();
+    private final Simulation simulation;
 
     private final int iterations;
 
-    public MCTS(int iterations) {
+    // added constructor for pruner
+    public MCTS(int iterations, MovePruner pruner) {
         this.iterations = iterations;
+        this.expansion = new Expansion(pruner);   // use agent-specific pruner
+        this.simulation = new Simulation(pruner); // use agent-specific pruner
     }
 
     public Node search(Node root, GameState rootState) {
+
         for (int i = 0; i < iterations; i++) {
             GameState state = rootState.copy();
             Node leaf = selection.select(root, state);
@@ -28,7 +33,7 @@ public final class MCTS {
             if (child != leaf) state.doMove(child.move);
 
             int winner = state.isTerminal() ? state.getWinnerId()
-                                            : simulation.simulate(state);
+                    : simulation.simulate(state);
             backprop.backpropagate(child, winner);
         }
         return bestChildByVisits(root);
@@ -43,4 +48,11 @@ public final class MCTS {
         }
         return best;
     }
+
+    // getter for pruner
+    public MovePruner getPruner() {
+        return expansion.getPruner();
+    }
 }
+
+

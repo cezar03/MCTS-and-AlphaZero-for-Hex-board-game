@@ -19,9 +19,9 @@ import javafx.stage.Stage;
 import Game.Board;
 import Game.BoardAdapter;
 import Game.Player;
-import AI.AIAgent;
-import AI.RandomPlayer;
-import AI.MCTSPlayer;
+import AI.AiPlayer.AIAgent;
+import AI.AiPlayer.MCTSPlayer;
+import AI.AiPlayer.RandomPlayer;
 
 public final class NavigationService {
     private final Stage stage;
@@ -131,7 +131,7 @@ public final class NavigationService {
         boardView.updateTurnDisplay(controller.getCurrentPlayer());
 
         // Setup single AI agent for BLACK player
-        MCTSPlayer mctsPlayer = new MCTSPlayer(Player.BLACK, aiIterations);
+        MCTSPlayer mctsPlayer = new MCTSPlayer(Player.BLACK, aiIterations, 0.25, 0.5, 0.5);
         controller.setupAIAgent(Player.BLACK, mctsPlayer);
     }
 
@@ -153,16 +153,16 @@ public final class NavigationService {
         mctsVsRandomBtn.setOnAction(e -> {
             dialog.close();
             showGameAIvsAI(
-                new MCTSPlayer(Player.RED, 5000),
-                new RandomPlayer(Player.BLACK)
+                    new MCTSPlayer(Player.RED, 5000, 0.25, 0.5, 0.5),
+                    new RandomPlayer(Player.BLACK)
             );
         });
 
         mctsVsMctsBtn.setOnAction(e -> {
             dialog.close();
             showGameAIvsAI(
-                new MCTSPlayer(Player.RED, 2000),
-                new MCTSPlayer(Player.BLACK, 2000)
+                    new MCTSPlayer(Player.RED, 2000, 0.25, 0.5, 0.5),
+                    new MCTSPlayer(Player.BLACK, 2000, 0.25, 0.5, 0.5)
             );
         });
 
@@ -298,14 +298,14 @@ public final class NavigationService {
     //CSS methods that helps to style our UI
     private void attachCss(Scene scene) {
         scene.getStylesheets().add(
-            Objects.requireNonNull(MainMenu.class.getResource("/app.css")).toExternalForm()
+                Objects.requireNonNull(MainMenu.class.getResource("/app.css")).toExternalForm()
         );
     }
 
     private void styleDialog(Alert a) {
         var dp = a.getDialogPane();
         dp.getStylesheets().add(
-            Objects.requireNonNull(MainMenu.class.getResource("/app.css")).toExternalForm()
+                Objects.requireNonNull(MainMenu.class.getResource("/app.css")).toExternalForm()
         );
         dp.getStyleClass().add("themed-dialog");
     }

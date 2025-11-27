@@ -1,16 +1,17 @@
-package AI;
+package AI.AiPlayer;
 
 import AI.mcts.MCTS;
 import AI.mcts.Node;
 import AI.mcts.HexGame.GameState;
 import AI.mcts.HexGame.Move;
+import AI.mcts.Optimazation.*;
 import Game.Board;
 import Game.Player;
 
 /**
  * AIPlayer class that uses Monte Carlo Tree Search (MCTS) to determine the best move.
  * Integrates the AI system with the game.
- * 
+ *
  * @author Team 04
  */
 public class MCTSPlayer implements AIAgent {
@@ -18,21 +19,41 @@ public class MCTSPlayer implements AIAgent {
     private final Player mctsPlayer;
     private final int iterations;
 
+    //  agent pruning config
+    private final double threshold;
+    private final double centralityWeight;
+    private final double connectivityWeight;
+
     /**
      * Constructor for MCTSPlayer
      * @param mctsPlayer The player this AI represents (RED or BLACK)
      * @param iterations The number of MCTS iterations to perform
+     * @param threshold pruning threshold for this agent
+     * @param centralityWeight weight used in heuristic
+     * @param connectivityWeight weight used in heuristic
      */
-    public MCTSPlayer(Player mctsPlayer, int iterations) {
+    public MCTSPlayer(Player mctsPlayer, int iterations,
+                      double threshold, double centralityWeight, double connectivityWeight) {
+
         this.mctsPlayer = mctsPlayer;
         this.iterations = iterations;
-        this.mcts = new MCTS(iterations);
+
+        // save settings
+        this.threshold = threshold;
+        this.centralityWeight = centralityWeight;
+        this.connectivityWeight = connectivityWeight;
+
+        //  pruner for this agent
+        MovePruner pruner = new MovePruner(threshold, centralityWeight, connectivityWeight);
+
+        // use pruner when building MCTS
+        this.mcts = new MCTS(iterations, pruner);
     }
 
     @Override
     /**
      * Determines the best move for the AI player using MCTS.
-     * 
+     *
      * @param board The current game board state
      * @param currentPlayer The player whose turn it is
      * @return The best move found by the MCTS algorithm, or null if no moves are available
@@ -43,7 +64,6 @@ public class MCTSPlayer implements AIAgent {
         if (gameState.getLegalMoves().isEmpty()) {
             return null;
         }
-
 
         GameState simState = gameState.copy();
         Node root = new Node(null, null, currentPlayer.other().id);
@@ -82,5 +102,10 @@ public class MCTSPlayer implements AIAgent {
      */
     public int getIterations() {
         return iterations;
+    }
+
+    // getter for reporting
+    public MovePruner getPruner() {
+        return mcts.getPruner();
     }
 }

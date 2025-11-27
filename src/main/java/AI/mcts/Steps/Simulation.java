@@ -5,10 +5,19 @@ import java.util.*;
 
 import AI.mcts.HexGame.GameState;
 import AI.mcts.HexGame.Move;
+import AI.mcts.Optimazation.*;
 
 public class Simulation {
     private Random random = new Random();
     private static final double EPSILON = 0.1;
+
+    // pruner passed from MCTS
+    private final MovePruner pruner;
+
+    // constructor for the  agent specific pruner
+    public Simulation(MovePruner pruner) {
+        this.pruner = pruner;
+    }
 
     public int simulate(GameState start) {
         GameState state = start.copy();
@@ -17,8 +26,13 @@ public class Simulation {
             if (legal.isEmpty()) {
                 break;
             }
-            Move chosen = chooseMove(state, legal);
-            state.doMove(chosen);
+
+            //  agent specific pruner
+            List<Move> pruned = pruner.pruneMoves(state, legal);
+            if (pruned.isEmpty()) pruned = legal;
+
+            Collections.shuffle(pruned, random);
+            state.doMove(pruned.getFirst());
         }
         return state.getWinnerId();
     }
@@ -46,3 +60,5 @@ public class Simulation {
         return best;
     }
 }
+
+
