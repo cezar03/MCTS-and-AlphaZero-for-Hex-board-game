@@ -111,7 +111,7 @@ public class AITester {
         TestResult result = new TestResult(redName, blackName, numGames, redWins, blackWins, draws);
         result.printResults();
 
-        // print pruning & heuristic params
+        // print pruning & heuristic parameters used for each agent
         if (redAgent instanceof MCTSPlayer p) {
             System.out.println("RED pruning threshold: " + p.getPruner().getThreshold());
             System.out.println("RED centrality weight: " + p.getPruner().getCentralityWeight());

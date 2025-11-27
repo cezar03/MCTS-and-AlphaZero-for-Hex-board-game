@@ -8,8 +8,13 @@ import AI.mcts.MovePruner;
 
 public class Expansion {
 
-    // added pruner
-    private final MovePruner pruner = new MovePruner(0.25);
+    // pruner
+    private final MovePruner pruner;
+
+    // constructor for pruner
+    public Expansion(MovePruner pruner) {
+        this.pruner = pruner;
+    }
 
     //Expands a node by creating one new child for an untried move
     public Node expand(Node node, GameState currentState) {
@@ -29,7 +34,7 @@ public class Expansion {
             }
         }
 
-        // pruning added
+        //  pruner applied
         List<Move> prunedUntried = pruner.pruneMoves(currentState, untriedMoves);
         if (prunedUntried.isEmpty()) {
             prunedUntried = untriedMoves;
@@ -53,8 +58,10 @@ public class Expansion {
         // return the newly created child
         return child;
     }
-    //accessor for reports
+
+    // accessor
     public MovePruner getPruner() {
         return pruner;
     }
 }
+

@@ -14,11 +14,18 @@ public class MovePruner {
     //set thershold to represent how many moves we want to keep (smaller=fewer)
     private final double threshold;
 
-    public MovePruner(double threshold) {
+    // heuristics
+    private final double centralityWeight;
+    private final double connectivityWeight;
+
+    //  constructor to allow different agents to use different pruning settings (used for testing)
+    public MovePruner(double threshold, double centralityWeight, double connectivityWeight) {
         this.threshold = threshold;
+        this.centralityWeight = centralityWeight;
+        this.connectivityWeight = connectivityWeight;
     }
 
-    //scores each move based on the heuristic, find max among legal moves and creates a minimum score for being kept
+    //scores each move based on the heuristic, find max among legal (possible) moves and creates a minimum score for being kept
     public List<Move> pruneMoves(GameState state, List<Move> legalMoves) {
         if (legalMoves.isEmpty()) return legalMoves;
 
@@ -34,7 +41,7 @@ public class MovePruner {
             }
         }
 
-        //  keep only moves whose score is closest to the best posssible (we use threshold value to represent how close the moves have to be to the max, so basically if thershold is >=max we keep all, if it <0 we don t keep any, anything in between we prune some of them)
+        //  keep moves based on our thershold, here is where we decide how many nodes we want to prune
         double min = maxScore - threshold;
         List<Move> pruned = new ArrayList<>();
         for (Move m : legalMoves) {
@@ -43,11 +50,11 @@ public class MovePruner {
             }
         }
 
-        // if we pruned everything, just return all moves
+        // if we pruned everything, return moves
         return pruned.isEmpty() ? legalMoves : pruned;
     }
 
-    // our heursitic based on centrality and how connected a move is to other friendly stones
+    // our heuristic based on centrality and how connected a move is to other friendly stones
     private double heuristic(GameState state, Move move) {
         Board board = state.getBoard();
         int n = board.getSize();
@@ -57,10 +64,9 @@ public class MovePruner {
         double centerCol = (n - 1) / 2.0;
         double distCenter = Math.hypot(move.row - centerRow, move.col - centerCol);
         double maxDist = Math.hypot(centerRow, centerCol);
-        double centrality = 1.0 - distCenter / (maxDist + 1e-9); // 1e-9 for preventing division by 0 if we are playing on a small board
+        double centrality = 1.0 - distCenter / (maxDist + 1e-9); // 1e-9 prevents division by 0
 
-
-//identify which color it is palying as
+//identify which color agent is playing as
         Player toMove = state.getToMove();
         Color myColor;
 
@@ -84,22 +90,20 @@ public class MovePruner {
         }
         double connection = (totalNeighbors == 0) ? 0.0 : (double) friendlyNeighbors / totalNeighbors;
 
-        // i ve set the importance to centrality and connection to 50/50(equal) but we can tune it to value centrality or connectivtity more, i think connectivity would be better in most situations
-        return 0.5 * centrality + 0.5 * connection;
+        // final score based on centrality and connection
+        return centralityWeight * centrality + connectivityWeight * connection;
     }
 
-    //getters for reports
-
+    // getters (unchanged)
     public double getThreshold() {
         return threshold;
     }
 
     public double getCentralityWeight() {
-        return 0.5;
+        return centralityWeight;
     }
 
     public double getConnectivityWeight() {
-        return 0.5;
+        return connectivityWeight;
     }
 }
-
