@@ -10,14 +10,17 @@ import AI.mcts.Steps.Simulation;
 
 public final class MCTS {
     private final Selection selection = new Selection();
-    private final Expansion expansion = new Expansion();
+    private final Expansion expansion;
     private final Backpropagation backprop = new Backpropagation();
-    private final Simulation simulation = new Simulation();
+    private final Simulation simulation;
 
     private final int iterations;
 
-    public MCTS(int iterations) {
+    // added constructor to pass MovePruner
+    public MCTS(int iterations, MovePruner pruner) {
         this.iterations = iterations;
+        this.expansion = new Expansion(pruner);   // use agent-specific pruner
+        this.simulation = new Simulation(pruner); // use agent-specific pruner
     }
 
     public Node search(Node root, GameState rootState) {
@@ -45,9 +48,10 @@ public final class MCTS {
         return best;
     }
 
-    // accessor
+    // simple getter
     public MovePruner getPruner() {
         return expansion.getPruner();
     }
 }
+
 

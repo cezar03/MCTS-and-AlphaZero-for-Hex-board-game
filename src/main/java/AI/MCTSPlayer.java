@@ -19,15 +19,35 @@ public class MCTSPlayer implements AIAgent {
     private final Player mctsPlayer;
     private final int iterations;
 
+    // added fields for agent-specific pruning config
+    private final double threshold;
+    private final double centralityWeight;
+    private final double connectivityWeight;
+
     /**
      * Constructor for MCTSPlayer
      * @param mctsPlayer The player this AI represents (RED or BLACK)
      * @param iterations The number of MCTS iterations to perform
+     * @param threshold pruning threshold for this agent
+     * @param centralityWeight weight used in heuristic
+     * @param connectivityWeight weight used in heuristic
      */
-    public MCTSPlayer(Player mctsPlayer, int iterations) {
+    public MCTSPlayer(Player mctsPlayer, int iterations,
+                      double threshold, double centralityWeight, double connectivityWeight) {
+
         this.mctsPlayer = mctsPlayer;
         this.iterations = iterations;
-        this.mcts = new MCTS(iterations);
+
+        // save settings
+        this.threshold = threshold;
+        this.centralityWeight = centralityWeight;
+        this.connectivityWeight = connectivityWeight;
+
+        // create pruner for this agent
+        MovePruner pruner = new MovePruner(threshold, centralityWeight, connectivityWeight);
+
+        // use pruner when building MCTS
+        this.mcts = new MCTS(iterations, pruner);
     }
 
     @Override
@@ -84,7 +104,7 @@ public class MCTSPlayer implements AIAgent {
         return iterations;
     }
 
-    //added accessor
+    // getter for reporting
     public MovePruner getPruner() {
         return mcts.getPruner();
     }

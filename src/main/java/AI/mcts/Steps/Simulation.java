@@ -10,8 +10,13 @@ import AI.mcts.MovePruner;
 public class Simulation {
     private Random random = new Random();
 
-    // added pruner
-    private final MovePruner pruner = new MovePruner(0.25);
+    // pruner passed from MCTS instead of hardcode
+    private final MovePruner pruner;
+
+    // constructor for agent-specific pruner
+    public Simulation(MovePruner pruner) {
+        this.pruner = pruner;
+    }
 
     public int simulate(GameState start) {
         GameState state = start.copy();
@@ -21,7 +26,7 @@ public class Simulation {
                 break;
             }
 
-            //  prune rollout moves
+            //  agent-specific pruner
             List<Move> pruned = pruner.pruneMoves(state, legal);
             if (pruned.isEmpty()) pruned = legal;
 
@@ -31,4 +36,5 @@ public class Simulation {
         return state.getWinnerId();
     }
 }
+
 
