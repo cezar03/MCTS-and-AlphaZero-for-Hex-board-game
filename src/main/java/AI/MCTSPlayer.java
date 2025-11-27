@@ -19,7 +19,7 @@ public class MCTSPlayer implements AIAgent {
     private final Player mctsPlayer;
     private final int iterations;
 
-    // added fields for agent-specific pruning config
+    //  agent pruning config
     private final double threshold;
     private final double centralityWeight;
     private final double connectivityWeight;
@@ -43,7 +43,7 @@ public class MCTSPlayer implements AIAgent {
         this.centralityWeight = centralityWeight;
         this.connectivityWeight = connectivityWeight;
 
-        // create pruner for this agent
+        //  pruner for this agent
         MovePruner pruner = new MovePruner(threshold, centralityWeight, connectivityWeight);
 
         // use pruner when building MCTS

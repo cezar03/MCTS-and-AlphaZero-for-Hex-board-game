@@ -8,10 +8,10 @@ import AI.mcts.MovePruner;
 
 public class Expansion {
 
-    // pruner is passed from outside
+    // pruner
     private final MovePruner pruner;
 
-    // constructor to receive agent-specific pruner
+    // constructor for pruner
     public Expansion(MovePruner pruner) {
         this.pruner = pruner;
     }

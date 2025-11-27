@@ -24,7 +24,7 @@ public class TestRunner {
         AIAgent mctsAgent2 = new MCTSPlayer(Player.BLACK, 1000,
                 0.30, 0.5, 0.5);
 
-        runTournament(mctsAgent1, mctsAgent2, 50, 11, false);
+        runTournament(mctsAgent1, mctsAgent2, 20, 7, false);
     }
 
     /**

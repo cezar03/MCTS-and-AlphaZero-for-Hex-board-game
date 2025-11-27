@@ -16,7 +16,7 @@ public final class MCTS {
 
     private final int iterations;
 
-    // added constructor to pass MovePruner
+    // added constructor for pruner
     public MCTS(int iterations, MovePruner pruner) {
         this.iterations = iterations;
         this.expansion = new Expansion(pruner);   // use agent-specific pruner
@@ -48,7 +48,7 @@ public final class MCTS {
         return best;
     }
 
-    // simple getter
+    // getter for pruner
     public MovePruner getPruner() {
         return expansion.getPruner();
     }
