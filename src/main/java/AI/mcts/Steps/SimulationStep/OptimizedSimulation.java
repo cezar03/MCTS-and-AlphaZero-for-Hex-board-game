@@ -1,57 +1,49 @@
-package AI.mcts.Steps;
+package AI.mcts.Steps.SimulationStep;
 
-import Game.*;
 import java.util.*;
-
 import AI.mcts.HexGame.GameState;
 import AI.mcts.HexGame.Move;
-import AI.mcts.Optimazation.*;
+import AI.mcts.Optimazation.MovePruner;
 
-public class Simulation {
-    private Random random = new Random();
-    private static final double EPSILON = 0.1;
-
-    // pruner passed from MCTS
+public class OptimizedSimulation implements Simulation {
+    private final Random random = new Random();
     private final MovePruner pruner;
+    private final double epsilon;
 
-    // constructor for the  agent specific pruner
-    public Simulation(MovePruner pruner) {
+    public OptimizedSimulation(MovePruner pruner, double epsilon) {
         this.pruner = pruner;
+        this.epsilon = epsilon;
     }
 
+    @Override
     public int simulate(GameState start) {
         GameState state = start.copy();
         while (!state.isTerminal()) {
             List<Move> legal = state.getLegalMoves();
-            if (legal.isEmpty()) {
-                break;
-            }
+            if (legal.isEmpty()) break;
 
-            //  agent specific pruner
             List<Move> pruned = pruner.pruneMoves(state, legal);
             if (pruned.isEmpty()) pruned = legal;
 
-            Collections.shuffle(pruned, random);
-            state.doMove(pruned.getFirst());
+            Move chosen = chooseMove(state, pruned);
+            state.doMove(chosen);
         }
         return state.getWinnerId();
     }
-    
-    //epsilon-greedy move selection
+
     private Move chooseMove(GameState state, List<Move> legal) {
-        if (random.nextDouble() < EPSILON) {
+        if (random.nextDouble() < epsilon) {
             return legal.get(random.nextInt(legal.size()));
         }
         return bestHeuristicMove(state, legal);
     }
 
-    //choose move that minimizes the estimated shortest path 
     private Move bestHeuristicMove(GameState state, List<Move> legal) {
         Move best = null;
-        int bestScore = Integer.MAX_VALUE;  // lower = better
+        int bestScore = Integer.MAX_VALUE;
 
         for (Move m : legal) {
-            int score = state.estimateAfterMove(m);  
+            int score = state.estimateAfterMove(m);  // uses ShortestPath internally
             if (score < bestScore) {
                 bestScore = score;
                 best = m;
@@ -60,5 +52,3 @@ public class Simulation {
         return best;
     }
 }
-
-

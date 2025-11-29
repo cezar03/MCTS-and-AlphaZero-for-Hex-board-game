@@ -5,11 +5,13 @@ import AI.mcts.Node;
 import AI.mcts.HexGame.GameState;
 import AI.mcts.HexGame.Move;
 import AI.mcts.Optimazation.*;
+import Game.Player;
 
 public class Expansion {
 
     // pruner
     private final MovePruner pruner;
+    private final Random random = new Random();
 
     // constructor for pruner
     public Expansion(MovePruner pruner) {
@@ -34,25 +36,23 @@ public class Expansion {
             }
         }
 
-        //  pruner applied
-        List<Move> prunedUntried = pruner.pruneMoves(currentState, untriedMoves);
-        if (prunedUntried.isEmpty()) {
-            prunedUntried = untriedMoves;
-        }
-
-        // if all moves are already tried, the node is fully expanded
-        if (prunedUntried.isEmpty()) {
+        if (untriedMoves.isEmpty()) {
             return node;
         }
 
+        //  pruner applied
+        List<Move> prunedUntried = untriedMoves;
+        if (pruner != null) {
+            List<Move> pruned = pruner.pruneMoves(currentState, prunedUntried);
+            if (!pruned.isEmpty()) {
+                prunedUntried = pruned;
+            }
+        }
+
         // pick a random untried move
-        Move chosenMove = prunedUntried.get(new Random().nextInt(prunedUntried.size()));
-
-        // switch the player (1 ↔ 2)
-        int nextPlayer = 3 - node.playerThatMoved;
-
-        // create a new child node with the selected move
-        Node child = new Node(chosenMove, node, nextPlayer);
+        Move chosenMove = prunedUntried.get(random.nextInt(prunedUntried.size()));
+        Player toMove = currentState.getToMove();
+        Node child = new Node(chosenMove, node, toMove.id);
         node.children.put(chosenMove, child);
 
         // return the newly created child

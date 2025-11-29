@@ -4,7 +4,6 @@ import Game.Board;
 import Game.BoardAdapter;
 import Game.Player;
 import AI.mcts.HexGame.Move;
-import AI.mcts.Optimazation.*;
 
 /**
  * Framework for testing AI agents against each other.
@@ -33,25 +32,14 @@ public class AITester {
             this.draws = draws;
         }
 
-        /**
-         * Calculates the win percentage for the agent that represents player RED.
-         * @return Win rate as a double between 0 and 100 to represent a percentage.
-         */
         public double getRedWinRate() {
             return totalGames > 0 ? (redWins * 100.0 / totalGames) : 0;
         }
 
-        /**
-         * Calculates the win percentage for the agent that represents player BLACK.
-         * @return Win rate as a double between 0 and 100 to represent a percentage.
-         */
         public double getBlackWinRate() {
             return totalGames > 0 ? (blackWins * 100.0 / totalGames) : 0;
         }
 
-        /**
-         * Prints a summary of the test results to the console.
-         */
         public void printResults() {
             System.out.println("\n========== TEST RESULTS ==========");
             System.out.println("RED:   " + redAgentName);
@@ -65,15 +53,6 @@ public class AITester {
         }
     }
 
-    /**
-     * Runs a match between two AI agents.
-     * @param redAgent The agent playing as RED
-     * @param blackAgent The agent playing as BLACK
-     * @param numGames The number of games to play
-     * @param boardSize The size of the board (typically 11)
-     * @param extensivePrints If true, prints progress for each game
-     * @return TestResult containing statistics
-     */
     public static TestResult runMatch(AIAgent redAgent, AIAgent blackAgent,
                                       int numGames, int boardSize, boolean extensivePrints) {
         int redWins = 0;
@@ -114,24 +93,34 @@ public class AITester {
 
         // print pruning & heuristic parameters used for each agent
         if (redAgent instanceof MCTSPlayer p) {
-            System.out.println("RED pruning threshold: " + p.getPruner().getThreshold());
-            System.out.println("RED centrality weight: " + p.getPruner().getCentralityWeight());
-            System.out.println("RED connectivity weight: " + p.getPruner().getConnectivityWeight());
+            printMctsPruningConfig("RED", p);
         }
 
         if (blackAgent instanceof MCTSPlayer p) {
-            System.out.println("BLACK pruning threshold: " + p.getPruner().getThreshold());
-            System.out.println("BLACK centrality weight: " + p.getPruner().getCentralityWeight());
-            System.out.println("BLACK connectivity weight: " + p.getPruner().getConnectivityWeight());
+            printMctsPruningConfig("BLACK", p);
         }
 
         return result;
     }
 
-    /**
-     * Plays a single game between two agents.
-     * @return The winner (RED, BLACK, or null for draw)
-     */
+    private static void printMctsPruningConfig(String label, MCTSPlayer p) {
+        double t  = p.getThreshold();
+        double cw = p.getCentralityWeight();
+        double connw = p.getConnectivityWeight();
+
+        boolean usesPruning = (t != 0.0) || (cw != 0.0) || (connw != 0.0);
+
+        if (!usesPruning) {
+            System.out.println(label + " pruning threshold: (no pruning)");
+            System.out.println(label + " centrality weight: (no pruning)");
+            System.out.println(label + " connectivity weight: (no pruning)");
+        } else {
+            System.out.println(label + " pruning threshold: " + t);
+            System.out.println(label + " centrality weight: " + cw);
+            System.out.println(label + " connectivity weight: " + connw);
+        }
+    }
+
     private static Player playGame(AIAgent redAgent, AIAgent blackAgent, int boardSize) {
         Board board = new Board(boardSize);
         BoardAdapter adapter = new BoardAdapter(board);
@@ -161,13 +150,22 @@ public class AITester {
         return adapter.getWinner();
     }
 
-    /**
-     * Gets a descriptive name for an agent.
-     */
     private static String getAgentName(AIAgent agent) {
-        if (agent instanceof MCTSPlayer) {
-            MCTSPlayer mctsPlayer = (MCTSPlayer) agent;
-            return "MCTS(" + mctsPlayer.getIterations() + " iterations)";
+        if (agent instanceof MCTSPlayer mctsPlayer) {
+            int iters = mctsPlayer.getIterations();
+            double t  = mctsPlayer.getThreshold();
+            double cw = mctsPlayer.getCentralityWeight();
+            double connw = mctsPlayer.getConnectivityWeight();
+
+            boolean usesPruning = (t != 0.0) || (cw != 0.0) || (connw != 0.0);
+
+            if (usesPruning) {
+                // Optimised: show that it uses pruning
+                return "MCTS(pruned," + iters + " iters)";
+            } else {
+                // Base: no pruning
+                return "MCTS(base," + iters + " iters)";
+            }
         } else if (agent instanceof RandomPlayer) {
             return "RandomPlayer";
         } else {
@@ -175,10 +173,6 @@ public class AITester {
         }
     }
 
-    /**
-     * Runs a tournament where agents play each other with swapped colors.
-     * This helps eliminate first-player advantage bias.
-     */
     public static void runTournament(AIAgent agent1, AIAgent agent2,
                                      int gamesPerSide, int boardSize, boolean extensivePrints) {
         System.out.println("\n########## TOURNAMENT ##########");

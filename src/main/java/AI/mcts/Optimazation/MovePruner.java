@@ -66,7 +66,7 @@ public class MovePruner {
         double maxDist = Math.hypot(centerRow, centerCol);
         double centrality = 1.0 - distCenter / (maxDist + 1e-9); // 1e-9 prevents division by 0
 
-//identify which color agent is playing as
+        //identify which color agent is playing as
         Player toMove = state.getToMove();
         Color myColor;
 
@@ -76,7 +76,7 @@ public class MovePruner {
             myColor = Color.BLACK;
         }
 
-// variable to represent how many neighbours of same color are among neighbours of the stone placed by possible move
+        // variable to represent how many neighbours of same color are among neighbours of the stone placed by possible move
         int friendlyNeighbors = 0;
         int totalNeighbors = 0;
         for (int[] rc : board.neighbors(move.row, move.col)) {

@@ -6,22 +6,24 @@ import AI.mcts.HexGame.GameState;
 import AI.mcts.Steps.Backpropagation;
 import AI.mcts.Steps.Expansion;
 import AI.mcts.Steps.Selection;
-import AI.mcts.Steps.Simulation;
+import AI.mcts.Steps.SimulationStep.*;
 import AI.mcts.Optimazation.*;
 
 public final class MCTS {
-    private final Selection selection = new Selection();
+    private final Selection selection;
     private final Expansion expansion;
-    private final Backpropagation backprop = new Backpropagation();
+    private final Backpropagation backprop;
     private final Simulation simulation;
 
     private final int iterations;
 
     // added constructor for pruner
-    public MCTS(int iterations, MovePruner pruner) {
+    public MCTS(int iterations, Selection selection, Expansion expansion, Simulation simulation) {
         this.iterations = iterations;
-        this.expansion = new Expansion(pruner);   // use agent-specific pruner
-        this.simulation = new Simulation(pruner); // use agent-specific pruner
+        this.selection = selection;
+        this.expansion = expansion;
+        this.backprop = new Backpropagation();
+        this.simulation = simulation;
     }
 
     public Node search(Node root, GameState rootState) {

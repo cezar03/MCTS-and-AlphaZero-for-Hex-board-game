@@ -5,6 +5,9 @@ import AI.mcts.Node;
 import AI.mcts.HexGame.GameState;
 import AI.mcts.HexGame.Move;
 import AI.mcts.Optimazation.*;
+import AI.mcts.Steps.Expansion;
+import AI.mcts.Steps.Selection;
+import AI.mcts.Steps.SimulationStep.*;
 import Game.Board;
 import Game.Player;
 
@@ -25,7 +28,30 @@ public class MCTSPlayer implements AIAgent {
     private final double connectivityWeight;
 
     /**
-     * Constructor for MCTSPlayer
+     * Constructor for Base MCTSPlayer
+     * @param mctsPlayer The player this AI represents (RED or BLACK)
+     * @param iterations The number of MCTS iterations to perform
+     * @param threshold pruning threshold for this agent
+     * @param centralityWeight weight used in heuristic
+     * @param connectivityWeight weight used in heuristic
+     */
+    public MCTSPlayer(Player mctsPlayer, int iterations) {
+        this.mctsPlayer = mctsPlayer;
+        this.iterations = iterations;
+
+        this.threshold = 0.0;
+        this.centralityWeight = 0.0;
+        this.connectivityWeight = 0.0;
+
+        Selection selection = new Selection();
+        Expansion expansion = new Expansion(null);      // no MovePruner => no pruning in tree
+        Simulation simulation = new BaseSimulation(); // pure random rollout
+
+        this.mcts = new MCTS(iterations, selection, expansion, simulation);
+    }
+
+    /**
+     * Constructor for Base MCTSPlayer
      * @param mctsPlayer The player this AI represents (RED or BLACK)
      * @param iterations The number of MCTS iterations to perform
      * @param threshold pruning threshold for this agent
@@ -38,16 +64,17 @@ public class MCTSPlayer implements AIAgent {
         this.mctsPlayer = mctsPlayer;
         this.iterations = iterations;
 
-        // save settings
         this.threshold = threshold;
         this.centralityWeight = centralityWeight;
         this.connectivityWeight = connectivityWeight;
 
-        //  pruner for this agent
         MovePruner pruner = new MovePruner(threshold, centralityWeight, connectivityWeight);
 
-        // use pruner when building MCTS
-        this.mcts = new MCTS(iterations, pruner);
+        Selection selection = new Selection();
+        Expansion expansion = new Expansion(pruner);                    // pruning in tree (if you want it)
+        Simulation simulation = new OptimizedSimulation(pruner, 0.1);   // EPS = 0.1 for epsilon-greedy
+
+        this.mcts = new MCTS(iterations, selection, expansion, simulation);
     }
 
     @Override
@@ -67,7 +94,6 @@ public class MCTSPlayer implements AIAgent {
 
         GameState simState = gameState.copy();
         Node root = new Node(null, null, currentPlayer.other().id);
-
         Node bestNode = mcts.search(root, simState);
 
         if (bestNode == null || bestNode.move == null) {
@@ -107,5 +133,17 @@ public class MCTSPlayer implements AIAgent {
     // getter for reporting
     public MovePruner getPruner() {
         return mcts.getPruner();
+    }
+
+    public double getThreshold() {
+        return threshold;
+    }
+
+    public double getCentralityWeight() {
+        return centralityWeight;
+    }
+
+    public double getConnectivityWeight() {
+        return connectivityWeight;
     }
 }

@@ -22,11 +22,9 @@ public class TestRunner {
         // Example 3: Tournament format (eliminates first-player bias)
 
         // change for pruning branch: MCTS agent  now takes pruning parameters
-        AIAgent mctsAgent1 = new MCTSPlayer(Player.RED, 1000,
-                0.05, 0.5, 0.5);  // RED threshold + heuristic weights
+        AIAgent mctsAgent1 = new MCTSPlayer(Player.RED, 1000);  // RED threshold + heuristic weights
 
-        AIAgent mctsAgent2 = new MCTSPlayer(Player.BLACK, 1000,
-                0.30, 0.5, 0.5);
+        AIAgent mctsAgent2 = new MCTSPlayer(Player.BLACK, 1000);
 
         runTournament(mctsAgent1, mctsAgent2, 20, 7, false);
     }
