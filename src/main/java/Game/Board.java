@@ -15,7 +15,7 @@ public final class Board {
         this.n = n;
         this.cells = new Color[n * n];
         Arrays.fill(cells, Color.EMPTY);
-        int unionFindSize = n * n + 4; // Union-Find arrays: one node per cell + 4 virtual edges
+        int unionFindSize = n * n + 4;
         this.uf = new UnionFind(unionFindSize);
 
         //Indices for edge nodes

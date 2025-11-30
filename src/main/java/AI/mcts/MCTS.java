@@ -25,13 +25,11 @@ public final class MCTS {
     }
 
     public Node search(Node root, GameState rootState) {
-
         for (int i = 0; i < iterations; i++) {
             GameState state = rootState.copy();
             Node leaf = selection.select(root, state);
             Node child = expansion.expand(leaf, state);
             if (child != leaf) state.doMove(child.move);
-
             int winner = state.isTerminal() ? state.getWinnerId()
                     : simulation.simulate(state);
             backprop.backpropagate(child, winner);
@@ -49,7 +47,6 @@ public final class MCTS {
         return best;
     }
 
-    // getter for pruner
     public MovePruner getPruner() {
         return expansion.getPruner();
     }

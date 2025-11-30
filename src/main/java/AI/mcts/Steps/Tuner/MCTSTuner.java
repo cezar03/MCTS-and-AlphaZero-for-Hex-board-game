@@ -37,7 +37,7 @@ public final class MCTSTuner {
      * (Keep if you still want a completely unconstrained search.)
      */
     private PrunerConfig sampleRandomConfig() {
-        double threshold = 0.3 + rng.nextDouble() * 0.7; // [0.3, 1.0]
+        double threshold = 0.7 + rng.nextDouble() * 0.3; // [0.7, 1.0]
         double centralityWeight = rng.nextDouble();      // [0.0, 1.0]
         double connectivityWeight = 1.0 - centralityWeight;
 
@@ -83,7 +83,6 @@ public final class MCTSTuner {
      * between base MCTS and optimized MCTS.
      */
     public double evaluateConfig(PrunerConfig cfg, boolean printMatches) {
-        // Round 1: base as RED, optimized as BLACK
         AIAgent baseRed = new MCTSPlayer(Player.RED, iterations);
         AIAgent optBlack = new MCTSPlayer(Player.BLACK, iterations,
                 cfg.threshold,
@@ -97,7 +96,6 @@ public final class MCTSTuner {
                 baseRed, optBlack, gamesPerSide, boardSize, printMatches
         );
 
-        // Round 2: optimized as RED, base as BLACK
         AIAgent optRed = new MCTSPlayer(Player.RED, iterations,
                 cfg.threshold,
                 cfg.centralityWeight,
@@ -147,10 +145,6 @@ public final class MCTSTuner {
         }
     }
 
-    /**
-     * New: for each fixed c value, run a random search over the other params.
-     * Prints best config for each c and the overall best.
-     */
     public void randomSearchPerC(double[] cValues, int trialsPerC) {
         PrunerConfig globalBestCfg = null;
         double globalBestWinRate = -1.0;
