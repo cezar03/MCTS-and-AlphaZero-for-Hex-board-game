@@ -5,8 +5,6 @@ import Game.Color;
 import Game.Player;
 import Game.Rules;
 import AI.AiPlayer.AIAgent;
-import AI.AiPlayer.MCTSPlayer;
-import AI.AiPlayer.RandomPlayer;
 import AI.mcts.HexGame.Move;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -14,16 +12,14 @@ import javafx.concurrent.Task;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.swing.Timer;
-
 /** Controller class to manage game logic and interactions between the BoardAdapter and BoardView 
  * @author Team 04
 */
 public class GameController {
-    private BoardView boardView;
+    private final BoardView boardView;
     private Player currentPlayer;
     private boolean gameOver;
-    private BoardAdapter adapter;
+    private final BoardAdapter adapter;
     private int moveCount = 0;
     
     // Map with AI player(s) (can be more than one when testing performance of agents)

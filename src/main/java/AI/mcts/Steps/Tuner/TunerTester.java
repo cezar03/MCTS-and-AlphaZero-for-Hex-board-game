@@ -2,11 +2,18 @@ package AI.mcts.Steps.Tuner;
 
 public class TunerTester {
     public static void main(String[] args) {
-        int boardSize = 7;
-        int iterations = 1000;
-        int gamesPerSide = 10; // 20 games per config (10 as RED, 10 as BLACK)
-
+        int boardSize    = 7;
+        int iterations   = 1000;
+        int gamesPerSide = 50;
         MCTSTuner tuner = new MCTSTuner(boardSize, iterations, gamesPerSide);
-        tuner.randomSearch(20);  // try 20 random configs
+        double[] cValues = {
+                Math.sqrt(2),
+                2.0
+        };
+
+        int trialsPerC = 10;
+        tuner.randomSearchPerC(cValues, trialsPerC);
+
+        // tuner.randomSearch(10);
     }
 }

@@ -1,6 +1,6 @@
 package Game;
 
-public class BoardAdapter {
+public final class BoardAdapter {
     private final Board board;
     private final int[][] matrix;
 

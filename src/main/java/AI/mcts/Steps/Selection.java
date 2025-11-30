@@ -4,25 +4,29 @@ import AI.mcts.Node;
 import AI.mcts.HexGame.GameState;
 
 public class Selection{
-/*
- Selection Class: 
- This class implements the selection phase of the MCTS 
- In MCTS, each node represents a game state. During the selection phase, we traverse the tree from the root to find a node that is:
- - not fully expanded (still has unexplored moves), or
- - a terminal node (game over)
- 
- Selection uses the UCT formula (The one that Jan explained in the first meeting):
- UCT = (w_i / n_i) + C * sqrt( ln(N) / n_i )
-Where:
- - w_i: number of wins for the child
-  - n_i: number of visits for the child
- - N: number of visits for the parent node
- - C: exploration constant (balances exploration vs exploitation)
- */
+    /*
+    Selection Class: 
+    This class implements the selection phase of the MCTS 
+    In MCTS, each node represents a game state. During the selection phase, we traverse the tree from the root to find a node that is:
+    - not fully expanded (still has unexplored moves), or
+    - a terminal node (game over)
+    
+    Selection uses the UCT formula (The one that Jan explained in the first meeting):
+    UCT = (w_i / n_i) + C * sqrt( ln(N) / n_i )
+    Where:
+    - w_i: number of wins for the child
+    - n_i: number of visits for the child
+    - N: number of visits for the parent node
+    - C: exploration constant (balances exploration vs exploitation)
+    */
 
     // Exploration constant (C) used in UCT formula.
     // sqrt(2) is commonly used to balance exploration and exploitation.
-    private double c = Math.sqrt(2); 
+    private final double c;
+    
+    public Selection(double c) {
+        this.c = c;
+    }
     
     /*
     Main Selection Method
@@ -51,14 +55,18 @@ Where:
 
         for (Node child : node.children.values()) {
             double uctValue;
+
             if (child.visits == 0) {
                 uctValue = Double.POSITIVE_INFINITY;
             } else {
                 double eps = 1e-9;
                 double winRate = child.wins / (child.visits + eps);
                 double explore = c * Math.sqrt(Math.log(node.visits + 1.0) / (child.visits + eps));
-                uctValue = winRate + explore;
+                double bias = child.heuristicBias;
+
+                uctValue = winRate + explore + bias;
             }
+
             if (uctValue > bestValue) {
                 bestValue = uctValue;
                 best = child;

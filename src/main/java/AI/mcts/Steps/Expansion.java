@@ -5,17 +5,22 @@ import AI.mcts.Node;
 import AI.mcts.HexGame.GameState;
 import AI.mcts.HexGame.Move;
 import AI.mcts.Optimazation.*;
+import AI.mcts.Optimazation.Heuristic.*;
 import Game.Player;
 
 public class Expansion {
 
     // pruner
-    private final MovePruner pruner;
+    private final MovePruner pruner;        // may be null
+    private final Heuristic heuristic;  // may be null
     private final Random random = new Random();
+    private final double biasScale; 
 
     // constructor for pruner
-    public Expansion(MovePruner pruner) {
+    public Expansion(MovePruner pruner, Heuristic heuristic, double biasScale) {
         this.pruner = pruner;
+        this.heuristic = heuristic;
+        this.biasScale = biasScale;
     }
 
     //Expands a node by creating one new child for an untried move
@@ -43,7 +48,7 @@ public class Expansion {
         //  pruner applied
         List<Move> prunedUntried = untriedMoves;
         if (pruner != null) {
-            List<Move> pruned = pruner.pruneMoves(currentState, prunedUntried);
+            List<Move> pruned = pruner.pruneMoves(currentState, untriedMoves);
             if (!pruned.isEmpty()) {
                 prunedUntried = pruned;
             }
@@ -53,6 +58,12 @@ public class Expansion {
         Move chosenMove = prunedUntried.get(random.nextInt(prunedUntried.size()));
         Player toMove = currentState.getToMove();
         Node child = new Node(chosenMove, node, toMove.id);
+
+        if (heuristic != null && biasScale != 0.0) {
+            double h = heuristic.score(currentState, chosenMove);
+            child.heuristicBias = biasScale * h;
+        }
+        
         node.children.put(chosenMove, child);
 
         // return the newly created child

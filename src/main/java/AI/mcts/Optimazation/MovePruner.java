@@ -2,12 +2,9 @@ package AI.mcts.Optimazation;
 
 import AI.mcts.HexGame.GameState;
 import AI.mcts.HexGame.Move;
-import Game.Board;
-import Game.Color;
-import Game.Player;
+import AI.mcts.Optimazation.Heuristic.*;
 
 import java.util.*;
-
 
 public class MovePruner {
 
@@ -15,15 +12,16 @@ public class MovePruner {
     private final double threshold;
 
     // heuristics
-    private final double centralityWeight;
-    private final double connectivityWeight;
+    private final int minMoves;
+    private final Heuristic heuristic;
 
     //  constructor to allow different agents to use different pruning settings (used for testing)
-    public MovePruner(double threshold, double centralityWeight, double connectivityWeight) {
+    public MovePruner(double threshold, int minMoves, Heuristic heuristic) {
         this.threshold = threshold;
-        this.centralityWeight = centralityWeight;
-        this.connectivityWeight = connectivityWeight;
+        this.minMoves = minMoves;
+        this.heuristic = heuristic;
     }
+
 
     //scores each move based on the heuristic, find max among legal (possible) moves and creates a minimum score for being kept
     public List<Move> pruneMoves(GameState state, List<Move> legalMoves) {
@@ -32,16 +30,12 @@ public class MovePruner {
         Map<Move, Double> scores = new HashMap<>();
         double maxScore = Double.NEGATIVE_INFINITY;
 
-        // scoring of each move
         for (Move m : legalMoves) {
-            double score = heuristic(state, m);
-            scores.put(m, score);
-            if (score > maxScore) {
-                maxScore = score;
-            }
+            double s = heuristic.score(state, m);
+            scores.put(m, s);
+            if (s > maxScore) maxScore = s;
         }
 
-        //  keep moves based on our thershold, here is where we decide how many nodes we want to prune
         double min = maxScore - threshold;
         List<Move> pruned = new ArrayList<>();
         for (Move m : legalMoves) {
@@ -50,60 +44,21 @@ public class MovePruner {
             }
         }
 
-        // if we pruned everything, return moves
-        return pruned.isEmpty() ? legalMoves : pruned;
-    }
-
-    // our heuristic based on centrality and how connected a move is to other friendly stones
-    private double heuristic(GameState state, Move move) {
-        Board board = state.getBoard();
-        int n = board.getSize();
-
-        // centrality variable for calculating the score based on centrality of our move
-        double centerRow = (n - 1) / 2.0;
-        double centerCol = (n - 1) / 2.0;
-        double distCenter = Math.hypot(move.row - centerRow, move.col - centerCol);
-        double maxDist = Math.hypot(centerRow, centerCol);
-        double centrality = 1.0 - distCenter / (maxDist + 1e-9); // 1e-9 prevents division by 0
-
-        //identify which color agent is playing as
-        Player toMove = state.getToMove();
-        Color myColor;
-
-        if (toMove == Player.RED) {
-            myColor = Color.RED;
-        } else {
-            myColor = Color.BLACK;
-        }
-
-        // variable to represent how many neighbours of same color are among neighbours of the stone placed by possible move
-        int friendlyNeighbors = 0;
-        int totalNeighbors = 0;
-        for (int[] rc : board.neighbors(move.row, move.col)) {
-            int r = rc[0];
-            int c = rc[1];
-            if (!board.inBounds(r, c)) continue;
-            totalNeighbors++;
-            if (board.getCell(r, c) == myColor) {
-                friendlyNeighbors++;
+        if (pruned.size() < minMoves) {
+            legalMoves.sort((a, b) -> Double.compare(scores.get(b), scores.get(a)));
+            pruned.clear();
+            for (int i = 0; i < Math.min(minMoves, legalMoves.size()); i++) {
+                pruned.add(legalMoves.get(i));
             }
         }
-        double connection = (totalNeighbors == 0) ? 0.0 : (double) friendlyNeighbors / totalNeighbors;
-
-        // final score based on centrality and connection
-        return centralityWeight * centrality + connectivityWeight * connection;
+        return pruned;
     }
 
-    // getters (unchanged)
     public double getThreshold() {
         return threshold;
     }
 
-    public double getCentralityWeight() {
-        return centralityWeight;
-    }
-
-    public double getConnectivityWeight() {
-        return connectivityWeight;
+    public Heuristic getHeuristic() {
+        return heuristic;
     }
 }

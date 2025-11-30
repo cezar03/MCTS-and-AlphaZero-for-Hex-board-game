@@ -13,25 +13,17 @@ public final class ShortestPath {
         // utility class, no instances
     }
 
-    private static Color getCellByPlayer(Board board, Color player, int i) {
-        if (player == Color.RED) {
-            return board.getCell(i, 0);
-        } else {
-            return board.getCell(0, i);
-        }
-    }
-
     /**
-     * 0–1 BFS / SPFA-style shortest path:
+     * 0–1 BFS shortest path:
      * cost 0 to move through player's stones,
      * cost 1 to move through empty cells,
      * opponent stones are blocked.
-     * <p>
-     * RED:  top -> bottom
-     * BLACK: left -> right
+     *
+     * RED:   top (row 0)    -> bottom (row n-1)
+     * BLACK: left (col 0)   -> right (col n-1)
      *
      * @return minimal number of empty cells that must be filled to connect,
-     * or a large number (INF) if no path exists.
+     *         or a large number (INF) if no path exists.
      */
     public static int shortestPath(Board board, Color player) {
         final int n = board.getSize();
@@ -45,20 +37,32 @@ public final class ShortestPath {
         List<int[]> queue = new ArrayList<>();
         int head = 0;
 
-        // initialize start edge
-        for (int i = 0; i < n; i++) {
-            Color c = getCellByPlayer(board, player, i);
-            if (c == player) {
-                dist[0][i] = 0;
-            } else if (c == Color.EMPTY) {
-                dist[0][i] = 1;
-            } else {
-                continue; // opponent stone blocks
+        if (player == Color.RED) {
+            for (int col = 0; col < n; col++) {
+                Color c = board.getCell(0, col);
+                if (c == player) {
+                    dist[0][col] = 0;
+                } else if (c == Color.EMPTY) {
+                    dist[0][col] = 1;
+                } else {
+                    continue;
+                }
+                queue.add(new int[]{0, col});
             }
-            queue.add(new int[]{0, i});
+        } else {
+            for (int row = 0; row < n; row++) {
+                Color c = board.getCell(row, 0);
+                if (c == player) {
+                    dist[row][0] = 0;
+                } else if (c == Color.EMPTY) {
+                    dist[row][0] = 1;
+                } else {
+                    continue;
+                }
+                queue.add(new int[]{row, 0});
+            }
         }
 
-        // BFS / SPFA over 0–1 edge costs
         while (head < queue.size()) {
             int[] cur = queue.get(head++);
             int r = cur[0];
@@ -68,7 +72,6 @@ public final class ShortestPath {
             for (int[] nb : board.neighbors(r, c)) {
                 int nr = nb[0];
                 int nc = nb[1];
-
                 Color cellColor = board.getCell(nr, nc);
                 int cost;
 
@@ -77,10 +80,11 @@ public final class ShortestPath {
                 } else if (cellColor == Color.EMPTY) {
                     cost = 1;
                 } else {
-                    continue; // opponent stone blocks this neighbor
+                    continue;
                 }
 
                 int newDist = currentDist + cost;
+
                 if (newDist < dist[nr][nc]) {
                     dist[nr][nc] = newDist;
                     queue.add(new int[]{nr, nc});
@@ -88,14 +92,14 @@ public final class ShortestPath {
             }
         }
 
-        // Check target edge
         int best = INF;
-        // bottom row
-        for (int i = 0; i < n; i++) {
-            if (player == Color.RED) {
-                best = Math.min(best, dist[n - 1][i]);
-            } else {
-                best = Math.min(best, dist[i][n - 1]);
+        if (player == Color.RED) {
+            for (int col = 0; col < n; col++) {
+                best = Math.min(best, dist[n - 1][col]);
+            }
+        } else {
+            for (int row = 0; row < n; row++) {
+                best = Math.min(best, dist[row][n - 1]);
             }
         }
 

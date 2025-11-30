@@ -22,10 +22,13 @@ public class OptimizedSimulation implements Simulation {
             List<Move> legal = state.getLegalMoves();
             if (legal.isEmpty()) break;
 
-            List<Move> pruned = pruner.pruneMoves(state, legal);
-            if (pruned.isEmpty()) pruned = legal;
+            List<Move> moves = legal;
+            if (pruner != null) {
+                List<Move> pruned = pruner.pruneMoves(state, legal);
+                if (!pruned.isEmpty()) moves = pruned;
+            }
 
-            Move chosen = chooseMove(state, pruned);
+            Move chosen = chooseMove(state, moves);
             state.doMove(chosen);
         }
         return state.getWinnerId();
@@ -42,11 +45,11 @@ public class OptimizedSimulation implements Simulation {
         Move best = null;
         int bestScore = Integer.MAX_VALUE;
 
-        for (Move m : legal) {
-            int score = state.estimateAfterMove(m);  // uses ShortestPath internally
+        for (Move move : legal) {
+            int score = state.estimateAfterMove(move);
             if (score < bestScore) {
                 bestScore = score;
-                best = m;
+                best = move;
             }
         }
         return best;

@@ -10,7 +10,6 @@ import AI.mcts.HexGame.Move;
  * Runs multiple games and collects statistics on win rates.
  */
 public class AITester {
-
     /**
      * Represents the result of a testing session.
      */
@@ -20,10 +19,11 @@ public class AITester {
         public final int totalGames;
         public final int redWins;
         public final int blackWins;
-        public final int draws; // In Hex, there should be no draws, but this variable can also help detect errors if it shows that there are draws.
+        public final int draws;
 
         public TestResult(String redAgentName, String blackAgentName,
-                          int totalGames, int redWins, int blackWins, int draws) {
+                          int totalGames, int redWins, int blackWins,
+                          int draws) {
             this.redAgentName = redAgentName;
             this.blackAgentName = blackAgentName;
             this.totalGames = totalGames;
@@ -58,10 +58,8 @@ public class AITester {
         int redWins = 0;
         int blackWins = 0;
         int draws = 0;
-
         String redName = getAgentName(redAgent);
         String blackName = getAgentName(blackAgent);
-
         System.out.println("\nStarting match: " + redName + " vs " + blackName);
         System.out.println("Playing " + numGames + " games on " + boardSize + "x" + boardSize + " board\n");
 
@@ -72,15 +70,15 @@ public class AITester {
 
             Player winner = playGame(redAgent, blackAgent, boardSize);
 
-            if (winner == Player.RED) {
-                redWins++;
-                if (extensivePrints) System.out.println("  Result: RED wins");
-            } else if (winner == Player.BLACK) {
-                blackWins++;
-                if (extensivePrints) System.out.println("  Result: BLACK wins");
-            } else {
-                draws++;
-                if (extensivePrints) System.out.println("  Result: Draw");
+            switch (winner) {
+                case RED -> {
+                    redWins++;
+                    if (extensivePrints) System.out.println("  Result: RED wins");
+                }
+                case BLACK -> {
+                    blackWins++;
+                    if (extensivePrints) System.out.println("  Result: BLACK wins");
+                }
             }
 
             if (!extensivePrints && gameNum % 10 == 0) {
@@ -91,7 +89,6 @@ public class AITester {
         TestResult result = new TestResult(redName, blackName, numGames, redWins, blackWins, draws);
         result.printResults();
 
-        // print pruning & heuristic parameters used for each agent
         if (redAgent instanceof MCTSPlayer p) {
             printMctsPruningConfig("RED", p);
         }
@@ -107,7 +104,6 @@ public class AITester {
         double t  = p.getThreshold();
         double cw = p.getCentralityWeight();
         double connw = p.getConnectivityWeight();
-
         boolean usesPruning = (t != 0.0) || (cw != 0.0) || (connw != 0.0);
 
         if (!usesPruning) {
@@ -125,8 +121,7 @@ public class AITester {
         Board board = new Board(boardSize);
         BoardAdapter adapter = new BoardAdapter(board);
         Player currentPlayer = Player.RED;
-
-        int maxMoves = boardSize * boardSize; // Prevent infinite loops
+        int maxMoves = boardSize * boardSize;
         int moveCount = 0;
 
         while (!adapter.isGameOver() && moveCount < maxMoves) {
@@ -134,10 +129,11 @@ public class AITester {
             Move move = currentAgent.getBestMove(board, currentPlayer);
 
             if (move == null) {
-                break; // No legal moves
+                break;
             }
 
             boolean success = adapter.makeMove(move.row, move.col, currentPlayer);
+
             if (!success) {
                 System.err.println("Warning: Invalid move returned by " + getAgentName(currentAgent));
                 break;
@@ -151,19 +147,19 @@ public class AITester {
     }
 
     private static String getAgentName(AIAgent agent) {
+        if (agent == null) {
+            return "Unknown";
+        }
         if (agent instanceof MCTSPlayer mctsPlayer) {
             int iters = mctsPlayer.getIterations();
             double t  = mctsPlayer.getThreshold();
             double cw = mctsPlayer.getCentralityWeight();
             double connw = mctsPlayer.getConnectivityWeight();
-
             boolean usesPruning = (t != 0.0) || (cw != 0.0) || (connw != 0.0);
 
             if (usesPruning) {
-                // Optimised: show that it uses pruning
                 return "MCTS(pruned," + iters + " iters)";
             } else {
-                // Base: no pruning
                 return "MCTS(base," + iters + " iters)";
             }
         } else if (agent instanceof RandomPlayer) {
@@ -174,20 +170,17 @@ public class AITester {
     }
 
     public static void runTournament(AIAgent agent1, AIAgent agent2,
-                                     int gamesPerSide, int boardSize, boolean extensivePrints) {
+                                     int gamesPerSide, int boardSize,
+                                     boolean extensivePrints) {
         System.out.println("\n########## TOURNAMENT ##########");
         System.out.println("Each agent will play " + gamesPerSide + " games as RED and BLACK");
-
         TestResult round1 = runMatch(agent1, agent2, gamesPerSide, boardSize, extensivePrints);
         TestResult round2 = runMatch(agent2, agent1, gamesPerSide, boardSize, extensivePrints);
-
         String agent1Name = getAgentName(agent1);
         String agent2Name = getAgentName(agent2);
-
         int agent1TotalWins = round1.redWins + round2.blackWins;
         int agent2TotalWins = round1.blackWins + round2.redWins;
         int totalGames = round1.totalGames + round2.totalGames;
-
         System.out.println("\n========== TOURNAMENT SUMMARY ==========");
         System.out.println(agent1Name + " total wins: " + agent1TotalWins + "/" + totalGames +
                 " (" + String.format("%.2f%%", agent1TotalWins * 100.0 / totalGames) + ")");

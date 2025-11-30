@@ -5,6 +5,7 @@ import AI.mcts.Node;
 import AI.mcts.HexGame.GameState;
 import AI.mcts.HexGame.Move;
 import AI.mcts.Optimazation.*;
+import AI.mcts.Optimazation.Heuristic.*;
 import AI.mcts.Steps.Expansion;
 import AI.mcts.Steps.Selection;
 import AI.mcts.Steps.SimulationStep.*;
@@ -43,8 +44,8 @@ public class MCTSPlayer implements AIAgent {
         this.centralityWeight = 0.0;
         this.connectivityWeight = 0.0;
 
-        Selection selection = new Selection();
-        Expansion expansion = new Expansion(null);      // no MovePruner => no pruning in tree
+        Selection selection = new Selection(Math.sqrt(2));
+        Expansion expansion = new Expansion(null, null, 0.0);
         Simulation simulation = new BaseSimulation(); // pure random rollout
 
         this.mcts = new MCTS(iterations, selection, expansion, simulation);
@@ -58,22 +59,34 @@ public class MCTSPlayer implements AIAgent {
      * @param centralityWeight weight used in heuristic
      * @param connectivityWeight weight used in heuristic
      */
-    public MCTSPlayer(Player mctsPlayer, int iterations,
-                      double threshold, double centralityWeight, double connectivityWeight) {
+    public MCTSPlayer(Player mctsPlayer, int iterations, double threshold, double centralityWeight,
+                        double connectivityWeight, double biasScale, double spWeight, double cExploration) {
 
         this.mctsPlayer = mctsPlayer;
         this.iterations = iterations;
-
         this.threshold = threshold;
         this.centralityWeight = centralityWeight;
         this.connectivityWeight = connectivityWeight;
 
-        MovePruner pruner = new MovePruner(threshold, centralityWeight, connectivityWeight);
+        // build combined heuristic with spWeight
+        Heuristic centrality = new CentralityHeuristic();
+        Heuristic connectivity = new ConnectivityHeuristic();
+        Heuristic sp = new ShortestPathHeuristic();
+        Heuristic combined = new LinearCombinationHeuristic(
+                centrality,
+                connectivity,
+                sp,
+                centralityWeight,
+                connectivityWeight,
+                spWeight
+        );
 
-        Selection selection = new Selection();
-        Expansion expansion = new Expansion(pruner);                    // pruning in tree (if you want it)
-        Simulation simulation = new OptimizedSimulation(pruner, 0.1);   // EPS = 0.1 for epsilon-greedy
-
+        // pruner with combined heuristic
+        int minMoves = 4;
+        MovePruner pruner = new MovePruner(threshold, minMoves, combined);
+        Selection selection = new Selection(cExploration);
+        Expansion expansion = new Expansion(pruner, combined, biasScale);
+        Simulation simulation = new BaseSimulation();
         this.mcts = new MCTS(iterations, selection, expansion, simulation);
     }
 

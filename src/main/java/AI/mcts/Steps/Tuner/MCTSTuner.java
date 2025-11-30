@@ -1,10 +1,7 @@
 package AI.mcts.Steps.Tuner;
 
 import Game.Player;
-
-import java.io.ObjectInputFilter.Config;
 import java.util.Random;
-
 import AI.AiPlayer.AIAgent;
 import AI.AiPlayer.AITester;
 import AI.AiPlayer.MCTSPlayer;
@@ -12,27 +9,18 @@ import AI.AiPlayer.MCTSPlayer;
 /**
  * Simple hyperparameter tuner for the MCTS MovePruner heuristics.
  *
- * It samples random (threshold, centralityWeight, connectivityWeight)
- * configurations, builds an "optimized" MCTSPlayer with those parameters,
- * and evaluates it against a baseline "base" MCTSPlayer (no pruning, random rollouts)
- * at equal iterations.
+ * It can:
+ *  - sample full random configs (including cExploration), or
+ *  - for each fixed cExploration, sample random (threshold, centralityWeight,
+ *    connectivityWeight, biasScale, spWeight) and find the best combo.
  */
 public final class MCTSTuner {
 
-    /**
-     * Configuration for the MovePruner / heuristic rollout.
-     */
     private final int boardSize;
     private final int iterations;
     private final int gamesPerSide;
     private final Random rng;
 
-    /**
-     * @param boardSize    board size (e.g. 7)
-     * @param iterations   MCTS iterations for both base and optimized
-     * @param gamesPerSide games as RED + games as BLACK for each evaluation (per round)
-     * @param seed         RNG seed (for reproducibility)
-     */
     public MCTSTuner(int boardSize, int iterations, int gamesPerSide, long seed) {
         this.boardSize = boardSize;
         this.iterations = iterations;
@@ -45,33 +33,65 @@ public final class MCTSTuner {
     }
 
     /**
-     * Sample a random configuration in a reasonable range for 7x7 Hex.
-     * Adjust ranges as needed.
+     * Full random config, including cExploration.
+     * (Keep if you still want a completely unconstrained search.)
      */
     private PrunerConfig sampleRandomConfig() {
-        // threshold in [0.1, 0.6] (how wide we keep around best score)
-        double threshold = 0.1 + rng.nextDouble() * 0.5;
-
-        // centralityWeight in [0.0, 0.7], connectivityWeight = 1 - centrality
-        double centralityWeight = rng.nextDouble() * 0.7;
+        double threshold = 0.3 + rng.nextDouble() * 0.7; // [0.3, 1.0]
+        double centralityWeight = rng.nextDouble();      // [0.0, 1.0]
         double connectivityWeight = 1.0 - centralityWeight;
 
-        return new PrunerConfig(threshold, centralityWeight, connectivityWeight);
+        double biasScale = 0.02 + rng.nextDouble() * 0.06; // [0.02, 0.08]
+        double spWeight  = rng.nextDouble() * 0.2;         // [0.0, 0.2]
+
+        double cExploration = 0.5 + rng.nextDouble() * 1.5; // [0.5, 2.0]
+
+        return new PrunerConfig(
+            threshold,
+            centralityWeight,
+            connectivityWeight,
+            biasScale,
+            spWeight,
+            cExploration
+        );
+    }
+
+    /**
+     * Random config for a fixed cExploration.
+     * cExploration is given, everything else is sampled.
+     */
+    private PrunerConfig sampleRandomConfigForC(double cExploration) {
+        double threshold = 0.3 + rng.nextDouble() * 0.7; // [0.3, 1.0]
+        double centralityWeight = rng.nextDouble();      // [0.0, 1.0]
+        double connectivityWeight = 1.0 - centralityWeight;
+
+        double biasScale = 0.02 + rng.nextDouble() * 0.06; // [0.02, 0.08]
+        double spWeight  = rng.nextDouble() * 0.2;         // [0.0, 0.2]
+
+        return new PrunerConfig(
+            threshold,
+            centralityWeight,
+            connectivityWeight,
+            biasScale,
+            spWeight,
+            cExploration
+        );
     }
 
     /**
      * Evaluate a single configuration by playing a color-swapped mini-tournament
-     * between:
-     *   - base MCTS (no pruning) and
-     *   - optimized MCTS (with given config)
-     *
-     * @return win rate of the optimized agent (in %, 0..100) vs the base agent.
+     * between base MCTS and optimized MCTS.
      */
     public double evaluateConfig(PrunerConfig cfg, boolean printMatches) {
         // Round 1: base as RED, optimized as BLACK
         AIAgent baseRed = new MCTSPlayer(Player.RED, iterations);
         AIAgent optBlack = new MCTSPlayer(Player.BLACK, iterations,
-                cfg.threshold, cfg.centralityWeight, cfg.connectivityWeight);
+                cfg.threshold,
+                cfg.centralityWeight,
+                cfg.connectivityWeight,
+                cfg.biasScale,
+                cfg.spWeight,
+                cfg.cExploration);
 
         AITester.TestResult r1 = AITester.runMatch(
                 baseRed, optBlack, gamesPerSide, boardSize, printMatches
@@ -79,7 +99,12 @@ public final class MCTSTuner {
 
         // Round 2: optimized as RED, base as BLACK
         AIAgent optRed = new MCTSPlayer(Player.RED, iterations,
-                cfg.threshold, cfg.centralityWeight, cfg.connectivityWeight);
+                cfg.threshold,
+                cfg.centralityWeight,
+                cfg.connectivityWeight,
+                cfg.biasScale,
+                cfg.spWeight,
+                cfg.cExploration);
         AIAgent baseBlack = new MCTSPlayer(Player.BLACK, iterations);
 
         AITester.TestResult r2 = AITester.runMatch(
@@ -93,8 +118,8 @@ public final class MCTSTuner {
     }
 
     /**
-     * Run random search for a number of trials, printing progress
-     * and reporting the best configuration found.
+     * Original global random search (including cExploration).
+     * You can keep this if you still want to explore everything at once.
      */
     public void randomSearch(int trials) {
         PrunerConfig bestCfg = null;
@@ -102,14 +127,9 @@ public final class MCTSTuner {
 
         for (int i = 0; i < trials; i++) {
             PrunerConfig cfg = sampleRandomConfig();
-            System.out.printf(
-                    "Trial %d/%d: %s%n",
-                    i + 1, trials, cfg.toString()
-            );
+            System.out.printf("Trial %d/%d: %s%n", i + 1, trials, cfg);
 
-            // false => don't spam per-game prints; you still get match summaries
             double winRate = evaluateConfig(cfg, false);
-
             System.out.printf("  => optimized win rate vs base: %.2f%%%n", winRate);
 
             if (winRate > bestWinRate) {
@@ -120,11 +140,61 @@ public final class MCTSTuner {
         }
 
         if (bestCfg != null) {
-            System.out.println("\n==== BEST CONFIG FOUND ====");
-            System.out.printf("  %s, winRate=%.2f%%%n",
-                    bestCfg.toString(), bestWinRate);
+            System.out.println("\n==== BEST CONFIG FOUND (global) ====");
+            System.out.printf("  %s, winRate=%.2f%%%n", bestCfg, bestWinRate);
         } else {
             System.out.println("\nNo valid configs evaluated.");
+        }
+    }
+
+    /**
+     * New: for each fixed c value, run a random search over the other params.
+     * Prints best config for each c and the overall best.
+     */
+    public void randomSearchPerC(double[] cValues, int trialsPerC) {
+        PrunerConfig globalBestCfg = null;
+        double globalBestWinRate = -1.0;
+
+        for (double c : cValues) {
+            System.out.printf("%n##### Tuning for c = %.5f #####%n", c);
+
+            PrunerConfig bestCfgForC = null;
+            double bestWinRateForC = -1.0;
+
+            for (int i = 0; i < trialsPerC; i++) {
+                PrunerConfig cfg = sampleRandomConfigForC(c);
+                System.out.printf("  Trial %d/%d (c=%.5f): %s%n",
+                        i + 1, trialsPerC, c, cfg);
+
+                double winRate = evaluateConfig(cfg, false);
+                System.out.printf("    => optimized win rate vs base: %.2f%%%n", winRate);
+
+                if (winRate > bestWinRateForC) {
+                    bestWinRateForC = winRate;
+                    bestCfgForC = cfg;
+                    System.out.printf("    NEW BEST FOR c=%.5f! (winRate=%.2f%%)%n",
+                            c, bestWinRateForC);
+                }
+            }
+
+            if (bestCfgForC != null) {
+                System.out.printf("%n== Best config for c=%.5f ==%n", c);
+                System.out.printf("  %s, winRate=%.2f%%%n%n",
+                        bestCfgForC, bestWinRateForC);
+            } else {
+                System.out.printf("%nNo valid configs evaluated for c=%.5f%n", c);
+            }
+
+            if (bestWinRateForC > globalBestWinRate) {
+                globalBestWinRate = bestWinRateForC;
+                globalBestCfg = bestCfgForC;
+            }
+        }
+
+        if (globalBestCfg != null) {
+            System.out.println("\n==== GLOBAL BEST CONFIG ACROSS ALL c ====");
+            System.out.printf("  %s, winRate=%.2f%%%n",
+                    globalBestCfg, globalBestWinRate);
         }
     }
 }

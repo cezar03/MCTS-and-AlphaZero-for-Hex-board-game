@@ -80,7 +80,6 @@ public class GameState {
     private Color toColor(Player p) {
         return (p == Player.RED ? Color.RED : Color.BLACK);
     }
-
     
     //Main heuristic for simulation rollouts , evaluates board after applying move m
     public int estimateAfterMove(Move m) {
@@ -89,8 +88,6 @@ public class GameState {
         copy.doMove(m);
         return copy.estimateShortestPathForPlayer(mover);
     }
-
-
 
     //shortest path distance for the player whose turn it is now.
     public int estimateShortestPathForCurrentPlayer() {

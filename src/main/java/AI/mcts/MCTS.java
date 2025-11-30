@@ -1,7 +1,5 @@
 package AI.mcts;
 
-import java.util.*;
-
 import AI.mcts.HexGame.GameState;
 import AI.mcts.Steps.Backpropagation;
 import AI.mcts.Steps.Expansion;
