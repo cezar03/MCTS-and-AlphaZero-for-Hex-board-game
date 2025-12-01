@@ -57,10 +57,8 @@ THR, CENT, CONN, BIAS, SP.
 - Comparison of different **c-values (0.5, 0.8, 1.0, sqrt(1.4), 2.0)** for different type of agents.
 - Comparison of **increasing number of iterations** againist a **Random baseline agent**
 - Comparison of **Base MCTS vs Optimized MCTS**
-
 - Colors are alternated between games to reduce first-move advantage
 - For **Base vs Optimized** experiments both agents uses **same number of iterations**
-
 - **For each experiment we log results into CSV**
 
 ## Usage
