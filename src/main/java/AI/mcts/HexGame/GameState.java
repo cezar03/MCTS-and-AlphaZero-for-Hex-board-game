@@ -4,6 +4,7 @@ package AI.mcts.HexGame;
 import Game.*;
 import java.util.ArrayList;
 import java.util.List;
+import AI.mcts.Optimazation.ShortestPath;
 
 public class GameState {
     private final Board board;
@@ -57,10 +58,11 @@ public class GameState {
         }
         recomputeTerminal();
     }
+    
 
     public GameState copy() {
-        Board b2 = board.copyBoard(board);
-        return new GameState(b2, toMove);
+        Board board2 = board.copyBoard(board);
+        return new GameState(board2, toMove);
     }
 
     private void recomputeTerminal() {
@@ -72,5 +74,29 @@ public class GameState {
             terminal = true;
             winnerId = 2;
         }
+    }
+    
+    //helper to convert Player to Color
+    private Color toColor(Player p) {
+        return (p == Player.RED ? Color.RED : Color.BLACK);
+    }
+    
+    //Main heuristic for simulation rollouts , evaluates board after applying move m
+    public int estimateAfterMove(Move m) {
+        Player mover = toMove;
+        GameState copy = this.copy();
+        copy.doMove(m);
+        return copy.estimateShortestPathForPlayer(mover);
+    }
+
+    //shortest path distance for the player whose turn it is now.
+    public int estimateShortestPathForCurrentPlayer() {
+        return ShortestPath.shortestPath(board, toColor(toMove));
+    }
+
+
+    //optional helper if you  need path for a specific player
+    public int estimateShortestPathForPlayer(Player p) {
+        return ShortestPath.shortestPath(board, toColor(p));
     }
 }

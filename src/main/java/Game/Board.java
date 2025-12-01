@@ -15,7 +15,7 @@ public final class Board {
         this.n = n;
         this.cells = new Color[n * n];
         Arrays.fill(cells, Color.EMPTY);
-        int unionFindSize = n * n + 4; // Union-Find arrays: one node per cell + 4 virtual edges
+        int unionFindSize = n * n + 4;
         this.uf = new UnionFind(unionFindSize);
 
         //Indices for edge nodes
@@ -37,11 +37,11 @@ public final class Board {
     }
     // Place red stone
     public void getMoveRed(int row, int column, Color _ignored) {
-        placeStone(row, column, Color.RED);
+        terminate(row, column, Color.RED);
     }
     // Place black stone
     public void getMoveBlack(int row, int column, Color _ignored) {
-        placeStone(row, column, Color.BLACK);
+        terminate(row, column, Color.BLACK);
     }
 
     /* Helpers for UI and future AI */
@@ -108,7 +108,7 @@ public final class Board {
 
     /* Placing stones */
 
-    private void placeStone(int row, int column, Color stone) {
+    private void terminate(int row, int column, Color stone) {
         if (!inBounds(row, column)) {
             throw new IndexOutOfBoundsException();
         }
@@ -148,7 +148,7 @@ public final class Board {
     }
 
     /** Neighbor coordinates for a pointy-top hex grid laid out as an n×n rhombus. */
-    private List<int[]> neighbors(int row, int column) {
+    public List<int[]> neighbors(int row, int column) {
         int[][] neighbor_deltas = { {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}};
         List<int[]> neighbors = new ArrayList<>(6);
         for (var delta : neighbor_deltas) {
