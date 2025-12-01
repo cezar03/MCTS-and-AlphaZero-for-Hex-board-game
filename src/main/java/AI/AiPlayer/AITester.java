@@ -21,9 +21,7 @@ public class AITester {
         public final int blackWins;
         public final int draws;
 
-        public TestResult(String redAgentName, String blackAgentName,
-                          int totalGames, int redWins, int blackWins,
-                          int draws) {
+        public TestResult(String redAgentName, String blackAgentName, int totalGames, int redWins, int blackWins, int draws) {
             this.redAgentName = redAgentName;
             this.blackAgentName = blackAgentName;
             this.totalGames = totalGames;

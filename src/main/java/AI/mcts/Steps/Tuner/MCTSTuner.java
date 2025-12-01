@@ -40,20 +40,10 @@ public final class MCTSTuner {
         double threshold = 0.7 + rng.nextDouble() * 0.3; // [0.7, 1.0]
         double centralityWeight = rng.nextDouble();      // [0.0, 1.0]
         double connectivityWeight = 1.0 - centralityWeight;
-
         double biasScale = 0.02 + rng.nextDouble() * 0.06; // [0.02, 0.08]
         double spWeight  = rng.nextDouble() * 0.2;         // [0.0, 0.2]
-
         double cExploration = 0.5 + rng.nextDouble() * 1.5; // [0.5, 2.0]
-
-        return new PrunerConfig(
-            threshold,
-            centralityWeight,
-            connectivityWeight,
-            biasScale,
-            spWeight,
-            cExploration
-        );
+        return new PrunerConfig( threshold, centralityWeight, connectivityWeight, biasScale, spWeight, cExploration);
     }
 
     /**
@@ -64,18 +54,9 @@ public final class MCTSTuner {
         double threshold = 0.3 + rng.nextDouble() * 0.7; // [0.3, 1.0]
         double centralityWeight = rng.nextDouble();      // [0.0, 1.0]
         double connectivityWeight = 1.0 - centralityWeight;
-
         double biasScale = 0.02 + rng.nextDouble() * 0.06; // [0.02, 0.08]
-        double spWeight  = rng.nextDouble() * 0.2;         // [0.0, 0.2]
-
-        return new PrunerConfig(
-            threshold,
-            centralityWeight,
-            connectivityWeight,
-            biasScale,
-            spWeight,
-            cExploration
-        );
+        double spWeight = rng.nextDouble() * 0.2;         // [0.0, 0.2]
+        return new PrunerConfig(threshold, centralityWeight, connectivityWeight, biasScale, spWeight, cExploration);
     }
 
     /**
@@ -84,34 +65,13 @@ public final class MCTSTuner {
      */
     public double evaluateConfig(PrunerConfig cfg, boolean printMatches) {
         AIAgent baseRed = new MCTSPlayer(Player.RED, iterations);
-        AIAgent optBlack = new MCTSPlayer(Player.BLACK, iterations,
-                cfg.threshold,
-                cfg.centralityWeight,
-                cfg.connectivityWeight,
-                cfg.biasScale,
-                cfg.spWeight,
-                cfg.cExploration);
-
-        AITester.TestResult r1 = AITester.runMatch(
-                baseRed, optBlack, gamesPerSide, boardSize, printMatches
-        );
-
-        AIAgent optRed = new MCTSPlayer(Player.RED, iterations,
-                cfg.threshold,
-                cfg.centralityWeight,
-                cfg.connectivityWeight,
-                cfg.biasScale,
-                cfg.spWeight,
-                cfg.cExploration);
+        AIAgent optBlack = new MCTSPlayer(Player.BLACK, iterations, cfg.threshold, cfg.centralityWeight, cfg.connectivityWeight, cfg.biasScale, cfg.spWeight, cfg.cExploration);
+        AITester.TestResult result1 = AITester.runMatch(baseRed, optBlack, gamesPerSide, boardSize, printMatches);
+        AIAgent optRed = new MCTSPlayer(Player.RED, iterations, cfg.threshold, cfg.centralityWeight, cfg.connectivityWeight, cfg.biasScale, cfg.spWeight, cfg.cExploration);
         AIAgent baseBlack = new MCTSPlayer(Player.BLACK, iterations);
-
-        AITester.TestResult r2 = AITester.runMatch(
-                optRed, baseBlack, gamesPerSide, boardSize, printMatches
-        );
-
-        int optWins = r1.blackWins + r2.redWins;
-        int totalGames = r1.totalGames + r2.totalGames;
-
+        AITester.TestResult result2 = AITester.runMatch(optRed, baseBlack, gamesPerSide, boardSize, printMatches);
+        int optWins = result1.blackWins + result2.redWins;
+        int totalGames = result1.totalGames + result2.totalGames;
         return (totalGames > 0) ? (optWins * 100.0 / totalGames) : 0.0;
     }
 
@@ -122,14 +82,11 @@ public final class MCTSTuner {
     public void randomSearch(int trials) {
         PrunerConfig bestCfg = null;
         double bestWinRate = -1.0;
-
         for (int i = 0; i < trials; i++) {
             PrunerConfig cfg = sampleRandomConfig();
             System.out.printf("Trial %d/%d: %s%n", i + 1, trials, cfg);
-
             double winRate = evaluateConfig(cfg, false);
             System.out.printf("  => optimized win rate vs base: %.2f%%%n", winRate);
-
             if (winRate > bestWinRate) {
                 bestWinRate = winRate;
                 bestCfg = cfg;
@@ -138,7 +95,7 @@ public final class MCTSTuner {
         }
 
         if (bestCfg != null) {
-            System.out.println("\n==== BEST CONFIG FOUND (global) ====");
+            System.out.println("\n==== BEST CONFIG FOUND ====");
             System.out.printf("  %s, winRate=%.2f%%%n", bestCfg, bestWinRate);
         } else {
             System.out.println("\nNo valid configs evaluated.");
@@ -148,21 +105,16 @@ public final class MCTSTuner {
     public void randomSearchPerC(double[] cValues, int trialsPerC) {
         PrunerConfig globalBestCfg = null;
         double globalBestWinRate = -1.0;
-
         for (double c : cValues) {
             System.out.printf("%n##### Tuning for c = %.5f #####%n", c);
-
             PrunerConfig bestCfgForC = null;
             double bestWinRateForC = -1.0;
-
             for (int i = 0; i < trialsPerC; i++) {
                 PrunerConfig cfg = sampleRandomConfigForC(c);
                 System.out.printf("  Trial %d/%d (c=%.5f): %s%n",
                         i + 1, trialsPerC, c, cfg);
-
                 double winRate = evaluateConfig(cfg, false);
                 System.out.printf("    => optimized win rate vs base: %.2f%%%n", winRate);
-
                 if (winRate > bestWinRateForC) {
                     bestWinRateForC = winRate;
                     bestCfgForC = cfg;
@@ -170,7 +122,6 @@ public final class MCTSTuner {
                             c, bestWinRateForC);
                 }
             }
-
             if (bestCfgForC != null) {
                 System.out.printf("%n== Best config for c=%.5f ==%n", c);
                 System.out.printf("  %s, winRate=%.2f%%%n%n",
@@ -178,7 +129,6 @@ public final class MCTSTuner {
             } else {
                 System.out.printf("%nNo valid configs evaluated for c=%.5f%n", c);
             }
-
             if (bestWinRateForC > globalBestWinRate) {
                 globalBestWinRate = bestWinRateForC;
                 globalBestCfg = bestCfgForC;

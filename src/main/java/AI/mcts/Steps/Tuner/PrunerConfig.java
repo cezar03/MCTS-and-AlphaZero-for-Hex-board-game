@@ -8,12 +8,7 @@ public class PrunerConfig {
     public final double spWeight;
     public final double cExploration;
 
-    public PrunerConfig(double threshold,
-                        double centralityWeight,
-                        double connectivityWeight,
-                        double biasScale,
-                        double spWeight,
-                        double cExploration) {
+    public PrunerConfig(double threshold, double centralityWeight, double connectivityWeight, double biasScale, double spWeight, double cExploration) {
         this.threshold = threshold;
         this.centralityWeight = centralityWeight;
         this.connectivityWeight = connectivityWeight;

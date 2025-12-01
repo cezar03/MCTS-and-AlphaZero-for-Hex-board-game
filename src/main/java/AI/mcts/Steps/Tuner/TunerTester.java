@@ -10,10 +10,8 @@ public class TunerTester {
                 Math.sqrt(2),
                 2.0
         };
-
         int trialsPerC = 10;
         tuner.randomSearchPerC(cValues, trialsPerC);
-
         // tuner.randomSearch(10);
     }
 }

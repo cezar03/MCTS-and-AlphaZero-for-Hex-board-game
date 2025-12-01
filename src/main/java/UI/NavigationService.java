@@ -131,11 +131,7 @@ public final class NavigationService {
         boardView.updateTurnDisplay(controller.getCurrentPlayer());
 
         // Setup single AI agent for BLACK player
-        MCTSPlayer mctsPlayer = new MCTSPlayer(Player.BLACK, aiIterations, 0.5411830438399008,
-        0.05311371878045057,
-        0.9468862812195494,
-        0.036,  // biasScale
-        0.033, Math.sqrt(2));
+        MCTSPlayer mctsPlayer = new MCTSPlayer(Player.BLACK, aiIterations);
         controller.setupAIAgent(Player.BLACK, mctsPlayer);
     }
 
@@ -157,11 +153,7 @@ public final class NavigationService {
         mctsVsRandomBtn.setOnAction(e -> {
             dialog.close();
             showGameAIvsAI(
-                    new MCTSPlayer(Player.RED, 5000, 0.5411830438399008,
-        0.05311371878045057,
-        0.9468862812195494,
-        0.036,  // biasScale
-        0.033, Math.sqrt(2)),
+                    new MCTSPlayer(Player.RED, 2000, 0.9,0.5,0.5, 0.046,0.039, Math.sqrt(2)),
                     new RandomPlayer(Player.BLACK)
             );
         });
@@ -169,16 +161,8 @@ public final class NavigationService {
         mctsVsMctsBtn.setOnAction(e -> {
             dialog.close();
             showGameAIvsAI(
-                    new MCTSPlayer(Player.RED, 2000, 0.5411830438399008,
-        0.05311371878045057,
-        0.9468862812195494,
-        0.036,  // biasScale
-        0.033, Math.sqrt(2)),
-                    new MCTSPlayer(Player.BLACK, 2000, 0.5411830438399008,
-        0.05311371878045057,
-        0.9468862812195494,
-        0.036,  // biasScale
-        0.033, Math.sqrt(2))
+                    new MCTSPlayer(Player.RED, 2000, 0.9,0.5,0.5, 0.046,0.039, Math.sqrt(2)),
+                    new MCTSPlayer(Player.RED, 2000, 0.9,0.5,0.5, 0.046,0.039, Math.sqrt(2))
             );
         });
 

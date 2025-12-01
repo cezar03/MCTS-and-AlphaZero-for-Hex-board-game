@@ -10,13 +10,15 @@ import Game.BoardAdapter;
 import Game.Player;
 
 public class RunExperimentCSV {
-
-    private static final int BOARD_SIZE = 7;
-    private static final int GAMES = 50;
+    // Simulation configurations
+    private static final int BOARD_SIZE = 11;
+    private static final int GAMES = 100;
     private static final boolean ALTERNATE_COLORS = true;
     private static int lastPlyCount = 0;
     private static final int SIMULATIONS = 5;
+    private static final double[] cValues = {0.5, 0.8, 1.0, Math.sqrt(2), 2.0};
 
+    //Optimized vaiables
     private static final double THR  = 0.9;
     private static final double CENT = 0.5;
     private static final double CONN = 0.5;
@@ -30,12 +32,12 @@ public class RunExperimentCSV {
 
         // Compare C values:
         // compareCValues(BOARD_SIZE, GAMES, ALTERNATE_COLORS);
+
+        // Base vs Optimized
+        // runBaseVsOpt(BOARD_SIZE, GAMES, ALTERNATE_COLORS);
     }
 
-    private static void runMctsVsRandomSweep(int boardSize,
-                                         int gamesPerSetting,
-                                         boolean alternateColors) {
-
+    private static void runMctsVsRandomSweep(int boardSize, int gamesPerSetting, boolean alternateColors) {
         System.out.println("simId,iters,games_played,mcts_wins,random_wins,winrate");
 
         int[] iterSettings = {
@@ -48,25 +50,24 @@ public class RunExperimentCSV {
 
         for (int simId = 1; simId <= SIMULATIONS; simId++) {
             for (int iters : iterSettings) {
+                // Agents setup
                 AIAgent mctsRed = new MCTSPlayer(Player.RED, iters);
                 AIAgent mctsBlack = new MCTSPlayer(Player.BLACK, iters);
                 AIAgent randRed = new RandomPlayer(Player.RED);
                 AIAgent randBlack = new RandomPlayer(Player.BLACK);
+                // Counting parameters
                 int mctsWins    = 0;
                 int randWins    = 0;
                 int gamesPlayed = 0;
 
-                for (int g = 1; g <= gamesPerSetting; g++) {
-                    boolean mctsIsRed = !alternateColors || (g % 2 == 1);
-
-                    AIAgent redAgent   = mctsIsRed ? mctsRed   : randRed;
+                for (int game = 1; game <= gamesPerSetting; game++) {
+                    boolean mctsIsRed = !alternateColors || (game % 2 == 1);
+                    AIAgent redAgent = mctsIsRed ? mctsRed : randRed;
                     AIAgent blackAgent = mctsIsRed ? randBlack : mctsBlack;
-
                     Player winner = playSingleGame(redAgent, blackAgent, boardSize);
 
                     if (winner == null) {
-                        System.err.println("Null winner at simId=" + simId
-                                + ", iters=" + iters + ", game=" + g);
+                        System.err.println("Null winner at simId=" + simId + ", iters=" + iters + ", game=" + game);
                         continue;
                     }
 
@@ -79,60 +80,63 @@ public class RunExperimentCSV {
                     }
                 }
 
-                double winrate = (gamesPlayed > 0)
-                        ? (double) mctsWins / gamesPlayed
-                        : 0.0;
-
-                System.out.printf("%d,%d,%d,%d,%d,%.4f%n",
-                        simId, iters, gamesPlayed, mctsWins, randWins, winrate);
+                double winrate = (gamesPlayed > 0) ? (double) mctsWins / gamesPlayed : 0.0;
+                System.out.printf("%d,%d,%d,%d,%d,%.4f%n", simId, iters, gamesPlayed, mctsWins, randWins, winrate);
             }
         }
     }
 
-    // ---------------- base vs opt CSV series ----------------
+    // ---------------- Base vs Optimized ----------------
 
-    private static void runBaseVsOpt(AIAgent base, AIAgent opt,
-                                     int games, int boardSize, boolean alternateColors) {
-        int baseCum = 0;
-        int optCum  = 0;
-        System.out.println("game,base_is_red,winner,ply_count,base_cum,opt_cum");
+    private static void runBaseVsOpt(int boardSize, int gamesPerSim, boolean alternateColors) {
+        // CSV Header
+        System.out.println("simId,game,base_is_red,winner,ply_count,base_cum,opt_cum");
 
-        for (int g = 1; g <= games; g++) {
-            boolean baseIsRed = !alternateColors || (g % 2 == 1);
-            AIAgent redAgent   = baseIsRed ? base : opt;
-            AIAgent blackAgent = baseIsRed ? opt  : base;
-            Player winner = playSingleGame(redAgent, blackAgent, boardSize);
-            int plyCount = lastPlyCount;
+        for (int simId = 1; simId <= SIMULATIONS; simId++) {
+            // Agents setup
+            AIAgent baseRed = new MCTSPlayer(Player.RED, 2000);
+            AIAgent baseBlack = new MCTSPlayer(Player.BLACK, 2000);
+            AIAgent optRed = new MCTSPlayer(Player.RED, 2000, THR, CENT, CONN, BIAS, SP, C_EXPL);
+            AIAgent optBlack = new MCTSPlayer(Player.BLACK, 2000, THR, CENT, CONN, BIAS, SP, C_EXPL);
 
-            String winnerLabel;
-            if (winner == Player.RED) {
-                winnerLabel = baseIsRed ? "BASE" : "OPT";
-            } else {
-                winnerLabel = baseIsRed ? "OPT" : "BASE";
+            int baseCum = 0;
+            int optCum = 0;
+
+            for (int game = 1; game <= gamesPerSim; game++) {
+                boolean baseIsRed = !alternateColors || (game % 2 == 1);
+                AIAgent redAgent = baseIsRed ? baseRed : optRed;
+                AIAgent blackAgent = baseIsRed ? optBlack : baseBlack;
+                Player winner = playSingleGame(redAgent, blackAgent, boardSize);
+                int plyCount = lastPlyCount;
+
+                if (winner == null) {
+                    System.err.println("Null winner at simId=" + simId + ", game=" + game);
+                    continue;
+                }
+
+                String winnerLabel;
+                if (winner == Player.RED) {
+                    winnerLabel = baseIsRed ? "BASE" : "OPT";
+                } else {
+                    winnerLabel = baseIsRed ? "OPT" : "BASE";
+                }
+
+                if ("BASE".equals(winnerLabel)) baseCum++;
+                else if ("OPT".equals(winnerLabel)) optCum++;
+
+                System.out.printf("%d,%d,%s,%s,%d,%d,%d%n", simId, game, baseIsRed, winnerLabel, plyCount, baseCum, optCum);
             }
-
-            if ("BASE".equals(winnerLabel)) baseCum++;
-            else if ("OPT".equals(winnerLabel)) optCum++;
-
-            System.out.printf("%d,%s,%s,%d,%d,%d%n",
-                    g,
-                    baseIsRed,
-                    winnerLabel,
-                    plyCount,
-                    baseCum,
-                    optCum);
         }
     }
 
     // --------------- Compare of C values --------------------------------
 
     private static void compareCValues(int boardSize, int gamesPerC, boolean alternateColors) {
-        double[] cValues = {0.5, 0.8, 1.0, Math.sqrt(2), 2.0};
-
         System.out.println("simId,c_value,games_played,base_wins,opt_wins,opt_winrate");
 
         for (int simId = 1; simId <= SIMULATIONS; simId++) {
             for (double cValue : cValues) {
+                // Agents setup
                 AIAgent baseRed = new MCTSPlayer(Player.RED, 1000);
                 AIAgent baseBlack = new MCTSPlayer(Player.BLACK, 1000);
                 AIAgent optRed = new MCTSPlayer(Player.RED, 1000, THR, CENT, CONN, BIAS, SP, cValue);
@@ -162,17 +166,14 @@ public class RunExperimentCSV {
                 }
 
                 double optWinrate = (gamesPlayed > 0) ? (double) optWins / gamesPlayed : 0.0;
-                System.out.printf("%d,%f,%d,%d,%d,%.4f%n",
-                        simId, cValue, gamesPlayed, baseWins, optWins, optWinrate);
+                System.out.printf("%d,%f,%d,%d,%d,%.4f%n", simId, cValue, gamesPlayed, baseWins, optWins, optWinrate);
             }
         }
     }
 
     // ---------------- shared game loop with ply counting ----------------
 
-    private static Player playSingleGame(AIAgent redAgent,
-                                         AIAgent blackAgent,
-                                         int boardSize) {
+    private static Player playSingleGame(AIAgent redAgent, AIAgent blackAgent, int boardSize) {
         Board board = new Board(boardSize);
         BoardAdapter adapter = new BoardAdapter(board);
         Player currentPlayer = Player.RED;
@@ -182,39 +183,28 @@ public class RunExperimentCSV {
         while (!adapter.isGameOver() && moveCount < maxMoves) {
             AIAgent currentAgent = (currentPlayer == Player.RED) ? redAgent : blackAgent;
             Move move = currentAgent.getBestMove(board, currentPlayer);
-
             if (move == null) break;
-
             boolean success = adapter.makeMove(move.row, move.col, currentPlayer);
             if (!success) {
-                System.err.println("Warning: Invalid move from "
-                        + currentAgent.getClass().getSimpleName());
+                System.err.println("Warning: Invalid move from " + currentAgent.getClass().getSimpleName());
                 break;
             }
-
             currentPlayer = currentPlayer.other();
             moveCount++;
         }
-
         lastPlyCount = moveCount;
         return adapter.getWinner();
     }
 
     private static void testMCTSvsRandom() {
-        AIAgent mcts = new MCTSPlayer(Player.RED, 1000,
-                THR, CENT, CONN,
-                BIAS, SP,
-                C_EXPL);
+        AIAgent mcts = new MCTSPlayer(Player.RED, 1000, THR, CENT, CONN, BIAS, SP, C_EXPL);
         AIAgent random = new RandomPlayer(Player.BLACK);
         AITester.runMatch(mcts, random, 50, 11, false);
     }
 
     private static void testMCTSvsMCTS() {
         AIAgent base = new MCTSPlayer(Player.RED, 1000);
-        AIAgent tuned = new MCTSPlayer(Player.BLACK, 1000,
-                THR, CENT, CONN,
-                BIAS, SP,
-                C_EXPL);
+        AIAgent tuned = new MCTSPlayer(Player.BLACK, 1000, THR, CENT, CONN, BIAS, SP, C_EXPL);
         AITester.runMatch(base, tuned, 30, 11, false);
     }
 }

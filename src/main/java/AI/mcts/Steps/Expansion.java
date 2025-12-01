@@ -11,7 +11,7 @@ import Game.Player;
 public class Expansion {
 
     // pruner
-    private final MovePruner pruner;        // may be null
+    private final MovePruner pruner; // may be null
     private final Heuristic heuristic;  // may be null
     private final Random random = new Random();
     private final double biasScale; 

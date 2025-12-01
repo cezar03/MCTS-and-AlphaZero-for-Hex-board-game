@@ -61,8 +61,8 @@ public class GameState {
     
 
     public GameState copy() {
-        Board b2 = board.copyBoard(board);
-        return new GameState(b2, toMove);
+        Board board2 = board.copyBoard(board);
+        return new GameState(board2, toMove);
     }
 
     private void recomputeTerminal() {
