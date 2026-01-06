@@ -1,4 +1,5 @@
 /Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/mcts/MCTS.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/AlphaZero/AlphaZeroNet.java
 /Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/mcts/Steps/Tuner/TunerTester.java
 /Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/mcts/Steps/Selection.java
 /Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/UI/BoardView.java
@@ -6,6 +7,7 @@
 /Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/mcts/Steps/Tuner/PrunerConfig.java
 /Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/mcts/Node.java
 /Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/Game/Player.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/AlphaZero/AlphaZeroTrainer.java
 /Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/mcts/Optimazation/Heuristic/CentralityHeuristic.java
 /Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/mcts/HexGame/GameState.java
 /Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/mcts/HexGame/Move.java
@@ -17,10 +19,14 @@
 /Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/RunExperimentCSV.java
 /Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/mcts/Steps/Backpropagation.java
 /Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/AiPlayer/MCTSPlayer.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/AlphaZero/AlphaZeroRunner.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/AlphaZero/TrainingExampleData.java
 /Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/UI/GameController.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/AlphaZero/AlphaZeroMCTS.java
 /Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/mcts/Steps/SimulationStep/OptimizedSimulation.java
 /Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/Game/Rules.java
 /Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/Game/BoardAdapter.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/AiPlayer/AlphaZeroPlayer.java
 /Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/mcts/Steps/SimulationStep/Simulation.java
 /Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/mcts/Optimazation/Heuristic/ShortestPathHeuristic.java
 /Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/mcts/Optimazation/Heuristic/Heuristic.java
@@ -30,6 +36,7 @@
 /Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/UI/NavigationService.java
 /Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/AiPlayer/AITester.java
 /Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/Game/Board.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/AlphaZero/BoardEncoder.java
 /Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/mcts/Optimazation/ShortestPath.java
 /Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/AiPlayer/AIAgent.java
 /Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/Game/UnionFind.java

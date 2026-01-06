@@ -3,6 +3,13 @@
   "configurations": [
     {
       "type": "java",
+      "name": "AlphaZeroRunner",
+      "request": "launch",
+      "mainClass": "AI.AlphaZero.AlphaZeroRunner",
+      "projectName": "team04-app"
+    },
+    {
+      "type": "java",
       "name": "TunerTester",
       "request": "launch",
       "mainClass": "AI.mcts.Steps.Tuner.TunerTester",

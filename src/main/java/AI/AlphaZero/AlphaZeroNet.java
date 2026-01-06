@@ -1,5 +1,6 @@
 package AI.AlphaZero;
 
+import org.deeplearning4j.nn.conf.inputs.InputType;
 import org.deeplearning4j.nn.conf.ComputationGraphConfiguration;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.conf.layers.*;
@@ -80,6 +81,8 @@ public class AlphaZeroNet {
 
             // Explicitly define the outputs of the network.
             .setOutputs("policy", "value")
+            // Establish the input type as a convolutional input with 3 channels (planes) for the board.
+            .setInputTypes(InputType.convolutional(boardSize, boardSize, 3))
             .build();
         
         // Create the network object using the blueprint 'conf' defined above.
