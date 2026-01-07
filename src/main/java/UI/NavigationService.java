@@ -20,8 +20,12 @@ import Game.Board;
 import Game.BoardAdapter;
 import Game.Player;
 import AI.AiPlayer.AIAgent;
+import AI.AiPlayer.AIAgentFactory;
+import AI.AiPlayer.AIAdaptationConfig;
 import AI.AiPlayer.MCTSPlayer;
+import AI.AiPlayer.MCTSPlayerFactory;
 import AI.AiPlayer.RandomPlayer;
+import AI.AiPlayer.RandomPlayerFactory;
 
 public final class NavigationService {
     private final Stage stage;
@@ -130,9 +134,12 @@ public final class NavigationService {
         boardView.update(adapter);
         boardView.updateTurnDisplay(controller.getCurrentPlayer());
 
-        // Setup single AI agent for BLACK player
-        MCTSPlayer mctsPlayer = new MCTSPlayer(Player.BLACK, aiIterations);
-        controller.setupAIAgent(Player.BLACK, mctsPlayer);
+        // Setup single AI agent for BLACK player using factory pattern
+        AIAdaptationConfig config = new AIAdaptationConfig.Builder(Player.BLACK)
+            .iterations(aiIterations)
+            .build();
+        AIAgentFactory factory = new MCTSPlayerFactory();
+        controller.setupAIAgent(Player.BLACK, factory, config);
     }
 
     /**
@@ -152,18 +159,52 @@ public final class NavigationService {
 
         mctsVsRandomBtn.setOnAction(e -> {
             dialog.close();
-            showGameAIvsAI(
-                    new MCTSPlayer(Player.RED, 2000, 0.9,0.5,0.5, 0.046,0.039, Math.sqrt(2)),
-                    new RandomPlayer(Player.BLACK)
-            );
+            // Create agents using factories and configs for dynamic adaptation
+            AIAdaptationConfig redConfig = new AIAdaptationConfig.Builder(Player.RED)
+                .iterations(2000)
+                .threshold(0.9)
+                .centralityWeight(0.5)
+                .connectivityWeight(0.5)
+                .biasScale(0.046)
+                .shortestPathWeight(0.039)
+                .explorationConstant(Math.sqrt(2))
+                .build();
+            
+            AIAdaptationConfig blackConfig = new AIAdaptationConfig.Builder(Player.BLACK).build();
+            
+            AIAgent redAgent = new MCTSPlayerFactory().createAgent(redConfig);
+            AIAgent blackAgent = new RandomPlayerFactory().createAgent(blackConfig);
+            
+            showGameAIvsAI(redAgent, blackAgent);
         });
 
         mctsVsMctsBtn.setOnAction(e -> {
             dialog.close();
-            showGameAIvsAI(
-                    new MCTSPlayer(Player.RED, 2000, 0.9,0.5,0.5, 0.046,0.039, Math.sqrt(2)),
-                    new MCTSPlayer(Player.RED, 2000, 0.9,0.5,0.5, 0.046,0.039, Math.sqrt(2))
-            );
+            // Create agents using factories and configs for dynamic adaptation
+            AIAdaptationConfig redConfig = new AIAdaptationConfig.Builder(Player.RED)
+                .iterations(2000)
+                .threshold(0.9)
+                .centralityWeight(0.5)
+                .connectivityWeight(0.5)
+                .biasScale(0.046)
+                .shortestPathWeight(0.039)
+                .explorationConstant(Math.sqrt(2))
+                .build();
+            
+            AIAdaptationConfig blackConfig = new AIAdaptationConfig.Builder(Player.BLACK)
+                .iterations(2000)
+                .threshold(0.9)
+                .centralityWeight(0.5)
+                .connectivityWeight(0.5)
+                .biasScale(0.046)
+                .shortestPathWeight(0.039)
+                .explorationConstant(Math.sqrt(2))
+                .build();
+            
+            AIAgent redAgent = new MCTSPlayerFactory().createAgent(redConfig);
+            AIAgent blackAgent = new MCTSPlayerFactory().createAgent(blackConfig);
+            
+            showGameAIvsAI(redAgent, blackAgent);
         });
 
         cancelBtn.setOnAction(e -> dialog.close());

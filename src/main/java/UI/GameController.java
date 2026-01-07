@@ -5,6 +5,8 @@ import Game.Color;
 import Game.Player;
 import Game.Rules;
 import AI.AiPlayer.AIAgent;
+import AI.AiPlayer.AIAgentFactory;
+import AI.AiPlayer.AIAdaptationConfig;
 import AI.mcts.HexGame.Move;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -42,12 +44,16 @@ public class GameController {
     }
 
     /**
-     * Sets up an AI agent for a specific player.
+     * Sets up an AI agent for a specific player (direct agent setup).
      * @param player The player this AI will control (RED or BLACK).
      * @param agent The AI agent to use.
      */
     public void setupAIAgent(Player player, AIAgent agent) {
+        if (agent == null) {
+            throw new IllegalArgumentException("Agent cannot be null");
+        }
         aiAgents.put(player, agent);
+        agent.initialize();
         System.out.println("AI Agent set up for: " + player);
         
         // If it's this player's turn, make the AI move
@@ -55,13 +61,31 @@ public class GameController {
             makeAIMove();
         }
     }
+    
+    /**
+     * Sets up an AI agent using a factory and configuration.
+     * Decouples agent instantiation from GameController.
+     * @param player The player this AI will control (RED or BLACK).
+     * @param factory The factory for creating the AI agent.
+     * @param config The configuration for the AI agent.
+     */
+    public void setupAIAgent(Player player, AIAgentFactory factory, AIAdaptationConfig config) {
+        if (factory == null || config == null) {
+            throw new IllegalArgumentException("Factory and config cannot be null");
+        }
+        AIAgent agent = factory.createAgent(config);
+        setupAIAgent(player, agent);
+    }
 
     /**
      * Removes the AI agent for a specific player.
      * @param player The player whose AI should be removed
      */
     public void removeAIAgent(Player player) {
-        aiAgents.remove(player);
+        AIAgent agent = aiAgents.remove(player);
+        if (agent != null) {
+            agent.cleanup();
+        }
         System.out.println("AI Agent removed for: " + player);
     }
 
@@ -69,6 +93,9 @@ public class GameController {
      * Removes all AI agents from the game.
      */
     public void removeAllAIAgents() {
+        for (AIAgent agent : aiAgents.values()) {
+            agent.cleanup();
+        }
         aiAgents.clear();
         this.aiThinking = false;
         System.out.println("All AI Agents removed");
@@ -182,8 +209,8 @@ public class GameController {
         Task<Move> aiTask = new Task<Move>() {
             @Override
             protected Move call() throws Exception {
-                // Get the best move from the AI
-                return currentAIAgent.getBestMove(adapter.getBoard(), currentPlayer);
+                // Get the best move from the AI (pass adapter as AIBoardAdapter)
+                return currentAIAgent.getBestMove(adapter, currentPlayer);
             }
         };
 

@@ -1,20 +1,23 @@
 package AI.AiPlayer;
 
 import AI.mcts.HexGame.Move;
-import Game.Board;
 import Game.Player;
 
 /**
  * Interface for all AI agents that can play the game.
+ * Decoupled from concrete Board implementations via AIBoardAdapter.
+ * Supports optional lifecycle management for agent initialization and cleanup.
+ * 
+ * @author Team 04
  */
 public interface AIAgent {
     /**
      * Determines the best move for this agent.
-     * @param board The current game board state
+     * @param board The current game board state (via AIBoardAdapter interface)
      * @param currentPlayer The player whose turn it is
      * @return The chosen move, or null if no moves are available
      */
-    Move getBestMove(Board board, Player currentPlayer);
+    Move getBestMove(AIBoardAdapter board, Player currentPlayer);
     
     /**
      * Gets the player this agent represents.
@@ -28,4 +31,22 @@ public interface AIAgent {
      * @return true if this agent controls the player, false otherwise
      */
     boolean controlsPlayer(Player player);
+    
+    /**
+     * Optional lifecycle method called when the agent is set up for a game.
+     * Can be overridden by implementations that need initialization.
+     * Default implementation does nothing.
+     */
+    default void initialize() {
+        // Default: no initialization needed
+    }
+    
+    /**
+     * Optional lifecycle method called when the agent is removed from a game.
+     * Can be overridden by implementations that need cleanup.
+     * Default implementation does nothing.
+     */
+    default void cleanup() {
+        // Default: no cleanup needed
+    }
 }

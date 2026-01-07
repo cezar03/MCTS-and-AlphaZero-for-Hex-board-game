@@ -42,7 +42,7 @@ public class MainMenu extends Application {
         //Button skinsBtn = new Button("GAMBLING"); skinsBtn.getStyleClass().add("btn-secondary");
         Button aboutBtn = new Button("ABOUT"); aboutBtn.getStyleClass().add("btn-ghost");
 
-        playBtn.setOnAction(e -> nav.showGame(11, 55, null));
+        playBtn.setOnAction(e -> nav.showGame(11, 55));
         aiBtn.setOnAction(e -> nav.showDifficultySelection());
         testAIvsAIBtn.setOnAction(e -> nav.showAITesting());
         //skinsBtn.setOnAction(e -> nav.showSkins());

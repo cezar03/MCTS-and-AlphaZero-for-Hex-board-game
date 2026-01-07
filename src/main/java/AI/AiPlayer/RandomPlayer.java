@@ -4,7 +4,6 @@ import java.util.List;
 
 import AI.mcts.HexGame.GameState;
 import AI.mcts.HexGame.Move;
-import Game.Board;
 import Game.Player;
 
 /**
@@ -28,11 +27,11 @@ public class RandomPlayer implements AIAgent {
     /**
      * Randomly chooses a move for the random player.
      * 
-     * @param board The current game board state
+     * @param board The current game board state (via AIBoardAdapter interface)
      * @param currentPlayer The player whose turn it is
      * @return A random move from the list of legal moves, or null if no moves are available
      */
-    public Move getBestMove(Board board, Player currentPlayer) {
+    public Move getBestMove(AIBoardAdapter board, Player currentPlayer) {
         GameState gameState = new GameState(board, currentPlayer);
 
         List<Move> possibleMoves = gameState.getLegalMoves();
