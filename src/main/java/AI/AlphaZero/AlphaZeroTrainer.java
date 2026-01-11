@@ -66,7 +66,7 @@ public class AlphaZeroTrainer {
             Node root = mcts.search(board, currentPlayer, iterations);
 
             // Extract the Policy from the root's visit counts
-            // For the first 30 moves, use temperature=1 (explore), then temperature=0 (exploit)
+            // For the first 10 moves, use temperature=1 (explore), then temperature=0 (exploit)
             double temp = (moveCount < 10) ? 1.0 : 0.05; // Shortened for testing
             double[] policy = mcts.getSearchPolicy(root, temp, boardSize);
 
@@ -98,7 +98,7 @@ public class AlphaZeroTrainer {
         // The value must be relative to the player who was deciding!
         // If Red won (Result=1), then for a board where Red was playing, Target=1.
         // But for a board where Black was playing, Target=-1.
-        Color historyPlayer = Color.RED; // We know game started with Red
+        Color historyPlayer = Color.RED; // We assume game started with Red
         
         List<TrainingExampleData> finalExamples = new ArrayList<>();
         for (TrainingExampleData example : gameHistory) {
