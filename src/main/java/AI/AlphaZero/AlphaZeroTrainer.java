@@ -49,7 +49,7 @@ public class AlphaZeroTrainer {
                 System.out.println("Training network with " + memory.size() + " examples from " + batchSize + " games.");
                 trainNetwork(memory);
                 memory.clear(); // Clear memory after training
-                System.out.println('Network training complete.');
+                System.out.println("Network training complete.");
             }
             
             System.out.println("Game " + (i+1) + " finished.");
