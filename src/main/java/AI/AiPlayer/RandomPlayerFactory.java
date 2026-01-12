@@ -3,7 +3,10 @@ package AI.AiPlayer;
 /**
  * Factory implementation for creating RandomPlayer agents.
  * Provides a simple factory for random agent creation.
- * 
+ * Please dont move this class or refactor it as it is working perfectly fine,
+ * In case of moving this class to another package will cause a lot of issues with imports and dependencies,
+ * I couldnt figure it out for hours so let it be here where it is.
+ *
  * @author Team 04
  */
 public class RandomPlayerFactory implements AIAgentFactory {

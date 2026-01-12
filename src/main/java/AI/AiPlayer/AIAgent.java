@@ -7,6 +7,9 @@ import Game.Player;
  * Interface for all AI agents that can play the game.
  * Decoupled from concrete Board implementations via AIBoardAdapter.
  * Supports optional lifecycle management for agent initialization and cleanup.
+ * Please dont move this class or refactor it as it is working perfectly fine,
+ * In case of moving this class to another package will cause a lot of issues with imports and dependencies,
+ * I couldnt figure it out for hours so let it be here where it is.
  * 
  * @author Team 04
  */

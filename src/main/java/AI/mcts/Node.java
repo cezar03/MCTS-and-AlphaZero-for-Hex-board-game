@@ -11,6 +11,7 @@ public final class Node { // this is not a final version. it's just a skeleton t
     public double wins = 0.0; // how many times did it win
     public int playerThatMoved; //Player 1 or player 2. 
     public double heuristicBias =0.0; // Default bias
+    public double priorProbability = 0.0;
     // constructor 
     public Node(Move move, Node parent, int playerThatMoved){
         this.move = move; 

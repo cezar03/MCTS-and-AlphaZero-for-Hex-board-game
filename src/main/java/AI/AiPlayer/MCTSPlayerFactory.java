@@ -5,6 +5,9 @@ import Game.Player;
 /**
  * Factory implementation for creating MCTSPlayer agents.
  * Handles all complexity of MCTSPlayer instantiation with appropriate configuration.
+ * Please dont move this class or refactor it as it is working perfectly fine,
+ * In case of moving this class to another package will cause a lot of issues with imports and dependencies,
+ * I couldnt figure it out for hours so let it be here where it is.
  * 
  * @author Team 04
  */

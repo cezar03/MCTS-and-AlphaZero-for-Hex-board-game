@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /** Controller class to manage game logic and interactions between the BoardAdapter and BoardView 
+ * refactoring this is highly advised as this class is getting really big however if anyone has the time and ability please go ahead i am really tired and curious
  * @author Team 04
 */
 public class GameController {
@@ -27,6 +28,16 @@ public class GameController {
     // Map with AI player(s) (can be more than one when testing performance of agents)
     private Map<Player, AIAgent> aiAgents = new HashMap<>();
     private boolean aiThinking = false;
+    
+    // Callback for when game ends
+    private GameEndListener gameEndListener;
+    
+    /**
+     * Interface for listening to game end events.
+     */
+    public interface GameEndListener {
+        void onGameEnd(Player winner);
+    }
 
     /**
      * Constructor for GameController
@@ -41,6 +52,14 @@ public class GameController {
         this.aiAgents = new HashMap<>();
         boardView.setController(this);
         boardView.updateTurnDisplay(currentPlayer);
+    }
+
+    /**
+     * Sets the listener that will be called when the game ends.
+     * @param listener The GameEndListener to be notified when game ends
+     */
+    public void setGameEndListener(GameEndListener listener) {
+        this.gameEndListener = listener;
     }
 
     /**
@@ -123,6 +142,24 @@ public class GameController {
     }
 
     /**
+     * Resets the game state for a new game while keeping AI agents intact.
+     * Resets the board, current player, and game over flag.
+     */
+    public void resetForNewGame() {
+        this.adapter.reset();
+        this.currentPlayer = Player.RED;
+        this.gameOver = false;
+        this.moveCount = 0;
+        boardView.update(adapter);
+        boardView.updateTurnDisplay(currentPlayer);
+        
+        // If current player is AI-controlled, make the AI move
+        if (isAIControlled(currentPlayer) && !gameOver) {
+            makeAIMove();
+        }
+    }
+
+    /**
      * Returns the current player whose turn it is to make a move.
      * 
      * @return the current player (either RED or BLACK)
@@ -176,6 +213,9 @@ public class GameController {
             Player winner = adapter.getWinner();
             System.out.println("Player " + winner + " wins!");
             boardView.updateWinDisplay(winner);
+            if (gameEndListener != null) {
+                gameEndListener.onGameEnd(winner);
+            }
             return;
         }
 
@@ -260,6 +300,9 @@ public class GameController {
             Player winner = adapter.getWinner();
             System.out.println("Player " + winner + " wins!");
             boardView.updateWinDisplay(winner);
+            if (gameEndListener != null) {
+                gameEndListener.onGameEnd(winner);
+            }
             return;
         }
 
@@ -275,6 +318,17 @@ public class GameController {
         //     timer.setRepeats(false);
         //     timer.start();
         // }
+        if (isAIControlled(currentPlayer)) {
+            // after a long time of trying to fix why ai vs ai mode is not working i realized this part was missing :) god bless this code
+            new Thread(() -> {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+                Platform.runLater(this::makeAIMove);
+            }).start();
+        }
     }
 
 }
