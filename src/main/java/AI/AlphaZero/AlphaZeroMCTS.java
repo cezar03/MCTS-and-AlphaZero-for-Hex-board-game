@@ -11,6 +11,7 @@ import java.util.Map;
 
 public class AlphaZeroMCTS {
     private AlphaZeroNet network; // The neural network used for evaluations
+    // TODO: Decide if this is the final C value we use for the neural network.
     private final double C_PUCT = 1.4; // Exploration constant
 
     public AlphaZeroMCTS(AlphaZeroNet network) {

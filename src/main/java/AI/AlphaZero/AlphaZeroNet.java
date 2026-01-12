@@ -33,7 +33,9 @@ public class AlphaZeroNet {
         int outputSize = boardSize * boardSize; // The total number of moves. The policy head will need to output this amount of probabilities.
 
         ComputationGraphConfiguration conf = new NeuralNetConfiguration.Builder()
+            // TODO: Choose the best value for the learning rate.
             .updater(new Adam(0.001)) // Learning Rate
+            // TODO: Choose the best value for L2 regularization.
             .l2(0.0001) // Regularization to prevent overfitting
             .graphBuilder() // Allows for creating split paths in the network (policy and value).
             .addInputs("input") // Input layer
@@ -49,6 +51,7 @@ public class AlphaZeroNet {
                  * Activation.RELU adds non-linearity, allowing the network to learn complex patterns. It applies ReLU logic and turns negative numbers to 0.
                  * Finally the layer gets connected to the input node defined earlier.
                  */
+                // TODO: Choose the best number for nOut (number of filters)
                 .stride(1,1).padding(1,1).nOut(64).activation(Activation.RELU).build(), "input")
             .addLayer("bn1", new BatchNormalization(), "conv1") // Normalizes the output of conv1 to stabilize and speed up training.
             

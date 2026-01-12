@@ -26,21 +26,33 @@ public class AlphaZeroTrainer {
     /**
      * The main method to start the training process.
      * @param numGames How many self-play games to run.
+     * @param batchSize How many games to accumulate before training the network.
      * @param mctsIterations How many mcts iterations per move.
      */
-    public void train(int numGames, int mctsIterations) {
+    public void train(int numGames, int batchSize, int mctsIterations) {
+
+        // First create a list to hold data from multiple games.
+        List<TrainingExampleData> memory = new ArrayList<>();
+
         for (int i = 0; i < numGames; i++) {
             System.out.println("Starting Self-Play Game " + (i + 1));
             
             // Play one full game and collect data
             List<TrainingExampleData> examples = selfPlay(mctsIterations);
             
-            // Train the network on this data
-            // In a real scenario, you would accumulate many games before training, 
-            // but for simplicity, we train after every game here.
-            trainNetwork(examples);
+            // Add data from this game to the memory.
+            memory.addAll(examples);
+
+            // Check if we have enough data to train the network.
+            // i+1 is the number of games played so far, and if i+1 is a multiple of the batch size, then train the network.
+            if ((i + 1) % batchSize == 0) {
+                System.out.println("Training network with " + memory.size() + " examples from " + batchSize + " games.");
+                trainNetwork(memory);
+                memory.clear(); // Clear memory after training
+                System.out.println('Network training complete.');
+            }
             
-            System.out.println("Game " + (i+1) + " finished. Training complete.");
+            System.out.println("Game " + (i+1) + " finished.");
         }
         
         // Save the trained model
@@ -65,8 +77,9 @@ public class AlphaZeroTrainer {
             // Run MCTS to get the root of the search tree
             Node root = mcts.search(board, currentPlayer, iterations);
 
+            // TODO: Decide on temperature threshold and values.
             // Extract the Policy from the root's visit counts
-            // For the first 10 moves, use temperature=1 (explore), then temperature=0 (exploit)
+            // For the first 10 moves, use temperature=1 (explore), then temperature=0.05 (exploit)
             double temp = (moveCount < 10) ? 1.0 : 0.05; // Shortened for testing
             double[] policy = mcts.getSearchPolicy(root, temp, boardSize);
 
