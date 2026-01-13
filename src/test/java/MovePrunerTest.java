@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class MovePrunerTest {
 
-    //take score from the map, otherwise we set 0.0
+    //take score from the map otherwise we set 0.0
     static final class MapHeuristic implements Heuristic {
         private final Map<Move, Double> scores;
 
