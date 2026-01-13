@@ -7,6 +7,6 @@ public class AlphaZeroRunner {
         
         // TODO: Decide on the number of self-play games, batch size, and MCTS iterations per move.
         // Run self-play games, with a number MCTS simulations per move to be specified below.
-        trainer.train(100_000, 50, 200);
+        trainer.train(100_000, 500, 200);
     }
 }
