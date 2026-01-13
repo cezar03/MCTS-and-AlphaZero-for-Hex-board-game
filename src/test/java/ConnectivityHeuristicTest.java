@@ -4,9 +4,8 @@ import AI.mcts.Optimazation.Heuristic.ConnectivityHeuristic;
 import Game.Board;
 import Game.Color;
 import Game.Player;
-import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-
+import org.junit.jupiter.api.Test;
 class ConnectivityHeuristicTest {
     //initial state
     private static void place(Board board, int r, int c, Color color) {

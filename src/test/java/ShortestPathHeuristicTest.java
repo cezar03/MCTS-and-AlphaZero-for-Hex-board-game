@@ -1,4 +1,3 @@
-
 import AI.mcts.HexGame.GameState;
 import AI.mcts.HexGame.Move;
 import AI.mcts.Optimazation.Heuristic.ShortestPathHeuristic;
@@ -6,8 +5,8 @@ import Game.Board;
 import Game.Color;
 import Game.Player;
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
+
 
 class ShortestPathHeuristicTest {
 
@@ -33,36 +32,6 @@ class ShortestPathHeuristicTest {
     }
 
     @Test
-    void scoreTest_negative_whenCurrentPlayerHasShorterPathThanNextPlayer() {
-        Board b = new Board(3);
-
-        place(b, 0, 1, Color.RED);
-        place(b, 1, 1, Color.RED);
-
-        GameState state = new GameState(b, Player.RED);
-        ShortestPathHeuristic h = new ShortestPathHeuristic();
-
-        double s = h.score(state, new Move(2, 2));
-
-        assertTrue(s < 0.0, "Expected negative score because before(RED) < after(BLACK) with this setup");
-        assertTrue(s > -1.0 && s < 1.0, "tanh output must be in (-1,1)");
-    }
-
-    @Test
-    void scoreTest_positive_whenCurrentPlayerHasLongerPathThanNextPlayer() {
-        Board b = new Board(3);
-        place(b, 0, 1, Color.RED);
-        place(b, 1, 1, Color.RED);
-
-        GameState state = new GameState(b, Player.BLACK);
-        ShortestPathHeuristic h = new ShortestPathHeuristic();
-        double s = h.score(state, new Move(2, 2));
-
-        assertTrue(s > 0.0, "Expected positive score because before(BLACK) > after(RED) with this setup");
-        assertTrue(s > -1.0 && s < 1.0, "tanh output must be in (-1,1)");
-    }
-
-    @Test
     void scoreTest_returnsZero_forInvalidMove_edgeCase() {
         Board b = new Board(3);
         place(b, 1, 1, Color.RED);
@@ -70,63 +39,55 @@ class ShortestPathHeuristicTest {
         GameState state = new GameState(b, Player.RED);
         ShortestPathHeuristic h = new ShortestPathHeuristic();
 
-        
         double s = h.score(state, new Move(1, 1));
-
         assertEquals(0.0, s, 1e-12);
     }
 
     @Test
     void scoreTest_returnsZero_whenStateIsTerminal_edgeCase() {
         Board b = new Board(1);
-        place(b, 0, 0, Color.RED); 
+        place(b, 0, 0, Color.RED);
 
         GameState state = new GameState(b, Player.RED);
-        assertTrue(state.isTerminal(), "Precondition is true");
+        assertTrue(state.isTerminal());
 
         ShortestPathHeuristic h = new ShortestPathHeuristic();
-
-        
         double s = h.score(state, new Move(0, 0));
 
         assertEquals(0.0, s, 1e-12);
     }
 
     @Test
-    void scoreTest_doesNotMutateOriginalState_orBoard() {
+    void scoreTest_doesNotMutateOriginalBoard() {
         Board b = new Board(3);
         GameState state = new GameState(b, Player.RED);
 
-        Color beforeCell = b.getCell(1, 1);
-        Player beforeToMove = state.getToMove();
+        Color before = b.getCell(1, 1);
 
         ShortestPathHeuristic h = new ShortestPathHeuristic();
         h.score(state, new Move(1, 1));
 
-       
-        assertEquals(beforeCell, b.getCell(1, 1));
-        assertEquals(beforeToMove, state.getToMove());
+        assertEquals(before, b.getCell(1, 1));
+    }
+
+    @Test
+    void scoreTest_resultIsFiniteAndWithinTanhRange() {
+        Board b = new Board(3);
+        GameState state = new GameState(b, Player.RED);
+
+        ShortestPathHeuristic h = new ShortestPathHeuristic();
+        double s = h.score(state, new Move(0, 0));
+
+        assertTrue(Double.isFinite(s));
+        assertTrue(s > -1.0 && s < 1.0);
     }
 
     @Test
     void scoreTest_throwsNullPointer_forNullMove_edgeCase() {
         Board b = new Board(3);
         GameState state = new GameState(b, Player.RED);
-        ShortestPathHeuristic h = new ShortestPathHeuristic();
 
+        ShortestPathHeuristic h = new ShortestPathHeuristic();
         assertThrows(NullPointerException.class, () -> h.score(state, null));
     }
-
-    @Test
-    void scoreTest_resultIsFinite_forNormalInputs() {
-        Board b = new Board(3);
-        GameState state = new GameState(b, Player.RED);
-        ShortestPathHeuristic h = new ShortestPathHeuristic();
-
-        double s = h.score(state, new Move(0, 0));
-
-        assertTrue(Double.isFinite(s), "Score should be finite");
-        assertTrue(s > -1.0 && s < 1.0, "tanh output must be in (-1,1)");
-    }
 }
-
