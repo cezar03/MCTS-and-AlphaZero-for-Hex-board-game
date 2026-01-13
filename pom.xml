@@ -78,6 +78,15 @@
                 </configuration>
             </plugin>
 
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <mainClass>AI.AlphaZero.AlphaZeroRunner</mainClass>
+                </configuration>
+            </plugin>
+
             <!-- JavaFX Maven plugin for running with mvn javafx:run -->
             <plugin>
                 <groupId>org.openjfx</groupId>

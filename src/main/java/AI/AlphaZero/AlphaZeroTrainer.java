@@ -1,16 +1,15 @@
 package AI.AlphaZero;
 
-import AI.mcts.Node;
-import AI.mcts.HexGame.Move;
-import Game.Board;
-import Game.Color;
-import org.deeplearning4j.nn.graph.ComputationGraph;
-import org.nd4j.linalg.api.ndarray.INDArray;
-import org.nd4j.linalg.dataset.api.MultiDataSet;
-import org.nd4j.linalg.factory.Nd4j;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.factory.Nd4j;
+
+import AI.mcts.HexGame.Move;
+import AI.mcts.Node;
+import Game.Board;
+import Game.Color;
 
 public class AlphaZeroTrainer {
     private AlphaZeroNet network;
@@ -79,8 +78,8 @@ public class AlphaZeroTrainer {
 
             // TODO: Decide on temperature threshold and values.
             // Extract the Policy from the root's visit counts
-            // For the first 10 moves, use temperature=1 (explore), then temperature=0.05 (exploit)
-            double temp = (moveCount < 10) ? 1.0 : 0.05; // Shortened for testing
+            // For the first 30 moves, use temperature=1 (explore), then temperature=0 (exploit)
+            double temp = (moveCount < 30) ? 1.0 : 0.2; // Shortened for testing
             double[] policy = mcts.getSearchPolicy(root, temp, boardSize);
 
             // Store the state and the target policy

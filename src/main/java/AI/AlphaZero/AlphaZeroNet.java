@@ -1,16 +1,19 @@
 package AI.AlphaZero;
 
-import org.deeplearning4j.nn.conf.inputs.InputType;
+import java.io.File;
+import java.io.IOException;
+
 import org.deeplearning4j.nn.conf.ComputationGraphConfiguration;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
-import org.deeplearning4j.nn.conf.layers.*;
-import org.deeplearning4j.nn.graph.ComputationGraph; // This is used for branching networks, which we need for AlphaZero.
+import org.deeplearning4j.nn.conf.inputs.InputType; // This is used for branching networks, which we need for AlphaZero.
+import org.deeplearning4j.nn.conf.layers.BatchNormalization;
+import org.deeplearning4j.nn.conf.layers.ConvolutionLayer; // This is used for optimization.
+import org.deeplearning4j.nn.conf.layers.DenseLayer;
+import org.deeplearning4j.nn.conf.layers.OutputLayer;
+import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.nd4j.linalg.activations.Activation;
-import org.nd4j.linalg.learning.config.Adam; // This is used for optimization.
+import org.nd4j.linalg.learning.config.Adam;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
-
-import java.io.IOException;
-import java.io.File;
 
 public class AlphaZeroNet {
     // The actual neural network model. 
@@ -33,10 +36,8 @@ public class AlphaZeroNet {
         int outputSize = boardSize * boardSize; // The total number of moves. The policy head will need to output this amount of probabilities.
 
         ComputationGraphConfiguration conf = new NeuralNetConfiguration.Builder()
-            // TODO: Choose the best value for the learning rate.
-            .updater(new Adam(0.001)) // Learning Rate
-            // TODO: Choose the best value for L2 regularization.
-            .l2(0.0001) // Regularization to prevent overfitting
+            .updater(new Adam(3e-4)) // Learning Rate
+            .l2(3e-4) // Regularization to prevent overfitting
             .graphBuilder() // Allows for creating split paths in the network (policy and value).
             .addInputs("input") // Input layer
 

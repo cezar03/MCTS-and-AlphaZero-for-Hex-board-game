@@ -1,18 +1,22 @@
 package AI.AlphaZero;
 
-import AI.mcts.Node;
-import AI.mcts.HexGame.Move;
-import Game.Board;
-import Game.Color;
-import org.nd4j.linalg.api.ndarray.INDArray;
-
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.math3.distribution.GammaDistribution;
+import org.nd4j.linalg.api.ndarray.INDArray;
+
+import AI.mcts.HexGame.Move;
+import AI.mcts.Node;
+import Game.Board;
+import Game.Color;
+
 public class AlphaZeroMCTS {
     private AlphaZeroNet network; // The neural network used for evaluations
-    // TODO: Decide if this is the final C value we use for the neural network.
-    private final double C_PUCT = 1.4; // Exploration constant
+    private final double C_PUCT = Math.sqrt(2); // Exploration constant
+    private final double DIR_EPS = 0.25;  // ε
+    private final double DIR_ALPHA = 0.10; // α for 11x11 Hex
 
     public AlphaZeroMCTS(AlphaZeroNet network) {
         this.network = network;
@@ -25,6 +29,7 @@ public class AlphaZeroMCTS {
         
         // EXPAND ROOT immediately using the network
         expandAndEvaluate(root, rootBoard, rootPlayer);
+        addDirichletNoiseToRoot(root);
 
         // Perform Simulations
         for (int i = 0; i < iterations; i++) {
@@ -104,6 +109,15 @@ public class AlphaZeroMCTS {
             policySum += prob;
         }
 
+        if (policySum > 0) {
+            for (Node child : node.children.values()) {
+                child.priorProbability /= policySum;
+            }
+        } else {
+            double uniform = 1.0 / node.children.size();
+            for (Node child : node.children.values()) child.priorProbability = uniform;
+        }
+
         return value;
     }
 
@@ -175,5 +189,41 @@ public class AlphaZeroMCTS {
         }
         
         return policy;
+    }
+
+    private void addDirichletNoiseToRoot(Node root) {
+        int k = root.children.size();
+        if (k == 0) return;
+
+        GammaDistribution gamma = new GammaDistribution(DIR_ALPHA, 1.0);
+
+        double[] noise = new double[k];
+        double sum = 0.0;
+
+        for (int i = 0; i < k; i++) {
+            double x = gamma.sample();
+            noise[i] = x;
+            sum += x;
+        }
+
+        if (sum <= 0.0) {
+            double uniform = 1.0 / k;
+            for (int i = 0; i < k; i++) noise[i] = uniform;
+        } else {
+            for (int i = 0; i < k; i++) noise[i] /= sum;
+        }
+
+        var children = new ArrayList<>(root.children.values());
+
+        double priorSum = 0.0;
+        for (int i = 0; i < k; i++) {
+            Node child = children.get(i);
+            child.priorProbability = (1 - DIR_EPS) * child.priorProbability + DIR_EPS * noise[i];
+            priorSum += child.priorProbability;
+        }
+
+        if (priorSum > 0.0) {
+            for (Node child : children) child.priorProbability /= priorSum;
+        }
     }
 }
