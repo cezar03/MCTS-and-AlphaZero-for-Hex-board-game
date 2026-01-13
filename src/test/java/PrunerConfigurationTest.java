@@ -1,5 +1,8 @@
-package AI.mcts.Steps.Tuner;
+
 import org.junit.jupiter.api.Test;
+
+import AI.mcts.Steps.Tuner.PrunerConfig;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class PrunerConfigTest {

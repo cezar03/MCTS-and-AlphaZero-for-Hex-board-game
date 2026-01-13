@@ -1,5 +1,6 @@
-package AI.mcts;
 
+
+import AI.mcts.Node;
 import AI.mcts.HexGame.Move;
 import org.junit.jupiter.api.Test;
 

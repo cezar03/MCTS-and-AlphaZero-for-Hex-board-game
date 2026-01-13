@@ -1,8 +1,9 @@
-package AI.mcts.Optimazation;
 
 import Game.Board;
 import Game.Color;
 import org.junit.jupiter.api.Test;
+
+import AI.mcts.Optimazation.ShortestPath;
 
 import static org.junit.jupiter.api.Assertions.*;
 
