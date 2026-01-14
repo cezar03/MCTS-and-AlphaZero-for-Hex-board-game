@@ -11,11 +11,31 @@ import AI.mcts.Node;
 import Game.Board;
 import Game.Color;
 
+/**
+ * Manages the self-play training loop for AlphaZero.
+ * This class orchestrates the entire training process: generating self-play games,
+ * collecting training examples, and updating the neural network.
+ * 
+ * <p>The training process follows the following methodology:
+ * <ol>
+ *   <li>Play games against itself using MCTS + neural network</li>
+ *   <li>Collect (state, policy, outcome) tuples from each game</li>
+ *   <li>Accumulate examples across multiple games</li>
+ *   <li>Train the neural network on batches of examples</li>
+ *   <li>Repeat with the improved network</li>
+ * </ol>
+*/
 public class AlphaZeroTrainer {
     private AlphaZeroNet network;
     private AlphaZeroMCTS mcts;
     private int boardSize;
 
+    /**
+     * Constructs a trainer for the AlphaZero algorithm.
+     * Initializes a new neural network and MCTS instance for the specified board size.
+     * 
+     * @param boardSize the size of the Hex board
+    */
     public AlphaZeroTrainer(int boardSize) {
         this.boardSize = boardSize;
         this.network = new AlphaZeroNet(boardSize);
@@ -23,11 +43,22 @@ public class AlphaZeroTrainer {
     }
 
     /**
-     * The main method to start the training process.
-     * @param numGames How many self-play games to run.
-     * @param batchSize How many games to accumulate before training the network.
-     * @param mctsIterations How many mcts iterations per move.
-     */
+     * Executes the main training loop for AlphaZero.
+     * 
+     * <p>Process:
+     * <ol>
+     *   <li>Plays the specified number of self-play games sequentially</li>
+     *   <li>Collects training examples from each game</li>
+     *   <li>Every {@code batchSize} games, trains the network on accumulated examples</li>
+     *   <li>Saves the final trained model to disk</li>
+     * </ol>
+     * 
+     * @param numGames the total number of self-play games to generate
+     * @param batchSize how many games to accumulate before performing a network update
+     *                  (smaller = more frequent updates but less stable; larger = more stable but slower)
+     * @param mctsIterations the number of MCTS simulations to run for each move decision
+     *                       (more iterations = stronger play but slower training)
+    */
     public void train(int numGames, int batchSize, int mctsIterations) {
 
         // First create a list to hold data from multiple games.
@@ -64,8 +95,29 @@ public class AlphaZeroTrainer {
     }
 
     /**
-     * Simulates one full game of Self-Play.
-     */
+     * Simulates one complete game of self-play using MCTS guided by the current neural network.
+     * 
+     * <p>For each move:
+     * <ol>
+     *   <li>Runs MCTS to obtain an improved policy (visit count distribution)</li>
+     *   <li>Records the board state and the improved policy as a training example</li>
+     *   <li>Selects a move probabilistically according to the policy</li>
+     *   <li>Applies the move and continues until the game ends</li>
+     * </ol>
+     * 
+     * <p>Temperature schedule:
+     * <ul>
+     *   <li>Early game (first 30 moves): temperature = 1.0 for exploration</li>
+     *   <li>Late game: temperature = 0.2 for more deterministic play</li>
+     * </ul>
+     * 
+     * <p>After the game concludes, all training examples are updated with the actual
+     * game outcome relative to the player who made each move.
+     * 
+     * @param iterations the number of MCTS simulations per move
+     * @return a list of training examples: (board state, improved policy, game outcome)
+     *         where outcome is +1 for a win, -1 for a loss from that position's player's perspective
+    */
     private List<TrainingExampleData> selfPlay(int iterations) {
         List<TrainingExampleData> gameHistory = new ArrayList<>();
         Board board = new Board(boardSize);
@@ -127,8 +179,13 @@ public class AlphaZeroTrainer {
     }
 
     /**
-     * Helper to pick a move index based on the probability distribution.
-     */
+     * Samples a move from the probability distribution provided by the search policy.
+     * Moves with higher probabilitiesare more likely to be selected, but all legal moves have some chance.
+     * 
+     * @param policy the probability distribution over all board positions (should sum to 1.0)
+     * @param board the current board state (used for fallback if needed)
+     * @return the selected move as a Move object with row and column coordinates
+    */
     private Move selectMoveFromPolicy(double[] policy, Board board) {
         // Generate a random number between 0 and 1.
         double randomNumber = Math.random();
@@ -156,8 +213,24 @@ public class AlphaZeroTrainer {
     }
 
     /**
-     * Feeds the collected examples into the neural network to update weights.
-     */
+     * Updates the neural network weights using the collected training examples.
+     * 
+     * <p>Training process:
+     * <ol>
+     *   <li>Combines all training examples into a single batch</li>
+     *   <li>Separates inputs (board states) from targets (policies and values)</li>
+     *   <li>Performs one training step (forward pass + backpropagation + weight update)</li>
+     * </ol>
+     * 
+     * <p>The network learns to:
+     * <ul>
+     *   <li>Predict policies that match the improved MCTS search policies (via KL-divergence loss)</li>
+     *   <li>Predict values that match actual game outcomes (via MSE loss)</li>
+     * </ul>
+     * 
+     * @param examples the list of training examples accumulated from self-play games,
+     *                 each containing a board state, target policy, and target value
+    */
     private void trainNetwork(List<TrainingExampleData> examples) {
         if (examples.isEmpty()) return; // Nothing to train on
 

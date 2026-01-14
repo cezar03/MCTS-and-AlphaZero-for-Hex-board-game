@@ -5,12 +5,39 @@ import Game.Color;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
 
+/**
+ * Encodes Hex board states into a tensor format suitable for neural network input.
+ * The encoding uses a 3-plane representation to capture all relevant game state information.
+ * 
+ * <p>Plane representation:
+ * <ul>
+ *   <li><strong>Plane 0:</strong> Red piece positions (1.0 where Red has a piece, 0.0 elsewhere)</li>
+ *   <li><strong>Plane 1:</strong> Black piece positions (1.0 where Black has a piece, 0.0 elsewhere)</li>
+ *   <li><strong>Plane 2:</strong> Current player indicator (1.0 everywhere if Red to move, 0.0 if Black to move)</li>
+ * </ul>
+ * 
+ * <p>This representation allows the neural network to:
+ * <ul>
+ *   <li>Identify piece positions for both players</li>
+ *   <li>Determine whose turn it is</li>
+ *   <li>Process spatial patterns using convolutional layers</li>
+ * </ul>
+*/
 public class BoardEncoder {
+    
     /**
-     * Converts the Hex Board into a format that the neural network understands. (A 3 plane format)
-     * Plane 0: Red Stones (1 if Red, 0 otherwise)
-     * Plane 1: Black Stones (1 if Black, 0 otherwise)
-     * Plane 2: Current Player (1 if Red to play, 0 if Black
+     * Converts a Hex board and current player into a 3-plane tensor representation.
+     * 
+     * <p>The output tensor has shape [1, 3, boardSize, boardSize] where:
+     * <ul>
+     *   <li>Dimension 0: Batch size (always 1 for single board encoding)</li>
+     *   <li>Dimension 1: Channels (3 planes as described above)</li>
+     *   <li>Dimensions 2-3: Spatial dimensions matching the board size</li>
+     * </ul>
+     * 
+     * @param board the current Hex board state to encode
+     * @param currentPlayer the player whose turn it is (Color.RED or Color.BLACK)
+     * @return an INDArray tensor of shape [1, 3, boardSize, boardSize] representing the encoded board
     */
     public static INDArray encode(Board board, Color currentPlayer) {
         int size = board.getSize();
