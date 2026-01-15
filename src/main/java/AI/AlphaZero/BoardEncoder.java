@@ -1,9 +1,10 @@
 package AI.AlphaZero;
 
-import Game.Board;
-import Game.Color;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
+
+import Game.Board;
+import Game.Color;
 
 /**
  * Encodes Hex board states into a tensor format suitable for neural network input.

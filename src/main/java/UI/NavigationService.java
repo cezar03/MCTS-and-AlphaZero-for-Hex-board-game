@@ -20,8 +20,16 @@ import Game.Board;
 import Game.BoardAdapter;
 import Game.Player;
 import AI.AiPlayer.AIAgent;
+import AI.AiPlayer.AIAgentFactory;
+import AI.AiPlayer.AIAdaptationConfig;
 import AI.AiPlayer.MCTSPlayer;
+import AI.AiPlayer.MCTSPlayerFactory;
 import AI.AiPlayer.RandomPlayer;
+import AI.AiPlayer.RandomPlayerFactory;
+import AI.AlphaZero.AlphaZeroConfig;
+import AI.AlphaZero.AlphaZeroMCTS;
+import AI.AlphaZero.AlphaZeroPlayer;
+import AI.AlphaZero.AlphaZeroNet;
 
 public final class NavigationService {
     private final Stage stage;
@@ -45,6 +53,18 @@ public final class NavigationService {
      * @param hexSize size of the hexagons
      */
     public void showGame(int size, double hexSize) {
+        ScoreBoard scoreBoard = new ScoreBoard();
+        showGameWithScoreboard(size, hexSize, null, null, scoreBoard);
+    }
+
+    /**
+     * Shows the game with scoreboard tracking for human vs human games.
+     * @param size size of the Hex board
+     * @param hexSize size of the hexagons
+     * @param scoreBoard the scoreboard to track wins
+     */
+    private void showGameWithScoreboard(int size, double hexSize, AIAgentFactory aiFactory, 
+                                        AIAdaptationConfig aiConfig, ScoreBoard scoreBoard) {
         Board board = new Board(size);
         BoardAdapter adapter = new BoardAdapter(board);
         BoardView boardView = new BoardView(size, hexSize);
@@ -55,7 +75,11 @@ public final class NavigationService {
         Label turnLabel = new Label();
         turnLabel.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px;");
 
-        // Set the label in the view
+        // Create scoreboard label
+        Label scoreLabel = new Label(scoreBoard.toString());
+        scoreLabel.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px;");
+
+        // Set the labels in the view
         boardView.setTurnLabel(turnLabel);
 
         // Wrap BoardView in a BorderPane to add controls
@@ -67,8 +91,8 @@ public final class NavigationService {
         Button backBtn = Buttons.primary("← Back to Menu");
         backBtn.setOnAction(e -> showMenu());
 
-        // Add button to the top
-        HBox topBar = new HBox(12, backBtn, turnLabel);
+        // Add button and labels to the top
+        HBox topBar = new HBox(12, backBtn, turnLabel, scoreLabel);
         topBar.setPadding(new Insets(12));
         topBar.setAlignment(Pos.CENTER_LEFT);
         root.setTop(topBar);
@@ -81,6 +105,31 @@ public final class NavigationService {
         // initial paint
         boardView.update(adapter);
         boardView.updateTurnDisplay(controller.getCurrentPlayer());
+
+        // Set up game end listener to show play again dialog
+        controller.setGameEndListener(winner -> {
+            scoreBoard.recordWin(winner);
+            scoreLabel.setText(scoreBoard.toString());
+            
+            PlayAgainDialog.showDialog(winner, scoreBoard,
+                () -> {
+                    // Play Again
+                    controller.resetForNewGame();
+                },
+                () -> {
+                    // Back to Menu
+                    if (controller.hasAnyAIAgent()) {
+                        controller.removeAllAIAgents();
+                    }
+                    showMenu();
+                }
+            );
+        });
+
+        // Setup AI if applicable
+        if (aiFactory != null && aiConfig != null) {
+            controller.setupAIAgent(Player.BLACK, aiFactory, aiConfig);
+        }
     }
 
     /**
@@ -90,17 +139,46 @@ public final class NavigationService {
      * @param aiIterations number of iterations for the AI's Monte Carlo Tree Search
      */
     public void showGame(int size, double hexSize, Integer aiIterations) {
-        Board board = new Board(size);
+        ScoreBoard scoreBoard = new ScoreBoard();
+        AIAdaptationConfig config = new AIAdaptationConfig.Builder(Player.BLACK)
+            .iterations(aiIterations)
+            .build();
+        AIAgentFactory factory = new MCTSPlayerFactory();
+        showGameWithScoreboard(size, hexSize, factory, config, scoreBoard);
+    }
+
+    /**
+     * Shows the game with AlphaZero AI agent.
+     */
+    public void showGameWithAlphaZero() {
+        ScoreBoard scoreBoard = new ScoreBoard();
+        
+        // Create AlphaZero components
+        AlphaZeroNet network = new AlphaZeroNet(11);
+        AlphaZeroMCTS alphaMcts = new AlphaZeroMCTS(network);
+        AlphaZeroConfig alphaConfig = new AlphaZeroConfig.Builder()
+            .boardSize(11)
+            .mctsIterations(1000)
+            .temperature(1.0)
+            .build();
+        
+        AlphaZeroPlayer alphaAgent = new AlphaZeroPlayer(Player.BLACK, alphaMcts, alphaConfig);
+        
+        Board board = new Board(11);
         BoardAdapter adapter = new BoardAdapter(board);
-        BoardView boardView = new BoardView(size, hexSize);
+        BoardView boardView = new BoardView(11, 55);
         GameController controller = new GameController(adapter, boardView);
-        boardView.setController(controller); // (controller also sets itself in ctor)
+        boardView.setController(controller);
 
         // Create turn label
         Label turnLabel = new Label();
         turnLabel.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px;");
 
-        // Set the label in the view
+        // Create scoreboard label
+        Label scoreLabel = new Label(scoreBoard.toString());
+        scoreLabel.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px;");
+
+        // Set the labels in the view
         boardView.setTurnLabel(turnLabel);
 
         // Wrap BoardView in a BorderPane to add controls
@@ -111,28 +189,49 @@ public final class NavigationService {
         // Create a back button
         Button backBtn = Buttons.primary("← Back to Menu");
         backBtn.setOnAction(e -> {
-            controller.removeAllAIAgents();
+            if (controller.hasAnyAIAgent()) {
+                controller.removeAllAIAgents();
+            }
             showMenu();
         });
 
-        // Add button to the top
-        HBox topBar = new HBox(12, backBtn, turnLabel);
+        // Add button and labels to the top
+        HBox topBar = new HBox(12, backBtn, turnLabel, scoreLabel);
         topBar.setPadding(new Insets(12));
         topBar.setAlignment(Pos.CENTER_LEFT);
         root.setTop(topBar);
 
         Scene scene = new Scene(root, 900, 900);
         attachCss(scene);
-        stage.setTitle("Hex — Game");
+        stage.setTitle("Hex — Game vs AlphaZero");
         stage.setScene(scene);
 
         // initial paint
         boardView.update(adapter);
         boardView.updateTurnDisplay(controller.getCurrentPlayer());
 
-        // Setup single AI agent for BLACK player
-        MCTSPlayer mctsPlayer = new MCTSPlayer(Player.BLACK, aiIterations);
-        controller.setupAIAgent(Player.BLACK, mctsPlayer);
+        // Set up game end listener to show play again dialog
+        controller.setGameEndListener(winner -> {
+            scoreBoard.recordWin(winner);
+            scoreLabel.setText(scoreBoard.toString());
+            
+            PlayAgainDialog.showDialog(winner, scoreBoard,
+                () -> {
+                    // Play Again
+                    controller.resetForNewGame();
+                },
+                () -> {
+                    // Back to Menu
+                    if (controller.hasAnyAIAgent()) {
+                        controller.removeAllAIAgents();
+                    }
+                    showMenu();
+                }
+            );
+        });
+
+        // Setup AlphaZero AI agent for BLACK player
+        controller.setupAIAgent(Player.BLACK, alphaAgent);
     }
 
     /**
@@ -152,18 +251,64 @@ public final class NavigationService {
 
         mctsVsRandomBtn.setOnAction(e -> {
             dialog.close();
-            showGameAIvsAI(
-                    new MCTSPlayer(Player.RED, 2000, 0.9,0.5,0.5, 0.046,0.039, Math.sqrt(2)),
-                    new RandomPlayer(Player.BLACK)
-            );
+            // Create agents using factories and configs for dynamic adaptation
+            AIAdaptationConfig redConfig = new AIAdaptationConfig.Builder(Player.RED)
+                .iterations(2000)
+                .threshold(0.9)
+                .centralityWeight(0.5)
+                .connectivityWeight(0.5)
+                .biasScale(0.046)
+                .shortestPathWeight(0.039)
+                .explorationConstant(Math.sqrt(2))
+                .build();
+            
+            AIAdaptationConfig blackConfig = new AIAdaptationConfig.Builder(Player.BLACK).build();
+            
+            AIAgent redAgent = new MCTSPlayerFactory().createAgent(redConfig);
+            AIAgent blackAgent = new RandomPlayerFactory().createAgent(blackConfig);
+            
+            showGameAIvsAI(redAgent, blackAgent);
         });
 
         mctsVsMctsBtn.setOnAction(e -> {
             dialog.close();
-            showGameAIvsAI(
-                    new MCTSPlayer(Player.RED, 2000, 0.9,0.5,0.5, 0.046,0.039, Math.sqrt(2)),
-                    new MCTSPlayer(Player.RED, 2000, 0.9,0.5,0.5, 0.046,0.039, Math.sqrt(2))
-            );
+            // Create agents using factories and configs for dynamic adaptation
+            AIAdaptationConfig redConfig = new AIAdaptationConfig.Builder(Player.RED)
+                .iterations(2000)
+                .threshold(0.9)
+                .centralityWeight(0.5)
+                .connectivityWeight(0.5)
+                .biasScale(0.046)
+                .shortestPathWeight(0.039)
+                .explorationConstant(Math.sqrt(2))
+                .build();
+            
+            AIAdaptationConfig blackConfig = new AIAdaptationConfig.Builder(Player.BLACK)
+                .iterations(2000)
+                .threshold(0.9)
+                .centralityWeight(0.5)
+                .connectivityWeight(0.5)
+                .biasScale(0.046)
+                .shortestPathWeight(0.039)
+                .explorationConstant(Math.sqrt(2))
+                .build();
+            
+            AIAgent redAgent = new MCTSPlayerFactory().createAgent(redConfig);
+            AIAgent blackAgent = new MCTSPlayerFactory().createAgent(blackConfig);
+            
+            showGameAIvsAI(redAgent, blackAgent);
+        });
+
+        randomVsRandomBtn.setOnAction(e -> {
+            dialog.close();
+            AIAdaptationConfig redConfig = new AIAdaptationConfig.Builder(Player.RED).build();
+            AIAdaptationConfig blackConfig = new AIAdaptationConfig.Builder(Player.BLACK).build();
+
+            AIAgent redAgent = new RandomPlayerFactory().createAgent(redConfig);
+            AIAgent blackAgent = new RandomPlayerFactory().createAgent(blackConfig);
+
+            showGameAIvsAI(redAgent, blackAgent);
+
         });
 
         cancelBtn.setOnAction(e -> dialog.close());
@@ -180,6 +325,8 @@ public final class NavigationService {
      * Shows a game where two AI agents play against each other.
      */
     private void showGameAIvsAI(AIAgent redAgent, AIAgent blackAgent) {
+        ScoreBoard scoreBoard = new ScoreBoard();
+        
         Board board = new Board(11);
         BoardAdapter adapter = new BoardAdapter(board);
         BoardView boardView = new BoardView(11, 55);
@@ -189,6 +336,10 @@ public final class NavigationService {
         // Setup UI
         Label turnLabel = new Label();
         turnLabel.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px;");
+        
+        Label scoreLabel = new Label(scoreBoard.toString());
+        scoreLabel.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px;");
+        
         boardView.setTurnLabel(turnLabel);
 
         BorderPane root = new BorderPane();
@@ -201,7 +352,7 @@ public final class NavigationService {
             showMenu();
         });
 
-        HBox topBar = new HBox(12, backBtn, turnLabel);
+        HBox topBar = new HBox(12, backBtn, turnLabel, scoreLabel);
         topBar.setPadding(new Insets(12));
         topBar.setAlignment(Pos.CENTER_LEFT);
         root.setTop(topBar);
@@ -213,6 +364,24 @@ public final class NavigationService {
 
         boardView.update(adapter);
         boardView.updateTurnDisplay(controller.getCurrentPlayer());
+
+        // Set up game end listener to show play again dialog
+        controller.setGameEndListener(winner -> {
+            scoreBoard.recordWin(winner);
+            scoreLabel.setText(scoreBoard.toString());
+            
+            PlayAgainDialog.showDialog(winner, scoreBoard,
+                () -> {
+                    // Play Again
+                    controller.resetForNewGame();
+                },
+                () -> {
+                    // Back to Menu
+                    controller.removeAllAIAgents();
+                    showMenu();
+                }
+            );
+        });
 
         // Setup BOTH AI agents
         controller.setupAIAgent(Player.RED, redAgent);

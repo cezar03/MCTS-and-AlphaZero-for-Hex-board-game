@@ -2,7 +2,7 @@ package AI.mcts.Optimazation.Heuristic;
 
 import AI.mcts.HexGame.GameState;
 import AI.mcts.HexGame.Move;
-import Game.Board;
+import AI.AiPlayer.AIBoardAdapter;
 import Game.Color;
 import Game.Player;
 
@@ -29,7 +29,7 @@ public final class ConnectivityHeuristic  implements Heuristic{
      */
     @Override
     public double score(GameState state, Move move) {
-        Board board = state.getBoard();
+        AIBoardAdapter board = state.getBoard();
         Player toMove = state.getToMove();
         Color myColor = (toMove == Player.RED ? Color.RED : Color.BLACK);
         int friendly = 0;

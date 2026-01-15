@@ -1,6 +1,6 @@
 package AI.mcts.Optimazation;
 
-import Game.Board;
+import AI.AiPlayer.AIBoardAdapter;
 import Game.Color;
 
 import java.util.ArrayList;
@@ -57,7 +57,7 @@ public final class ShortestPath {
      * @return the minimum number of empty cells needed to complete a winning path,
      *         or a large number (1,000,000) if no path exists (board is blocked)
      */
-    public static int shortestPath(Board board, Color player) {
+    public static int shortestPath(AIBoardAdapter board, Color player) {
         final int n = board.getSize();
         final int INF = 1_000_000;
 

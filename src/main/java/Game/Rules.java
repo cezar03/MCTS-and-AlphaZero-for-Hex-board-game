@@ -1,14 +1,7 @@
 package Game;
 
-/**
- * A utility class containing rule validation methods for the Hex game.
- * <p>
- * This class provides static methods to check the validity of cells and moves
- * according to standard Hex rules. In Hex, all cells within the n×n board are
- * playable, and a move is valid if the target cell is both within bounds and empty.
- * <p>
- * This is a utility class and cannot be instantiated.
- */
+import AI.AiPlayer.AIBoardAdapter;
+
 public final class Rules {
     /**
      * Private constructor to prevent instantiation of this utility class.
@@ -38,6 +31,16 @@ public final class Rules {
      * @return true if the move is legal (in bounds and cell is empty), false otherwise
      */
     public static boolean validMove(Board b, int row, int col) {
+        return validCell(b, row, col) && b.isEmpty(row, col);
+    }
+    
+    /* Valid cell: inside bounds. (AIBoardAdapter version) */
+    public static boolean validCell(AIBoardAdapter b, int row, int col) {
+        return b.inBounds(row, col);
+    }
+
+    /* Valid move: inside bounds and EMPTY. (AIBoardAdapter version) */
+    public static boolean validMove(AIBoardAdapter b, int row, int col) {
         return validCell(b, row, col) && b.isEmpty(row, col);
     }
 

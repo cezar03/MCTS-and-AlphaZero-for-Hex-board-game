@@ -1,22 +1,10 @@
 package Game;
 
-/**
- * An adapter class that bridges between the Board representation and a 2D integer
- * matrix representation of the game state.
- * <p>
- * This adapter maintains both representations in sync and provides convenient methods
- * for making moves, undoing moves, and querying game state. The matrix uses integer
- * encoding:
- * <ul>
- * <li>0 = EMPTY</li>
- * <li>1 = RED</li>
- * <li>2 = BLACK</li>
- * </ul>
- * <p>
- * This class is particularly useful for interfacing with AI systems or UI components
- * that prefer working with integer matrices rather than the Board's internal representation.
- */
-public final class BoardAdapter {
+import java.util.List;
+
+import AI.AiPlayer.AIBoardAdapter;
+
+public final class BoardAdapter implements AIBoardAdapter {
     private final Board board;
     private final int[][] matrix;
 
@@ -126,43 +114,6 @@ public final class BoardAdapter {
         }
     }
 
-    /**
-     * Attempts to make a move for the specified player at the given coordinates.
-     * Updates both the matrix and board representations if the move is valid.
-     * 
-     * @param row the row coordinate for the move
-     * @param col the column coordinate for the move
-     * @param player the player making the move
-     * @return true if the move was valid and successfully made, false if invalid
-     */
-    public boolean makeMove(int row, int col, Player player) {
-        if (!Rules.validMove(board, row, col)) {
-            return false;
-        }
-
-        // Update matrix
-        matrix[row][col] = player.id;
-
-        // Update board
-        if (player == Player.RED) {
-            board.getMoveRed(row, col, Color.RED);
-        } else {
-            board.getMoveBlack(row, col, Color.BLACK);
-        }
-
-        return true;
-    }
-
-    /**
-     * Undoes a move at the specified position by clearing the cell in the matrix
-     * and rebuilding the board state from the modified matrix.
-     * <p>
-     * Note: This method clears the cell and reconstructs the entire board to maintain
-     * proper connectivity in the Union-Find structure.
-     * 
-     * @param row the row coordinate of the move to undo
-     * @param col the column coordinate of the move to undo
-     */
     public void undoMove(int row, int col) {
         matrix[row][col] = 0;
         updateBoard();
@@ -215,5 +166,145 @@ public final class BoardAdapter {
      */
     public Color getCellColor(int row, int col) {
         return board.getCell(row, col);
+    }
+    
+    /**
+     * Creates a deep copy of the board adapter for simulations.
+     * Implements AIBoardAdapter.copy().
+     */
+    @Override
+    public AIBoardAdapter copy() {
+        Board boardCopy = board.copyBoard(board);
+        BoardAdapter adapterCopy = new BoardAdapter(boardCopy);
+        // Copy the matrix state
+        int n = this.matrix.length;
+        for (int row = 0; row < n; row++) {
+            for (int col = 0; col < n; col++) {
+                adapterCopy.matrix[row][col] = this.matrix[row][col];
+            }
+        }
+        return adapterCopy;
+    }
+    
+    /**
+     * Gets all legal moves on the board.
+     * Implements AIBoardAdapter.legalMoves().
+     */
+    @Override
+    public List<int[]> legalMoves() {
+        return board.legalMoves();
+    }
+    
+    /**
+     * Checks if the game is over (terminal state).
+     * Implements AIBoardAdapter.isTerminal().
+     */
+    @Override
+    public boolean isTerminal() {
+        return board.isTerminal();
+    }
+    
+    /**
+     * Checks if RED player has won.
+     * Implements AIBoardAdapter.redWins().
+     */
+    @Override
+    public boolean redWins() {
+        return board.redWins();
+    }
+    
+    /**
+     * Checks if BLACK player has won.
+     * Implements AIBoardAdapter.blackWins().
+     */
+    @Override
+    public boolean blackWins() {
+        return board.blackWins();
+    }
+    
+    /**
+     * Gets the size of the board.
+     * Implements AIBoardAdapter.getSize().
+     */
+    @Override
+    public int getSize() {
+        return board.getSize();
+    }
+    
+    /**
+     * Checks if coordinates are in bounds.
+     * Implements AIBoardAdapter.inBounds().
+     */
+    @Override
+    public boolean inBounds(int row, int col) {
+        return board.inBounds(row, col);
+    }
+    
+    /**
+     * Checks if a cell is empty.
+     * Implements AIBoardAdapter.isEmpty().
+     */
+    @Override
+    public boolean isEmpty(int row, int col) {
+        return board.isEmpty(row, col);
+    }
+    
+    /**
+     * Gets the color of a cell (AIBoardAdapter implementation).
+     * Implements AIBoardAdapter.getCell().
+     */
+    @Override
+    public Color getCell(int row, int col) {
+        return board.getCell(row, col);
+    }
+    
+    /**
+     * Makes a move on the board (AIBoardAdapter implementation).
+     * Implements AIBoardAdapter.makeMove().
+     */
+    @Override
+    public boolean makeMove(int row, int col, Player player) {
+        if (!Rules.validMove(board, row, col)) {
+            return false;
+        }
+
+        // Update matrix
+        matrix[row][col] = player.id;
+
+        // Update board
+        if (player == Player.RED) {
+            board.getMoveRed(row, col, Color.RED);
+        } else {
+            board.getMoveBlack(row, col, Color.BLACK);
+        }
+
+        return true;
+    }
+    
+    /**
+     * Places a RED stone at the given position.
+     * Implements AIBoardAdapter.getMoveRed().
+     */
+    @Override
+    public void getMoveRed(int row, int col, Color color) {
+        board.getMoveRed(row, col, color);
+    }
+    
+    /**
+     * Places a BLACK stone at the given position.
+     * Implements AIBoardAdapter.getMoveBlack().
+     */
+    @Override
+    public void getMoveBlack(int row, int col, Color color) {
+        board.getMoveBlack(row, col, color);
+    }
+    
+    /**
+     * Gets the neighboring cells for the given position.
+     * Implements AIBoardAdapter.neighbors().
+     */
+    @Override
+    public List<int[]> neighbors(int row, int col) {
+        return board.neighbors(row, col);
     }
 }

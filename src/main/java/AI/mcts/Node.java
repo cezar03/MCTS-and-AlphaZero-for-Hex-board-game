@@ -1,5 +1,6 @@
 package AI.mcts;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 import AI.mcts.HexGame.Move;
 

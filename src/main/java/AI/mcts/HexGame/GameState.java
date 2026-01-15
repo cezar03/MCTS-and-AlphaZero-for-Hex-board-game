@@ -1,10 +1,14 @@
 // AI/mcts/GameState.java
 package AI.mcts.HexGame;
 
-import Game.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import AI.AiPlayer.AIBoardAdapter;
 import AI.mcts.Optimazation.ShortestPath;
+import Game.Color;
+import Game.Player;
+import Game.Rules;
 
 /**
  * Represents the state of a Hex game, including the board configuration, current player,
@@ -15,19 +19,12 @@ import AI.mcts.Optimazation.ShortestPath;
  * by monitoring win conditions for both players.</p>
 */
 public class GameState {
-    private final Board board;
+    private final AIBoardAdapter board;
     private Player toMove;          // RED starts typically
     private boolean terminal = false;
     private int winnerId = 0;       // 0 = none, 1 = RED, 2 = BLACK
 
-    /**
-     * Constructs a new GameState with the specified board and starting player.
-     * Automatically computes whether the game is in a terminal state.
-     *
-     * @param board the game board representing the current position
-     * @param toMove the player whose turn it is to move
-    */
-    public GameState(Board board, Player toMove) {
+    public GameState(AIBoardAdapter board, Player toMove) {
         this.board = board;
         this.toMove = toMove;
         recomputeTerminal();
@@ -60,12 +57,7 @@ public class GameState {
         return toMove;
     }
 
-    /**
-     * Returns the current game board.
-     *
-     * @return the Board object representing the current game state
-    */
-    public Board getBoard(){
+    public AIBoardAdapter getBoard(){
         return board;
     }
 
@@ -113,7 +105,7 @@ public class GameState {
      * @return a new GameState object that is a copy of this state
     */
     public GameState copy() {
-        Board board2 = board.copyBoard(board);
+        AIBoardAdapter board2 = board.copy();
         return new GameState(board2, toMove);
     }
 
