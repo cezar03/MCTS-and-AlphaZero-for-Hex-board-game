@@ -1,7 +1,6 @@
 package AI.AlphaZero;
 
 import AI.AiPlayer.AIAdaptationConfig;
-import AI.AlphaZero.AlphaZeroConfig.Builder;
 import AI.AiPlayer.AIAgent;
 import AI.AiPlayer.AIAgentFactory;
 import Game.Player;
@@ -65,7 +64,7 @@ public class AlphaZeroPlayerFactory implements AIAgentFactory {
         // If loadExistingModel is true, try to load from the specified path
         if (alphaZeroConfig.isLoadExistingModel()) {
             try {
-                return AlphaZeroNet.load(alphaZeroConfig.getModelPath());
+                return AlphaZeroNet.load(alphaZeroConfig.getModelPath(), alphaZeroConfig.getBoardSize());
             } catch (Exception e) {
                 System.err.println("Failed to load model from " + alphaZeroConfig.getModelPath() + 
                                  ", creating new model. Error: " + e.getMessage());
