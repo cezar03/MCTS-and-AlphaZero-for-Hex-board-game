@@ -4,11 +4,17 @@ Game\BoardAdapter.class
 Game\BoardAdapter$1.class
 AI\AlphaZero\AlphaZeroRunner.class
 AI\AiPlayer\RandomPlayer.class
+<<<<<<< HEAD
+UI\CaseOpeningView$Item.class
+AI\mcts\Optimazation\Heuristic\ConnectivityHeuristic.class
+UI\BoardView$1.class
+=======
 AI\AlphaZero\AlphaZeroConfig.class
 UI\CaseOpeningView$Item.class
 AI\mcts\Optimazation\Heuristic\ConnectivityHeuristic.class
 UI\BoardView$1.class
 AI\AiPlayer\AIAdaptationConfig.class
+>>>>>>> origin/Factory
 AI\AiPlayer\AIAgent.class
 AI\RunExperimentCSV.class
 UI\MainMenu.class
@@ -24,25 +30,41 @@ AI\mcts\Optimazation\Heuristic\LinearCombinationHeuristic.class
 Game\MoveRegistration.class
 AI\mcts\Steps\Selection.class
 UI\CaseOpeningView.class
+<<<<<<< HEAD
+=======
 UI\PlayAgainDialog.class
+>>>>>>> origin/Factory
 AI\mcts\Optimazation\MovePruner.class
 AI\AiPlayer\AITester$1.class
 AI\mcts\Steps\Tuner\PrunerConfig.class
 Game\Player.class
+<<<<<<< HEAD
+=======
 AI\AiPlayer\AIBoardAdapter.class
 AI\AlphaZero\AlphaZeroPlayer.class
 AI\AiPlayer\AIAdaptationConfig$Builder.class
+>>>>>>> origin/Factory
 AI\mcts\Optimazation\Heuristic\Heuristic.class
 AI\AlphaZero\AlphaZeroNet.class
 UI\BoardView.class
 UI\GameController$1.class
+<<<<<<< HEAD
+AI\mcts\Optimazation\Heuristic\ShortestPathHeuristic.class
+=======
 UI\GameController$GameEndListener.class
 AI\mcts\Optimazation\Heuristic\ShortestPathHeuristic.class
 AI\AiPlayer\AIAgentFactory.class
+>>>>>>> origin/Factory
 AI\AiPlayer\MCTSPlayer.class
 AI\mcts\Steps\SimulationStep\OptimizedSimulation.class
 AI\AlphaZero\TrainingExampleData.class
 AI\AlphaZero\AlphaZeroTrainer.class
+<<<<<<< HEAD
+Game\UnionFind.class
+UI\GameController.class
+AI\mcts\Steps\Tuner\TunerTester.class
+AI\mcts\Steps\SimulationStep\BaseSimulation.class
+=======
 AI\AlphaZero\AlphaZeroConfig$Builder.class
 AI\AiPlayer\MCTSPlayerFactory.class
 Game\UnionFind.class
@@ -51,13 +73,17 @@ AI\mcts\Steps\Tuner\TunerTester.class
 AI\AlphaZero\AlphaZeroPlayerFactory.class
 AI\mcts\Steps\SimulationStep\BaseSimulation.class
 UI\ScoreBoard.class
+>>>>>>> origin/Factory
 AI\mcts\Steps\Tuner\MCTSTuner.class
 UI\CaseOpeningView$Rarity.class
 AI\mcts\Node.class
 UI\Buttons.class
 AI\mcts\Optimazation\ShortestPath.class
 AI\mcts\MCTS.class
+<<<<<<< HEAD
+=======
 AI\AiPlayer\RandomPlayerFactory.class
+>>>>>>> origin/Factory
 AI\AiPlayer\AITester$TestResult.class
 UI\NavigationService.class
 AI\mcts\Steps\Expansion.class

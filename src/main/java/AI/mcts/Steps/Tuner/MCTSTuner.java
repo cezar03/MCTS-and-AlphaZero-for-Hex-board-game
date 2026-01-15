@@ -7,12 +7,18 @@ import AI.AiPlayer.AITester;
 import AI.AiPlayer.MCTSPlayer;
 
 /**
- * Simple hyperparameter tuner for the MCTS MovePruner heuristics.
- *
- * It can:
- *  - sample full random configs (including cExploration), or
- *  - for each fixed cExploration, sample random (threshold, centralityWeight,
- *    connectivityWeight, biasScale, spWeight) and find the best combo.
+ * A hyperparameter tuning utility for MCTS MovePruner heuristics.
+ * This class performs random search over the hyperparameter space to find
+ * configurations that improve MCTS performance.
+ * 
+ * <p>The tuner supports two modes:</p>
+ * <ul>
+ *   <li>Full random search: samples all parameters including exploration constant</li>
+ *   <li>Per-C search: fixes the exploration constant and tunes other parameters</li>
+ * </ul>
+ * 
+ * <p>Configurations are evaluated by playing matches between base MCTS and
+ * optimized MCTS with color-swapping to ensure fairness.</p>
  */
 public final class MCTSTuner {
 
@@ -21,6 +27,14 @@ public final class MCTSTuner {
     private final int gamesPerSide;
     private final Random rng;
 
+    /**
+     * Constructs an MCTSTuner with the specified parameters and random seed.
+     *
+     * @param boardSize the size of the Hex board for testing
+     * @param iterations the number of MCTS iterations per move
+     * @param gamesPerSide the number of games to play for each color assignment
+     * @param seed the random seed for reproducible results
+     */
     public MCTSTuner(int boardSize, int iterations, int gamesPerSide, long seed) {
         this.boardSize = boardSize;
         this.iterations = iterations;
@@ -28,13 +42,32 @@ public final class MCTSTuner {
         this.rng = new Random(seed);
     }
 
+    /**
+     * Constructs an MCTSTuner with the specified parameters and a random seed
+     * based on the current time.
+     *
+     * @param boardSize the size of the Hex board for testing
+     * @param iterations the number of MCTS iterations per move
+     * @param gamesPerSide the number of games to play for each color assignment
+     */
     public MCTSTuner(int boardSize, int iterations, int gamesPerSide) {
         this(boardSize, iterations, gamesPerSide, System.currentTimeMillis());
     }
 
     /**
-     * Full random config, including cExploration.
-     * (Keep if you still want a completely unconstrained search.)
+     * Samples a completely random configuration including all parameters
+     * and the exploration constant.
+     * 
+     * <p>Parameter ranges:</p>
+     * <ul>
+     *   <li>threshold: [0.7, 1.0]</li>
+     *   <li>centralityWeight: [0.0, 1.0]</li>
+     *   <li>biasScale: [0.02, 0.08]</li>
+     *   <li>spWeight: [0.0, 0.2]</li>
+     *   <li>cExploration: [0.5, 2.0]</li>
+     * </ul>
+     *
+     * @return a randomly sampled PrunerConfig
      */
     private PrunerConfig sampleRandomConfig() {
         double threshold = 0.7 + rng.nextDouble() * 0.3; // [0.7, 1.0]
@@ -47,8 +80,19 @@ public final class MCTSTuner {
     }
 
     /**
-     * Random config for a fixed cExploration.
-     * cExploration is given, everything else is sampled.
+     * Samples a random configuration with a fixed exploration constant.
+     * All other parameters are randomly sampled within their ranges.
+     * 
+     * <p>Parameter ranges:</p>
+     * <ul>
+     *   <li>threshold: [0.3, 1.0]</li>
+     *   <li>centralityWeight: [0.0, 1.0]</li>
+     *   <li>biasScale: [0.02, 0.08]</li>
+     *   <li>spWeight: [0.0, 0.2]</li>
+     * </ul>
+     *
+     * @param cExploration the fixed exploration constant to use
+     * @return a randomly sampled PrunerConfig with the specified exploration constant
      */
     private PrunerConfig sampleRandomConfigForC(double cExploration) {
         double threshold = 0.3 + rng.nextDouble() * 0.7; // [0.3, 1.0]
@@ -60,8 +104,13 @@ public final class MCTSTuner {
     }
 
     /**
-     * Evaluate a single configuration by playing a color-swapped mini-tournament
-     * between base MCTS and optimized MCTS.
+     * Evaluates a configuration by playing a color-swapped tournament between
+     * base MCTS and optimized MCTS. Each agent plays both colors to eliminate
+     * first-player advantage bias.
+     *
+     * @param cfg the configuration to evaluate
+     * @param printMatches whether to print individual match results
+     * @return the win rate percentage of the optimized configuration against the base
      */
     public double evaluateConfig(PrunerConfig cfg, boolean printMatches) {
         AIAgent baseRed = new MCTSPlayer(Player.RED, iterations);
@@ -76,8 +125,11 @@ public final class MCTSTuner {
     }
 
     /**
-     * Original global random search (including cExploration).
-     * You can keep this if you still want to explore everything at once.
+     * Performs a random search over the entire hyperparameter space including
+     * the exploration constant. Evaluates the specified number of random
+     * configurations and reports the best one found.
+     *
+     * @param trials the number of random configurations to evaluate
      */
     public void randomSearch(int trials) {
         PrunerConfig bestCfg = null;
@@ -102,6 +154,14 @@ public final class MCTSTuner {
         }
     }
 
+    /**
+     * Performs random search for each fixed exploration constant value.
+     * For each C value, samples and evaluates multiple random configurations
+     * of the other parameters. Reports the best configuration overall.
+     *
+     * @param cValues array of exploration constant values to test
+     * @param trialsPerC number of random configurations to try for each C value
+     */
     public void randomSearchPerC(double[] cValues, int trialsPerC) {
         PrunerConfig globalBestCfg = null;
         double globalBestWinRate = -1.0;

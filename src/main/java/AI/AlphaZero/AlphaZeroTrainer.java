@@ -1,86 +1,126 @@
 package AI.AlphaZero;
 
-import AI.mcts.Node;
-import AI.mcts.HexGame.Move;
-import Game.Board;
-import Game.Color;
-import org.deeplearning4j.nn.graph.ComputationGraph;
-import org.nd4j.linalg.api.ndarray.INDArray;
-import org.nd4j.linalg.dataset.api.MultiDataSet;
-import org.nd4j.linalg.factory.Nd4j;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.factory.Nd4j;
+
+import AI.mcts.HexGame.Move;
+import AI.mcts.Node;
+import Game.Board;
+import Game.Color;
+
 /**
- * AlphaZero Trainer for self-play learning.
- * Trains the neural network using self-play games and MCTS.
- * Uses the factory pattern for creation.
+ * Manages the self-play training loop for AlphaZero.
+ * This class orchestrates the entire training process: generating self-play games,
+ * collecting training examples, and updating the neural network.
  * 
- * @author Team 04
- */
+ * <p>The training process follows the following methodology:
+ * <ol>
+ *   <li>Play games against itself using MCTS + neural network</li>
+ *   <li>Collect (state, policy, outcome) tuples from each game</li>
+ *   <li>Accumulate examples across multiple games</li>
+ *   <li>Train the neural network on batches of examples</li>
+ *   <li>Repeat with the improved network</li>
+ * </ol>
+*/
 public class AlphaZeroTrainer {
     private AlphaZeroNet network;
     private AlphaZeroMCTS mcts;
-    private AlphaZeroConfig config;
+    private int boardSize;
 
     /**
-     * Creates a trainer with the specified configuration.
-     * @param config The AlphaZero configuration
-     */
-    public AlphaZeroTrainer(AlphaZeroConfig config) {
-        if (config == null) {
-            throw new IllegalArgumentException("Configuration cannot be null");
-        }
-        this.config = config;
-        this.network = new AlphaZeroNet(config.getBoardSize());
+     * Constructs a trainer for the AlphaZero algorithm.
+     * Initializes a new neural network and MCTS instance for the specified board size.
+     * 
+     * @param boardSize the size of the Hex board
+    */
+    public AlphaZeroTrainer(int boardSize) {
+        this.boardSize = boardSize;
+        this.network = new AlphaZeroNet(boardSize);
         this.mcts = new AlphaZeroMCTS(network);
     }
-    
-    /**
-     * Legacy constructor for backward compatibility.
-     * Creates a trainer with a default configuration for the given board size.
-     * @param boardSize The size of the board
-     */
-    public AlphaZeroTrainer(int boardSize) {
-        this(new AlphaZeroConfig.Builder().boardSize(boardSize).build());
-    }
 
     /**
-     * The main method to start the training process.
-     * @param numGames How many self-play games to run.
-     * @param mctsIterations How many mcts iterations per move.
-     */
-    public void train(int numGames, int mctsIterations) {
+     * Executes the main training loop for AlphaZero.
+     * 
+     * <p>Process:
+     * <ol>
+     *   <li>Plays the specified number of self-play games sequentially</li>
+     *   <li>Collects training examples from each game</li>
+     *   <li>Every {@code batchSize} games, trains the network on accumulated examples</li>
+     *   <li>Saves the final trained model to disk</li>
+     * </ol>
+     * 
+     * @param numGames the total number of self-play games to generate
+     * @param batchSize how many games to accumulate before performing a network update
+     *                  (smaller = more frequent updates but less stable; larger = more stable but slower)
+     * @param mctsIterations the number of MCTS simulations to run for each move decision
+     *                       (more iterations = stronger play but slower training)
+    */
+    public void train(int numGames, int batchSize, int mctsIterations) {
+
+        // First create a list to hold data from multiple games.
+        List<TrainingExampleData> memory = new ArrayList<>();
+
         for (int i = 0; i < numGames; i++) {
             System.out.println("Starting Self-Play Game " + (i + 1));
             
             // Play one full game and collect data
             List<TrainingExampleData> examples = selfPlay(mctsIterations);
             
-            // Train the network on this data
-            // In a real scenario, you would accumulate many games before training, 
-            // but for simplicity, we train after every game here.
-            trainNetwork(examples);
+            // Add data from this game to the memory.
+            memory.addAll(examples);
+
+            // Check if we have enough data to train the network.
+            // i+1 is the number of games played so far, and if i+1 is a multiple of the batch size, then train the network.
+            if ((i + 1) % batchSize == 0) {
+                System.out.println("Training network with " + memory.size() + " examples from " + batchSize + " games.");
+                trainNetwork(memory);
+                memory.clear(); // Clear memory after training
+                System.out.println("Network training complete.");
+            }
             
-            System.out.println("Game " + (i+1) + " finished. Training complete.");
+            System.out.println("Game " + (i+1) + " finished.");
         }
         
         // Save the trained model
         try {
-            network.save(config.getModelPath());
-            System.out.println("Model is successfully saved to: " + config.getModelPath());
+            network.save("hex_alphazero_model.zip");
+            System.out.println("Model is successfully saved!");
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     /**
-     * Simulates one full game of Self-Play.
-     */
+     * Simulates one complete game of self-play using MCTS guided by the current neural network.
+     * 
+     * <p>For each move:
+     * <ol>
+     *   <li>Runs MCTS to obtain an improved policy (visit count distribution)</li>
+     *   <li>Records the board state and the improved policy as a training example</li>
+     *   <li>Selects a move probabilistically according to the policy</li>
+     *   <li>Applies the move and continues until the game ends</li>
+     * </ol>
+     * 
+     * <p>Temperature schedule:
+     * <ul>
+     *   <li>Early game (first 30 moves): temperature = 1.0 for exploration</li>
+     *   <li>Late game: temperature = 0.2 for more deterministic play</li>
+     * </ul>
+     * 
+     * <p>After the game concludes, all training examples are updated with the actual
+     * game outcome relative to the player who made each move.
+     * 
+     * @param iterations the number of MCTS simulations per move
+     * @return a list of training examples: (board state, improved policy, game outcome)
+     *         where outcome is +1 for a win, -1 for a loss from that position's player's perspective
+    */
     private List<TrainingExampleData> selfPlay(int iterations) {
         List<TrainingExampleData> gameHistory = new ArrayList<>();
-        Board board = new Board(config.getBoardSize());
+        Board board = new Board(boardSize);
         Color currentPlayer = Color.RED;
         int moveCount = 0;
 
@@ -88,14 +128,15 @@ public class AlphaZeroTrainer {
             // Run MCTS to get the root of the search tree
             Node root = mcts.search(board, currentPlayer, iterations);
 
+            // TODO: Decide on temperature threshold and values.
             // Extract the Policy from the root's visit counts
-            // For the first 10 moves, use temperature=1 (explore), then temperature=0 (exploit)
-            double temp = (moveCount < 10) ? 1.0 : 0.05; // Shortened for testing
-            double[] policy = mcts.getSearchPolicy(root, temp, config.getBoardSize());
+            // For the first 30 moves, use temperature=1 (explore), then temperature=0 (exploit)
+            double temp = (moveCount < 30) ? 1.0 : 0.2; // Shortened for testing
+            double[] policy = mcts.getSearchPolicy(root, temp, boardSize);
 
             // Store the state and the target policy
             INDArray input = BoardEncoder.encode(board, currentPlayer);
-            INDArray policyTensor = Nd4j.create(policy).reshape(1, config.getBoardSize() * config.getBoardSize());
+            INDArray policyTensor = Nd4j.create(policy).reshape(1, boardSize * boardSize);
             
             // We do not know the winner ("Value") yet, so we store null for now
             // We use a placeholder value (0.0) that we will overwrite later.
@@ -138,8 +179,13 @@ public class AlphaZeroTrainer {
     }
 
     /**
-     * Helper to pick a move index based on the probability distribution.
-     */
+     * Samples a move from the probability distribution provided by the search policy.
+     * Moves with higher probabilitiesare more likely to be selected, but all legal moves have some chance.
+     * 
+     * @param policy the probability distribution over all board positions (should sum to 1.0)
+     * @param board the current board state (used for fallback if needed)
+     * @return the selected move as a Move object with row and column coordinates
+    */
     private Move selectMoveFromPolicy(double[] policy, Board board) {
         // Generate a random number between 0 and 1.
         double randomNumber = Math.random();
@@ -161,14 +207,30 @@ public class AlphaZeroTrainer {
             for (int i=0; i<policy.length; i++) if (policy[i] > 0) selectedIdx = i;
         }
 
-        int row = selectedIdx / config.getBoardSize();
-        int col = selectedIdx % config.getBoardSize();
+        int row = selectedIdx / boardSize;
+        int col = selectedIdx % boardSize;
         return new Move(row, col);
     }
 
     /**
-     * Feeds the collected examples into the neural network to update weights.
-     */
+     * Updates the neural network weights using the collected training examples.
+     * 
+     * <p>Training process:
+     * <ol>
+     *   <li>Combines all training examples into a single batch</li>
+     *   <li>Separates inputs (board states) from targets (policies and values)</li>
+     *   <li>Performs one training step (forward pass + backpropagation + weight update)</li>
+     * </ol>
+     * 
+     * <p>The network learns to:
+     * <ul>
+     *   <li>Predict policies that match the improved MCTS search policies (via KL-divergence loss)</li>
+     *   <li>Predict values that match actual game outcomes (via MSE loss)</li>
+     * </ul>
+     * 
+     * @param examples the list of training examples accumulated from self-play games,
+     *                 each containing a board state, target policy, and target value
+    */
     private void trainNetwork(List<TrainingExampleData> examples) {
         if (examples.isEmpty()) return; // Nothing to train on
 

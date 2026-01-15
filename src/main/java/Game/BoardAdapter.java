@@ -1,12 +1,19 @@
 package Game;
 
-import AI.AiPlayer.AIBoardAdapter;
 import java.util.List;
+
+import AI.AiPlayer.AIBoardAdapter;
 
 public final class BoardAdapter implements AIBoardAdapter {
     private final Board board;
     private final int[][] matrix;
 
+    /**
+     * Creates a new BoardAdapter wrapping the specified board.
+     * Initializes the internal matrix representation based on the current board state.
+     * 
+     * @param board the Board instance to adapt
+     */
     public BoardAdapter(Board board) {
         this.board = board;
         this.matrix = new int[board.getSize()][board.getSize()];
@@ -14,7 +21,13 @@ public final class BoardAdapter implements AIBoardAdapter {
     }
 
 
-    //Updates the 2D matrix  based on the current state of the board
+    /**
+     * Synchronizes the internal matrix representation with the current board state.
+     * Converts each cell's Color to its integer representation (0=EMPTY, 1=RED, 2=BLACK).
+     * <p>
+     * This method should be called after any direct modifications to the board to ensure
+     * the matrix reflects the current state.
+     */
     public void updateMatrix() {
         int n = board.getSize();
         for (int row = 0; row < n; row++) {
@@ -24,7 +37,13 @@ public final class BoardAdapter implements AIBoardAdapter {
         }
     }
 
-    //Updates the board within the changes in the matrix
+    /**
+     * Synchronizes the board with the current matrix representation.
+     * Resets the board completely and then replays all stones from the matrix.
+     * <p>
+     * This method is useful when the matrix has been modified directly and the board
+     * needs to be updated to match, such as after an undo operation.
+     */
     public void updateBoard() {
         board.reset();
         int n = board.getSize();
@@ -40,18 +59,31 @@ public final class BoardAdapter implements AIBoardAdapter {
         }
     }
 
+    /**
+     * Returns the internal 2D integer matrix representation of the board.
+     * 
+     * @return the n×n matrix where each cell contains 0 (empty), 1 (red), or 2 (black)
+     */
     public int[][] getMatrix() {
         return matrix;
     }
 
+    /**
+     * Returns the underlying Board instance.
+     * 
+     * @return the Board being adapted
+     */
     public Board getBoard() {
         return board;
     }
 
-
-    //Converts Color enum to integer representation for matrix
-    //Where 0 = empty, 1 = red, 2 = blsck
-
+    /**
+     * Converts a Color enum value to its integer representation for the matrix.
+     * Here 0 = empty, 1 = red, 2 = blsck
+     * 
+     * @param color the Color to convert
+     * @return 0 for EMPTY, 1 for RED, 2 for BLACK
+     */
     private int colorToInt(Color color) {
         switch (color) {
             case RED:
@@ -64,7 +96,12 @@ public final class BoardAdapter implements AIBoardAdapter {
         }
     }
 
-
+    /**
+     * Converts an integer value from the matrix to its corresponding Color enum.
+     * 
+     * @param value the integer to convert
+     * @return EMPTY for 0, RED for 1, BLACK for 2, or EMPTY for any other value
+     */
     private Color intToColor(int value) {
         switch (value) {
             case 1:
@@ -82,12 +119,21 @@ public final class BoardAdapter implements AIBoardAdapter {
         updateBoard();
     }
 
-
+    /**
+     * Checks whether the game has ended.
+     * 
+     * @return true if either player has achieved a winning connection, false otherwise
+     */
     public boolean isGameOver() {
         return board.isTerminal();
     }
 
-
+    /**
+     * Determines which player has won the game, if any.
+     * 
+     * @return Player.RED if red has won, Player.BLACK if black has won, or null if
+     *         the game is not yet over
+     */
     public Player getWinner() {
         if (board.redWins()) {
             return Player.RED;
@@ -97,7 +143,10 @@ public final class BoardAdapter implements AIBoardAdapter {
         return null;
     }
 
-    //Resets both the matrix and the board
+    /**
+     * Resets both the matrix and board to their initial empty states.
+     * All cells are cleared and the game can be started fresh.
+     */
     public void reset() {
         int n = board.getSize();
         for (int row = 0; row < n; row++) {
@@ -108,6 +157,13 @@ public final class BoardAdapter implements AIBoardAdapter {
         board.reset();
     }
 
+    /**
+     * Returns the color of the stone at the specified position.
+     * 
+     * @param row the row coordinate
+     * @param col the column coordinate
+     * @return the Color of the cell (EMPTY, RED, or BLACK)
+     */
     public Color getCellColor(int row, int col) {
         return board.getCell(row, col);
     }

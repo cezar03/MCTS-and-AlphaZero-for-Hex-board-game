@@ -1,17 +1,36 @@
 package AI.AlphaZero;
 
-import org.deeplearning4j.nn.conf.inputs.InputType;
+import java.io.File;
+import java.io.IOException;
+
 import org.deeplearning4j.nn.conf.ComputationGraphConfiguration;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
-import org.deeplearning4j.nn.conf.layers.*;
-import org.deeplearning4j.nn.graph.ComputationGraph; // This is used for branching networks, which we need for AlphaZero.
+import org.deeplearning4j.nn.conf.inputs.InputType; // This is used for branching networks, which we need for AlphaZero.
+import org.deeplearning4j.nn.conf.layers.BatchNormalization;
+import org.deeplearning4j.nn.conf.layers.ConvolutionLayer; // This is used for optimization.
+import org.deeplearning4j.nn.conf.layers.DenseLayer;
+import org.deeplearning4j.nn.conf.layers.OutputLayer;
+import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.nd4j.linalg.activations.Activation;
-import org.nd4j.linalg.learning.config.Adam; // This is used for optimization.
+import org.nd4j.linalg.learning.config.Adam;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 
-import java.io.IOException;
-import java.io.File;
-
+/**
+ * Neural network architecture for the AlphaZero algorithm applied to Hex.
+ * This network uses a convolutional architecture with two output heads:
+ * one for policy (move probabilities) and one for value (position evaluation).
+ * 
+ * <p>Architecture overview:
+ * <ul>
+ *   <li><strong>Input:</strong> 3-plane board representation (Red pieces, Black pieces, current player)</li>
+ *   <li><strong>Shared trunk:</strong> Convolutional layers that extract spatial features from the board</li>
+ *   <li><strong>Policy head:</strong> Outputs probability distribution over all possible moves</li>
+ *   <li><strong>Value head:</strong> Outputs a single scalar estimating the win probability</li>
+ * </ul>
+ * 
+ * <p>The network uses ResNet-style architecture with batch normalization for stable training.
+ * It is implemented as a ComputationGraph to support the dual-head output structure.
+*/
 public class AlphaZeroNet {
     // The actual neural network model. 
     // It is called a ComputationGraph instead of a simple Network, because it has a branching structure with two heads. (For policy and value outputs)
@@ -20,21 +39,60 @@ public class AlphaZeroNet {
     // Size of the Hex board.
     private final int boardSize;
 
-    // Constructor to initialize the network with the given board size.
+    /**
+     * Constructs and initializes a new AlphaZero neural network for the specified board size.
+     * The network is immediately initialized with random weights ready for training.
+     * 
+     * @param boardSize the size of the Hex board (e.g., 11 for an 11×11 board)
+    */
     public AlphaZeroNet(int boardSize) {
         this.boardSize = boardSize;
         initModel(); // Method to build the neural network structure.
     }
 
     /**
-     * Initializes the neural network model with convolutional layers and two output heads (policy and value).
-     */
+     * Initializes the neural network architecture with convolutional layers and dual output heads.
+     * 
+     * <p>Network structure:
+     * <ol>
+     *   <li><strong>Shared convolutional trunk:</strong>
+     *       <ul>
+     *         <li>Conv layer 1: 3×3 filters, 64 channels, ReLU activation</li>
+     *         <li>Batch normalization</li>
+     *         <li>Conv layer 2: 3×3 filters, 64 channels, ReLU activation</li>
+     *         <li>Batch normalization</li>
+     *       </ul>
+     *   </li>
+     *   <li><strong>Policy head:</strong>
+     *       <ul>
+     *         <li>1×1 convolution to 2 channels</li>
+     *         <li>Flatten to dense layer</li>
+     *         <li>Softmax output of size boardSize² (one probability per board position)</li>
+     *         <li>Loss function: KL-divergence (measures difference from MCTS policy)</li>
+     *       </ul>
+     *   </li>
+     *   <li><strong>Value head:</strong>
+     *       <ul>
+     *         <li>1×1 convolution to 1 channel</li>
+     *         <li>Flatten to dense layer with 64 neurons</li>
+     *         <li>Tanh output of size 1 (win probability from -1 to 1)</li>
+     *         <li>Loss function: MSE (mean squared error from actual game outcome)</li>
+     *       </ul>
+     *   </li>
+     * </ol>
+     * 
+     * <p>Training configuration:
+     * <ul>
+     *   <li>Optimizer: Adam with learning rate 3×10⁻⁴</li>
+     *   <li>L2 regularization: 3×10⁻⁴ to prevent overfitting</li>
+     * </ul>
+    */
     private void initModel() {
         int outputSize = boardSize * boardSize; // The total number of moves. The policy head will need to output this amount of probabilities.
 
         ComputationGraphConfiguration conf = new NeuralNetConfiguration.Builder()
-            .updater(new Adam(0.001)) // Learning Rate
-            .l2(0.0001) // Regularization to prevent overfitting
+            .updater(new Adam(3e-4)) // Learning Rate
+            .l2(3e-4) // Regularization to prevent overfitting
             .graphBuilder() // Allows for creating split paths in the network (policy and value).
             .addInputs("input") // Input layer
 
@@ -49,6 +107,7 @@ public class AlphaZeroNet {
                  * Activation.RELU adds non-linearity, allowing the network to learn complex patterns. It applies ReLU logic and turns negative numbers to 0.
                  * Finally the layer gets connected to the input node defined earlier.
                  */
+                // TODO: Choose the best number for nOut (number of filters)
                 .stride(1,1).padding(1,1).nOut(64).activation(Activation.RELU).build(), "input")
             .addLayer("bn1", new BatchNormalization(), "conv1") // Normalizes the output of conv1 to stabilize and speed up training.
             
@@ -93,26 +152,39 @@ public class AlphaZeroNet {
         model.init();
     }
 
-    // Getter for the model
+    /**
+     * Returns the underlying neural network model.
+     * 
+     * @return the ComputationGraph representing the dual-head neural network
+    */
     public ComputationGraph getModel() {
         return model;
     }
     
-    // Save the model to a file so you do not lose progress after training.
+    /**
+     * Saves the trained neural network model to disk.
+     * This preserves all learned weights and biases so training progress is not lost.
+     * 
+     * @param path the file path where the model should be saved (e.g., "model.zip")
+     * @throws IOException if the file cannot be written
+    */
     public void save(String path) throws IOException {
         model.save(new File(path), true);
     }
     
-    // Method that creates a new empty network and then immediately overwrites its brain with data loaded from a file.
+    /**
+     * Loads a previously saved neural network model from disk.
+     * This method creates a new AlphaZeroNet instance with the specified architecture,
+     * then overwrites its parameters with the saved weights.
+     * 
+     * @param path the file path to the saved model
+     * @param size the board size the model was trained on
+     * @return a new AlphaZeroNet instance with weights loaded from the file
+     * @throws IOException if the file cannot be read or is corrupted
+    */
     public static AlphaZeroNet load(String path, int size) throws IOException {
         AlphaZeroNet net = new AlphaZeroNet(size);
         net.model = ComputationGraph.load(new File(path), true);
         return net;
-    }
-    
-    // Overloaded load method that automatically detects board size (for factory pattern)
-    public static AlphaZeroNet load(String path) throws IOException {
-        // Default to 11x11 board, which is standard for Hex
-        return load(path, 11);
     }
 }
