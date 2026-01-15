@@ -99,7 +99,19 @@ public class UnionFind {
     public boolean connected(int a, int b) {
         return find(a) == find(b);
     }
-
+    
+    /**
+     * Resets the Union-Find structure to its initial state where each element
+     * is in its own separate set.
+     * <p>
+     * This method reinitializes both the parent and rank arrays, making each
+     * element its own parent (root) and setting all ranks to zero. This is
+     * useful for reusing the same Union-Find instance for a new game or when
+     * the board needs to be cleared and rebuilt.
+     * <p>
+     * After calling this method, all previous union operations are forgotten
+     * and the structure behaves as if freshly constructed.
+     */
     public void reset() {
         Arrays.fill(rank, 0);
         for (int i = 0; i < parent.length; i++) {
