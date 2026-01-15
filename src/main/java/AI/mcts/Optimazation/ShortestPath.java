@@ -7,13 +7,43 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Utility class for computing shortest path distances in Hex game boards
+ * using a 0-1 BFS (Breadth-First Search) algorithm.
+ * <p>
+ * The algorithm calculates the minimum number of empty cells that need to be
+ * filled to create a winning connection between the player's goal edges:
+ * <ul>
+ * <li>RED player: connects top edge (row 0) to bottom edge (row n-1)</li>
+ * <li>BLACK player: connects left edge (col 0) to right edge (col n-1)</li>
+ * </ul>
+ * <p>
+ * The path cost model:
+ * <ul>
+ * <li>Cost 0 to traverse cells containing the player's stones</li>
+ * <li>Cost 1 to traverse empty cells (these need to be filled)</li>
+ * <li>Opponent's stones are impassable (blocked)</li>
+ * </ul>
+ * <p>
+ * This is a utility class and cannot be instantiated.
+ */
 public final class ShortestPath {
 
+    /**
+     * Private constructor to prevent instantiation of this utility class.
+     */
     private ShortestPath() {
         // utility class, no instances
     }
 
     /**
+     * Computes the shortest path distance for the specified player using 0-1 BFS.
+     * The distance represents the minimum number of empty cells that must be filled
+     * to create a winning connection between the player's goal edges.
+     * <p>
+     * The algorithm uses a deque-like structure to efficiently process edges with
+     * different costs, ensuring optimal shortest path computation.
+     * 
      * 0–1 BFS shortest path:
      * cost 0 to move through player's stones,
      * cost 1 to move through empty cells,
@@ -21,9 +51,11 @@ public final class ShortestPath {
      *
      * RED:   top (row 0)    -> bottom (row n-1)
      * BLACK: left (col 0)   -> right (col n-1)
-     *
-     * @return minimal number of empty cells that must be filled to connect,
-     *         or a large number (INF) if no path exists.
+     * 
+     * @param board the game board to analyze
+     * @param player the player (RED or BLACK) for whom to compute the shortest path
+     * @return the minimum number of empty cells needed to complete a winning path,
+     *         or a large number (1,000,000) if no path exists (board is blocked)
      */
     public static int shortestPath(Board board, Color player) {
         final int n = board.getSize();
