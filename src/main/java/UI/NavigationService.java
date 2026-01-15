@@ -10,6 +10,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -33,7 +34,6 @@ import AI.AlphaZero.AlphaZeroNet;
 
 public final class NavigationService {
     private final Stage stage;
-
     public NavigationService(Stage stage) {
         this.stage = stage;
     }
@@ -235,6 +235,34 @@ public final class NavigationService {
     }
 
     /**
+     * Shows the game with selected AI agent for human vs AI.
+     */
+    public void showGameWithAI(String agentType, int iterations) {
+        if ("AlphaZero".equals(agentType)) {
+            showGameWithAlphaZero();
+            return;
+        }
+
+        ScoreBoard scoreBoard = new ScoreBoard();
+        AIAgentFactory factory;
+        AIAdaptationConfig config;
+
+        if ("MCTS".equals(agentType)) {
+            factory = new MCTSPlayerFactory();
+            config = new AIAdaptationConfig.Builder(Player.BLACK)
+                .iterations(iterations)
+                .build();
+        } else if ("Random".equals(agentType)) {
+            factory = new RandomPlayerFactory();
+            config = new AIAdaptationConfig.Builder(Player.BLACK).build();
+        } else {
+            throw new IllegalArgumentException("Unknown agent type: " + agentType);
+        }
+
+        showGameWithScoreboard(11, 55, factory, config, scoreBoard);
+    }
+
+    /**
      * Shows AI vs AI testing interface.
      */
     public void showAITesting() {
@@ -244,80 +272,35 @@ public final class NavigationService {
         dialog.setContentText("Choose which agents to test:");
         styleDialog(dialog);
 
-        Button mctsVsRandomBtn = new Button("MCTS vs Random");
-        Button mctsVsMctsBtn = new Button("MCTS vs MCTS");
-        Button randomVsRandomBtn = new Button("Random vs Random");
+        Label redLabel = new Label("Red Player:");
+        ComboBox<String> redCombo = new ComboBox<>();
+        redCombo.getItems().addAll("MCTS", "Random" , "AlphaZero");
+        redCombo.setValue("MCTS");
+
+        Label blackLabel = new Label("Black Player:");
+        ComboBox<String> blackCombo = new ComboBox<>();
+        blackCombo.getItems().addAll("MCTS", "Random", "AlphaZero");
+        blackCombo.setValue("Random");
+
+        Button startBtn = new Button("Start Game");
         Button cancelBtn = new Button("Cancel");
 
-        mctsVsRandomBtn.setOnAction(e -> {
+        startBtn.setOnAction(e -> {
             dialog.close();
-            // Create agents using factories and configs for dynamic adaptation
-            AIAdaptationConfig redConfig = new AIAdaptationConfig.Builder(Player.RED)
-                .iterations(2000)
-                .threshold(0.9)
-                .centralityWeight(0.5)
-                .connectivityWeight(0.5)
-                .biasScale(0.046)
-                .shortestPathWeight(0.039)
-                .explorationConstant(Math.sqrt(2))
-                .build();
-            
-            AIAdaptationConfig blackConfig = new AIAdaptationConfig.Builder(Player.BLACK).build();
-            
-            AIAgent redAgent = new MCTSPlayerFactory().createAgent(redConfig);
-            AIAgent blackAgent = new RandomPlayerFactory().createAgent(blackConfig);
-            
+            String redType = redCombo.getValue();
+            String blackType = blackCombo.getValue();
+            AIAgent redAgent = createAgent(redType, Player.RED);
+            AIAgent blackAgent = createAgent(blackType, Player.BLACK);
             showGameAIvsAI(redAgent, blackAgent);
-        });
-
-        mctsVsMctsBtn.setOnAction(e -> {
-            dialog.close();
-            // Create agents using factories and configs for dynamic adaptation
-            AIAdaptationConfig redConfig = new AIAdaptationConfig.Builder(Player.RED)
-                .iterations(2000)
-                .threshold(0.9)
-                .centralityWeight(0.5)
-                .connectivityWeight(0.5)
-                .biasScale(0.046)
-                .shortestPathWeight(0.039)
-                .explorationConstant(Math.sqrt(2))
-                .build();
-            
-            AIAdaptationConfig blackConfig = new AIAdaptationConfig.Builder(Player.BLACK)
-                .iterations(2000)
-                .threshold(0.9)
-                .centralityWeight(0.5)
-                .connectivityWeight(0.5)
-                .biasScale(0.046)
-                .shortestPathWeight(0.039)
-                .explorationConstant(Math.sqrt(2))
-                .build();
-            
-            AIAgent redAgent = new MCTSPlayerFactory().createAgent(redConfig);
-            AIAgent blackAgent = new MCTSPlayerFactory().createAgent(blackConfig);
-            
-            showGameAIvsAI(redAgent, blackAgent);
-        });
-
-        randomVsRandomBtn.setOnAction(e -> {
-            dialog.close();
-            AIAdaptationConfig redConfig = new AIAdaptationConfig.Builder(Player.RED).build();
-            AIAdaptationConfig blackConfig = new AIAdaptationConfig.Builder(Player.BLACK).build();
-
-            AIAgent redAgent = new RandomPlayerFactory().createAgent(redConfig);
-            AIAgent blackAgent = new RandomPlayerFactory().createAgent(blackConfig);
-
-            showGameAIvsAI(redAgent, blackAgent);
-
         });
 
         cancelBtn.setOnAction(e -> dialog.close());
 
-        VBox buttonBox = new VBox(10, mctsVsRandomBtn, mctsVsMctsBtn, randomVsRandomBtn, cancelBtn);
-        buttonBox.setAlignment(Pos.CENTER);
-        buttonBox.setPadding(new Insets(10));
+        VBox content = new VBox(10, redLabel, redCombo, blackLabel, blackCombo, startBtn, cancelBtn);
+        content.setAlignment(Pos.CENTER);
+        content.setPadding(new Insets(10));
 
-        dialog.getDialogPane().setContent(buttonBox);
+        dialog.getDialogPane().setContent(content);
         dialog.showAndWait();
     }
 
@@ -417,8 +400,50 @@ public final class NavigationService {
     public void showDifficultySelection() {
         Alert dialog = new Alert(Alert.AlertType.INFORMATION);
         dialog.setTitle("AI Difficulty");
+        dialog.setHeaderText("Select AI Agent");
+        dialog.setContentText("Choose which AI agent to play against:");
+        styleDialog(dialog);
+
+        Button mctsBtn = new Button("MCTS");
+        Button randomBtn = new Button("Random");
+        Button alphaZeroBtn = new Button("AlphaZero");
+        Button cancelBtn = new Button("Cancel");
+
+        mctsBtn.setStyle("-fx-font-size: 12px; -fx-padding: 10px;");
+        randomBtn.setStyle("-fx-font-size: 12px; -fx-padding: 10px;");
+        alphaZeroBtn.setStyle("-fx-font-size: 12px; -fx-padding: 10px;");
+        cancelBtn.setStyle("-fx-font-size: 12px; -fx-padding: 10px;");
+
+        mctsBtn.setOnAction(e -> {
+            dialog.close();
+            showIterationsDialog();
+        });
+
+        randomBtn.setOnAction(e -> {
+            dialog.close();
+            showGameWithAI("Random", 0);
+        });
+
+        alphaZeroBtn.setOnAction(e -> {
+            dialog.close();
+            showGameWithAI("AlphaZero", 0);
+        });
+
+        cancelBtn.setOnAction(e -> dialog.close());
+
+        VBox buttonBox = new VBox(10, mctsBtn, randomBtn, alphaZeroBtn, cancelBtn);
+        buttonBox.setAlignment(Pos.CENTER);
+        buttonBox.setPadding(new Insets(10));
+
+        dialog.getDialogPane().setContent(buttonBox);
+        dialog.showAndWait();
+    }
+
+    private void showIterationsDialog() {
+        Alert dialog = new Alert(Alert.AlertType.INFORMATION);
+        dialog.setTitle("AI Difficulty");
         dialog.setHeaderText("Select Difficulty Level");
-        dialog.setContentText("Choose how strong the AI opponent should be:");
+        dialog.setContentText("Choose how strong the MCTS AI opponent should be:");
         styleDialog(dialog);
 
         Button easyBtn = new Button("Easy (500 iterations)");
@@ -435,22 +460,22 @@ public final class NavigationService {
 
         easyBtn.setOnAction(e -> {
             dialog.close();
-            showGame(11, 55, 500);
+            showGameWithAI("MCTS", 500);
         });
 
         mediumBtn.setOnAction(e -> {
             dialog.close();
-            showGame(11, 55, 1000);
+            showGameWithAI("MCTS", 1000);
         });
 
         hardBtn.setOnAction(e -> {
             dialog.close();
-            showGame(11, 55, 2000);
+            showGameWithAI("MCTS", 2000);
         });
 
         expertBtn.setOnAction(e -> {
             dialog.close();
-            showGame(11, 55, 5000);
+            showGameWithAI("MCTS", 5000);
         });
 
         cancelBtn.setOnAction(e -> dialog.close());
@@ -463,6 +488,34 @@ public final class NavigationService {
         dialog.showAndWait();
     }
 
+    private AIAgent createAgent(String type, Player player) {
+        if ("MCTS".equals(type)) {
+            AIAdaptationConfig config = new AIAdaptationConfig.Builder(player)
+                .iterations(2000)
+                .threshold(0.9)
+                .centralityWeight(0.5)
+                .connectivityWeight(0.5)
+                .biasScale(0.046)
+                .shortestPathWeight(0.039)
+                .explorationConstant(Math.sqrt(2))
+                .build();
+            return new MCTSPlayerFactory().createAgent(config);
+        } else if ("Random".equals(type)) {
+            AIAdaptationConfig config = new AIAdaptationConfig.Builder(player).build();
+            return new RandomPlayerFactory().createAgent(config);
+        } else if ("AlphaZero".equals(type)) {
+            AlphaZeroNet network = new AlphaZeroNet(11);
+            AlphaZeroMCTS alphaMcts = new AlphaZeroMCTS(network);
+            AlphaZeroConfig alphaConfig = new AlphaZeroConfig.Builder()
+                .boardSize(11)
+                .mctsIterations(1000)
+                .temperature(1.0)
+                .build();
+            return new AlphaZeroPlayer(player, alphaMcts, alphaConfig);
+        }  else {
+            throw new IllegalArgumentException("Unknown agent type: " + type);
+        }
+    }
 
     //CSS methods that helps to style our UI
     private void attachCss(Scene scene) {
