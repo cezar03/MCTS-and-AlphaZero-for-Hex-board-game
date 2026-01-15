@@ -9,7 +9,6 @@ import AI.mcts.Optimazation.Heuristic.*;
 import AI.mcts.Steps.Expansion;
 import AI.mcts.Steps.Selection;
 import AI.mcts.Steps.SimulationStep.*;
-import Game.Board;
 import Game.Player;
 
 /**
@@ -98,7 +97,7 @@ public class MCTSPlayer implements AIAgent {
      * @param currentPlayer The player whose turn it is
      * @return The best move found by the MCTS algorithm, or null if no moves are available
      */
-    public Move getBestMove(Board board, Player currentPlayer) {
+    public Move getBestMove(AIBoardAdapter board, Player currentPlayer) {
         GameState gameState = new GameState(board, currentPlayer);
 
         if (gameState.getLegalMoves().isEmpty()) {

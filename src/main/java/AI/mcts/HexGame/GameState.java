@@ -2,17 +2,18 @@
 package AI.mcts.HexGame;
 
 import Game.*;
+import AI.AiPlayer.AIBoardAdapter;
 import java.util.ArrayList;
 import java.util.List;
 import AI.mcts.Optimazation.ShortestPath;
 
 public class GameState {
-    private final Board board;
+    private final AIBoardAdapter board;
     private Player toMove;          // RED starts typically
     private boolean terminal = false;
     private int winnerId = 0;       // 0 = none, 1 = RED, 2 = BLACK
 
-    public GameState(Board board, Player toMove) {
+    public GameState(AIBoardAdapter board, Player toMove) {
         this.board = board;
         this.toMove = toMove;
         recomputeTerminal();
@@ -29,7 +30,7 @@ public class GameState {
     public Player getToMove(){
         return toMove;}
 
-    public Board getBoard(){
+    public AIBoardAdapter getBoard(){
         return board;
     }
 
@@ -61,7 +62,7 @@ public class GameState {
     
 
     public GameState copy() {
-        Board board2 = board.copyBoard(board);
+        AIBoardAdapter board2 = board.copy();
         return new GameState(board2, toMove);
     }
 

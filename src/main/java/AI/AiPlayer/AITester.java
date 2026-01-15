@@ -124,7 +124,7 @@ public class AITester {
 
         while (!adapter.isGameOver() && moveCount < maxMoves) {
             AIAgent currentAgent = (currentPlayer == Player.RED) ? redAgent : blackAgent;
-            Move move = currentAgent.getBestMove(board, currentPlayer);
+            Move move = currentAgent.getBestMove(adapter, currentPlayer);
 
             if (move == null) {
                 break;

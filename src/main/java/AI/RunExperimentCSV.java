@@ -182,7 +182,7 @@ public class RunExperimentCSV {
 
         while (!adapter.isGameOver() && moveCount < maxMoves) {
             AIAgent currentAgent = (currentPlayer == Player.RED) ? redAgent : blackAgent;
-            Move move = currentAgent.getBestMove(board, currentPlayer);
+            Move move = currentAgent.getBestMove(adapter, currentPlayer);
             if (move == null) break;
             boolean success = adapter.makeMove(move.row, move.col, currentPlayer);
             if (!success) {
