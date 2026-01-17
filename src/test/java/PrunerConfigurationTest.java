@@ -1,8 +1,6 @@
 
 import org.junit.jupiter.api.Test;
-
 import AI.mcts.Steps.Tuner.PrunerConfig;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class PrunerConfigTest {
@@ -21,24 +19,24 @@ class PrunerConfigTest {
 
 
     @Test
-    void toStringTestHandlesNaN() {
+    void toStringHandleNaNTest() {
         PrunerConfig cfg = new PrunerConfig(Double.NaN, 1.0, 2.0, 3.0, 4.0, 5.0);
 
         String s = cfg.toString();
-        assertTrue(s.contains("thr=NaN"), "Expected NaN to appear in formatted string");
+        assertTrue(s.contains("thr=NaN"), "NaN should be expected");
     }
 
     @Test
-    void toStringTest_handlesInfinity() {
+    void toStringInfinityTest() {
         PrunerConfig cfg1 = new PrunerConfig(Double.POSITIVE_INFINITY, 1.0, 2.0, 3.0, 4.0, 5.0);
         PrunerConfig cfg2 = new PrunerConfig(Double.NEGATIVE_INFINITY, 1.0, 2.0, 3.0, 4.0, 5.0);
 
-        assertTrue(cfg1.toString().contains("thr=Infinity"), "Expected Infinity to appear in formatted string");
-        assertTrue(cfg2.toString().contains("thr=-Infinity"), "Expected -Infinity to appear in formatted string");
+        assertTrue(cfg1.toString().contains("thr=Infinity"), "Expected infinity to appear in formatted string");
+        assertTrue(cfg2.toString().contains("thr=-Infinity"), "Expected minus infinity to appear in formatted string");
     }
 
     @Test
-    void toStringTest_producesStablePrefixLabels() {
+    void toStringTest() {
         PrunerConfig cfg = new PrunerConfig(0, 0, 0, 0, 0, 0);
 
         String s = cfg.toString();

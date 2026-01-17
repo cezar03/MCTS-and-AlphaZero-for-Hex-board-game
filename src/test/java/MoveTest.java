@@ -1,20 +1,19 @@
 
 import AI.mcts.HexGame.Move;
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class MoveTest {
 
     @Test
-    void constructor_setsFields() {
+    void constructorTest() {
         Move m = new Move(2, 5);
         assertEquals(2, m.row);
         assertEquals(5, m.col);
     }
 
     @Test
-    void getCoordinate_formatsCorrectly() {
+    void getCoordinatesTest() {
         Move m = new Move(0, 0);
         assertEquals("(0,0)", m.getCoordinate());
 
@@ -23,13 +22,13 @@ class MoveTest {
     }
 
     @Test
-    void toString_equalsCoordinate() {
+    void toStringTest() {
         Move m = new Move(3, 4);
         assertEquals("(3,4)", m.toString());
     }
 
     @Test
-    void equals_and_hashCode_sameRowCol() {
+    void hashCodeTest() {
         Move a = new Move(1, 2);
         Move b = new Move(1, 2);
 
@@ -38,7 +37,7 @@ class MoveTest {
     }
 
     @Test
-    void equals_falseForDifferentMove() {
+    void differentMoveTest() {
         Move a = new Move(1, 2);
         Move b = new Move(1, 3);
 
@@ -46,7 +45,7 @@ class MoveTest {
     }
 
     @Test
-    void equals_falseForNullOrOtherType() {
+    void falseNullTest() {
         Move a = new Move(1, 2);
 
         assertNotEquals(a, null);

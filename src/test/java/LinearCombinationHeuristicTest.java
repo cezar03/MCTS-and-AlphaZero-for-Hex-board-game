@@ -7,20 +7,18 @@ import static org.junit.jupiter.api.Assertions.*;
 class LinearCombinationHeuristicTest {
 
     @Test
-    void scoreTest_basicWeightedSum_withoutShortestPath() {
+    void scoreWeightedSumtest() {
         Heuristic cent = (s, m) -> 2.0;
         Heuristic conn = (s, m) -> 3.0;
 
         LinearCombinationHeuristic h =
                 new LinearCombinationHeuristic(cent, conn, null, 10.0, 1.0, 999.0);
-
-        // wSP не должен влиять, т.к. shortestPath == null
         double score = h.score(null, new Move(0, 0));
         assertEquals(10.0 * 2.0 + 1.0 * 3.0, score, 0.0);
     }
 
     @Test
-    void scoreTest_includesShortestPath_whenNotNullAndWeightNonZero() {
+    void scoreNotNullNotZeroTest() {
         Heuristic cent = (s, m) -> 1.0;
         Heuristic conn = (s, m) -> 2.0;
         Heuristic sp   = (s, m) -> 5.0;
@@ -33,12 +31,11 @@ class LinearCombinationHeuristicTest {
     }
 
     @Test
-    void scoreTest_doesNotCallShortestPath_whenWeightIsZero_edgeCase() {
-        // если wSP == 0.0, shortestPath.score(...) вызываться не должен
-        // сделаем эвристику shortestPath, которая бросает исключение при вызове
+    void scoreWeightZeroTest() {
+
         Heuristic cent = (s, m) -> 1.0;
         Heuristic conn = (s, m) -> 1.0;
-        Heuristic sp = (s, m) -> { throw new AssertionError("ShortestPath heuristic should not be called"); };
+        Heuristic sp = (s, m) -> { throw new AssertionError("Do not call shortestpath!!"); };
 
         LinearCombinationHeuristic h =
                 new LinearCombinationHeuristic(cent, conn, sp, 1.0, 1.0, 0.0);
@@ -48,7 +45,7 @@ class LinearCombinationHeuristicTest {
     }
 
     @Test
-    void scoreTest_returnsZero_whenAllWeightsZero() {
+    void scoreWeightsZeroTest() {
         Heuristic cent = (s, m) -> 100.0;
         Heuristic conn = (s, m) -> -50.0;
         Heuristic sp   = (s, m) -> 999.0;
@@ -60,20 +57,18 @@ class LinearCombinationHeuristicTest {
     }
 
     @Test
-    void scoreTest_supportsNegativeWeights_edgeCase() {
+    void scoreNegativeWeightsTest() {
         Heuristic cent = (s, m) -> 2.0;
         Heuristic conn = (s, m) -> 3.0;
         Heuristic sp   = (s, m) -> 4.0;
-
         LinearCombinationHeuristic h =
                 new LinearCombinationHeuristic(cent, conn, sp, -1.0, 2.0, -0.5);
-
         double score = h.score(null, new Move(0, 0));
         assertEquals((-1.0) * 2.0 + 2.0 * 3.0 + (-0.5) * 4.0, score, 1e-12);
     }
 
     @Test
-    void scoreTest_linearProperty_scalingAllWeightsScalesScore() {
+    void scalingWeightsTest() {
         Heuristic cent = (s, m) -> 1.5;
         Heuristic conn = (s, m) -> -2.0;
         Heuristic sp   = (s, m) -> 10.0;
@@ -92,7 +87,7 @@ class LinearCombinationHeuristicTest {
     }
 
     @Test
-    void scoreTest_nanPropagates_edgeCase() {
+    void nanTest() {
         Heuristic cent = (s, m) -> Double.NaN;
         Heuristic conn = (s, m) -> 1.0;
 
@@ -100,11 +95,11 @@ class LinearCombinationHeuristicTest {
                 new LinearCombinationHeuristic(cent, conn, null, 1.0, 1.0, 0.0);
 
         double score = h.score(null, new Move(0, 0));
-        assertTrue(Double.isNaN(score), "NaN from a component should propagate to final score");
+        assertTrue(Double.isNaN(score), "NaN may affect the final score");
     }
 
     @Test
-    void scoreTest_infinityPropagates_edgeCase() {
+    void infinityTest() {
         Heuristic cent = (s, m) -> Double.POSITIVE_INFINITY;
         Heuristic conn = (s, m) -> 1.0;
         Heuristic sp   = (s, m) -> 2.0;
@@ -118,7 +113,7 @@ class LinearCombinationHeuristicTest {
     }
 
     @Test
-    void scoreTest_throwsNullPointer_whenCentralityIsNull_edgeCase() {
+    void nullPointerTest() {
         Heuristic conn = (s, m) -> 1.0;
 
         LinearCombinationHeuristic h =
@@ -128,7 +123,7 @@ class LinearCombinationHeuristicTest {
     }
 
     @Test
-    void scoreTest_throwsNullPointer_whenConnectivityIsNull_edgeCase() {
+    void connectivityNullTest() {
         Heuristic cent = (s, m) -> 1.0;
 
         LinearCombinationHeuristic h =

@@ -1,105 +1,160 @@
-import AI.AiPlayer.AIBoardAdapter;
+
 import AI.mcts.HexGame.GameState;
 import AI.mcts.HexGame.Move;
 import AI.mcts.Optimazation.Heuristic.ConnectivityHeuristic;
 import Game.Board;
 import Game.BoardAdapter;
+import Game.BoardAdapter;
 import Game.Color;
 import Game.Player;
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
+
+import java.lang.reflect.Constructor;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 class ConnectivityHeuristicTest {
-    //initial state
+
+    private static final ConnectivityHeuristic H = new ConnectivityHeuristic();
+
     private static void place(Board board, int r, int c, Color color) {
-        if (color == Color.RED) {
-            board.getMoveRed(r, c, Color.RED);
-        } else if (color == Color.BLACK) {
-            board.getMoveBlack(r, c, Color.BLACK);
-        } else {
-            throw new IllegalArgumentException("Only RED or BLACK allowed");
+        if (color == Color.RED) board.getMoveRed(r, c, Color.RED);
+        else if (color == Color.BLACK) board.getMoveBlack(r, c, Color.BLACK);
+        else throw new IllegalArgumentException("Only RED or BLACK allowed");
+    }
+
+    /**
+     * In order to avoid possible problems with creating GameState for tests we use this GameState "factory"
+     * basically, it tries all constructors and auto-builds arguments from board/boardAdapter/player and etc.
+     * Extremely helpful in case you merge branches and the arguments differ in game state.
+     */
+    private static GameState newState(Board board, Player toMove) {
+        Constructor<?>[] ctors = GameState.class.getConstructors();
+        AssertionError lastError = null;
+
+        for (Constructor<?> ctor : ctors) {
+            try {
+                Object[] args = buildArgs(ctor.getParameterTypes(), board, toMove);
+                Object obj = ctor.newInstance(args);
+
+                GameState state = (GameState) obj;
+                assertNotNull(state.getBoard(), "GameState.getBoard() returned null");
+                assertNotNull(state.getToMove(), "GameState.getToMove() returned null");
+                return state;
+
+            } catch (Throwable t) {
+                lastError = new AssertionError(
+                        "Tried GameState constructor: " + ctor + " but failed: " + t.getClass().getSimpleName() + " - " + t.getMessage(),
+                        t
+                );
+            }
         }
+
+        throw (lastError != null)
+                ? lastError
+                : new AssertionError("No public constructors found in GameState.");
+    }
+
+    private static Object[] buildArgs(Class<?>[] paramTypes, Board board, Player toMove) {
+        Object[] args = new Object[paramTypes.length];
+        BoardAdapter adapter = null;
+
+        for (int i = 0; i < paramTypes.length; i++) {
+            Class<?> p = paramTypes[i];
+
+            if (p.isAssignableFrom(Board.class)) {
+                args[i] = board;
+            } else if (p.isAssignableFrom(BoardAdapter.class)) {
+                if (adapter == null) adapter = new BoardAdapter(board);
+                args[i] = adapter;
+            } else if (p.isAssignableFrom(Player.class)) {
+                args[i] = toMove;
+            } else if (p.isAssignableFrom(Color.class)) {
+                args[i] = toMove.stone;
+            } else if (p == int.class || p == Integer.class) {
+                args[i] = toMove.id; 
+            } else if (p == boolean.class || p == Boolean.class) {
+                args[i] = false;
+            } else if (p == double.class || p == Double.class) {
+                args[i] = 0.0;
+            } else if (p == long.class || p == Long.class) {
+                args[i] = 0L;
+            } else if (!p.isPrimitive()) {
+                args[i] = null;
+            } else {
+                if (p == short.class) args[i] = (short) 0;
+                else if (p == byte.class) args[i] = (byte) 0;
+                else if (p == char.class) args[i] = (char) 0;
+                else if (p == float.class) args[i] = 0f;
+                else args[i] = 0; 
+            }
+        }
+
+        return args;
     }
 
     @Test
-    void scoreTest_returnsZero_whenNoNeighborsExist_size1() {
+    void scoreHasNoNeighboursTest() {
         Board b = new Board(1);
-        GameState s = new GameState(new BoardAdapter(b), Player.RED);
-        ConnectivityHeuristic h = new ConnectivityHeuristic();
+        GameState s = newState(b, Player.RED);
 
-        double score = h.score(s, new Move(0, 0));
-
+        double score = H.score(s, new Move(0, 0));
         assertEquals(0.0, score, 0.0);
     }
 
     @Test
-    void scoreTest_returnsZero_whenNoFriendlyNeighbors() {
+    void scoreNoFriendNeighboursTest() {
         Board b = new Board(3);
-        GameState s = new GameState(new BoardAdapter(b), Player.RED);
-        ConnectivityHeuristic h = new ConnectivityHeuristic();
-
-        // вокруг (1,1) никого нет
-        double score = h.score(s, new Move(1, 1));
-
+        GameState s = newState(b, Player.RED);
+        double score = H.score(s, new Move(1, 1));
         assertEquals(0.0, score, 0.0);
     }
 
     @Test
-    void scoreTest_centerCell_countsFriendlyFraction_forRedToMove() {
+    void scoreThreeFriendlyNeighboursTest() {
         Board b = new Board(3);
-        GameState s = new GameState(new BoardAdapter(b), Player.RED);
-        ConnectivityHeuristic h = new ConnectivityHeuristic();
-
+        GameState s = newState(b, Player.RED);
         place(b, 0, 1, Color.RED);
         place(b, 1, 0, Color.RED);
         place(b, 2, 1, Color.RED);
+        int total = b.neighbors(1, 1).size();
+        assertTrue(total > 0);
 
-        double score = h.score(s, new Move(1, 1));
-
-        assertEquals(0.5, score, 1e-12);
+        double expected = 3.0 / total;
+        double score = H.score(s, new Move(1, 1));
+        assertEquals(expected, score, 1e-12);
     }
 
     @Test
-    void scoreTest_centerCell_allNeighborsFriendly_returnsOne() {
+    void scoreAllFriendlyNeighboursTest() {
         Board b = new Board(3);
-        GameState s = new GameState(new BoardAdapter(b), Player.RED);
-        ConnectivityHeuristic h = new ConnectivityHeuristic();
-
-        place(b, 0, 1, Color.RED);
-        place(b, 0, 2, Color.RED);
-        place(b, 1, 0, Color.RED);
-        place(b, 1, 2, Color.RED);
-        place(b, 2, 0, Color.RED);
-        place(b, 2, 1, Color.RED);
-
-        double score = h.score(s, new Move(1, 1));
-
+        GameState s = newState(b, Player.RED);
+        for (int[] nb : b.neighbors(1, 1)) {
+            place(b, nb[0], nb[1], Color.RED);
+        }
+        double score = H.score(s, new Move(1, 1));
         assertEquals(1.0, score, 1e-12);
     }
 
     @Test
-    void scoreTest_cornerCell_totalNeighborsLessThanSix_andFractionCorrect() {
+    void scoreCountCornersCorrectlyTest() {
         Board b = new Board(3);
-        GameState s = new GameState(new BoardAdapter(b), Player.RED);
-        ConnectivityHeuristic h = new ConnectivityHeuristic();
+        GameState s = newState(b, Player.RED);
 
-    
         int total = b.neighbors(0, 0).size();
-        assertTrue(total > 0 && total < 6, "Corner should have fewer neighbors than center");
+        assertTrue(total > 0 && total < 6);
 
-        
-        int[] first = b.neighbors(0, 0).get(0);
-        place(b, first[0], first[1], Color.RED);
+        int[] nb = b.neighbors(0, 0).get(0);
+        place(b, nb[0], nb[1], Color.RED);
 
-        double score = h.score(s, new Move(0, 0));
-
+        double score = H.score(s, new Move(0, 0));
         assertEquals(1.0 / total, score, 1e-12);
     }
 
     @Test
-    void scoreTest_usesToMoveColor_blackToMoveCountsBlackNeighborsNotRed() {
+    void scoreMoveColorTest() {
         Board b = new Board(3);
-        GameState s = new GameState(new BoardAdapter(b), Player.BLACK);
-        ConnectivityHeuristic h = new ConnectivityHeuristic();
+        GameState s = newState(b, Player.BLACK);
 
         place(b, 0, 1, Color.BLACK);
         place(b, 1, 0, Color.BLACK);
@@ -107,33 +162,29 @@ class ConnectivityHeuristicTest {
         place(b, 2, 1, Color.RED);
         place(b, 1, 2, Color.RED);
 
-        int total = b.neighbors(1, 1).size(); 
-        double expected = 2.0 / total; 
+        int total = b.neighbors(1, 1).size();
+        double expected = 2.0 / total;
 
-        double score = h.score(s, new Move(1, 1));
-
+        double score = H.score(s, new Move(1, 1));
         assertEquals(expected, score, 1e-12);
     }
-
+    //Should return the score for a certain player and the num of their stones near on the board
     @Test
-    void scoreTest_sameBoardDifferentToMove_changesScore() {
+    void scoreReturnDifferentScoresTest() {
         Board b = new Board(3);
-        ConnectivityHeuristic h = new ConnectivityHeuristic();
 
         place(b, 0, 1, Color.RED);
         place(b, 1, 0, Color.BLACK);
 
         int total = b.neighbors(1, 1).size();
 
-        GameState redState = new GameState(new BoardAdapter(b), Player.RED);
-        GameState blackState = new GameState(new BoardAdapter(b), Player.BLACK);
+        GameState redState = newState(b, Player.RED);
+        GameState blackState = newState(b, Player.BLACK);
 
-        double redScore = h.score(redState, new Move(1, 1));    
-        double blackScore = h.score(blackState, new Move(1, 1)); 
+        double redScore = H.score(redState, new Move(1, 1));
+        double blackScore = H.score(blackState, new Move(1, 1));
 
         assertEquals(1.0 / total, redScore, 1e-12);
         assertEquals(1.0 / total, blackScore, 1e-12);
-        
     }
 }
-
