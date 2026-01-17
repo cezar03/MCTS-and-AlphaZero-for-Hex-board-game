@@ -2,6 +2,7 @@ import AI.mcts.HexGame.GameState;
 import AI.mcts.HexGame.Move;
 import AI.mcts.Optimazation.Heuristic.ShortestPathHeuristic;
 import Game.Board;
+import Game.BoardAdapter;
 import Game.Color;
 import Game.Player;
 import org.junit.jupiter.api.Test;
@@ -23,7 +24,7 @@ class ShortestPathHeuristicTest {
     @Test
     void scoreTest_returnsZero_whenDeltaIsZero_symmetricEmptyBoard() {
         Board b = new Board(3);
-        GameState state = new GameState(b, Player.RED);
+        GameState state = new GameState(new BoardAdapter(b), Player.RED);
 
         ShortestPathHeuristic h = new ShortestPathHeuristic();
         double s = h.score(state, new Move(1, 1));
@@ -36,7 +37,7 @@ class ShortestPathHeuristicTest {
         Board b = new Board(3);
         place(b, 1, 1, Color.RED);
 
-        GameState state = new GameState(b, Player.RED);
+        GameState state = new GameState(new BoardAdapter(b), Player.RED);
         ShortestPathHeuristic h = new ShortestPathHeuristic();
 
         double s = h.score(state, new Move(1, 1));
@@ -48,7 +49,7 @@ class ShortestPathHeuristicTest {
         Board b = new Board(1);
         place(b, 0, 0, Color.RED);
 
-        GameState state = new GameState(b, Player.RED);
+        GameState state = new GameState(new BoardAdapter(b), Player.RED);
         assertTrue(state.isTerminal());
 
         ShortestPathHeuristic h = new ShortestPathHeuristic();
@@ -60,7 +61,7 @@ class ShortestPathHeuristicTest {
     @Test
     void scoreTest_doesNotMutateOriginalBoard() {
         Board b = new Board(3);
-        GameState state = new GameState(b, Player.RED);
+        GameState state = new GameState(new BoardAdapter(b), Player.RED);
 
         Color before = b.getCell(1, 1);
 
@@ -73,7 +74,7 @@ class ShortestPathHeuristicTest {
     @Test
     void scoreTest_resultIsFiniteAndWithinTanhRange() {
         Board b = new Board(3);
-        GameState state = new GameState(b, Player.RED);
+        GameState state = new GameState(new BoardAdapter(b), Player.RED);
 
         ShortestPathHeuristic h = new ShortestPathHeuristic();
         double s = h.score(state, new Move(0, 0));
@@ -85,7 +86,7 @@ class ShortestPathHeuristicTest {
     @Test
     void scoreTest_throwsNullPointer_forNullMove_edgeCase() {
         Board b = new Board(3);
-        GameState state = new GameState(b, Player.RED);
+        GameState state = new GameState(new BoardAdapter(b), Player.RED);
 
         ShortestPathHeuristic h = new ShortestPathHeuristic();
         assertThrows(NullPointerException.class, () -> h.score(state, null));

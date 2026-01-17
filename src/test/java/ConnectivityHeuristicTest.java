@@ -1,7 +1,9 @@
+import AI.AiPlayer.AIBoardAdapter;
 import AI.mcts.HexGame.GameState;
 import AI.mcts.HexGame.Move;
 import AI.mcts.Optimazation.Heuristic.ConnectivityHeuristic;
 import Game.Board;
+import Game.BoardAdapter;
 import Game.Color;
 import Game.Player;
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,7 +23,7 @@ class ConnectivityHeuristicTest {
     @Test
     void scoreTest_returnsZero_whenNoNeighborsExist_size1() {
         Board b = new Board(1);
-        GameState s = new GameState(b, Player.RED);
+        GameState s = new GameState(new BoardAdapter(b), Player.RED);
         ConnectivityHeuristic h = new ConnectivityHeuristic();
 
         double score = h.score(s, new Move(0, 0));
@@ -32,7 +34,7 @@ class ConnectivityHeuristicTest {
     @Test
     void scoreTest_returnsZero_whenNoFriendlyNeighbors() {
         Board b = new Board(3);
-        GameState s = new GameState(b, Player.RED);
+        GameState s = new GameState(new BoardAdapter(b), Player.RED);
         ConnectivityHeuristic h = new ConnectivityHeuristic();
 
         // вокруг (1,1) никого нет
@@ -44,7 +46,7 @@ class ConnectivityHeuristicTest {
     @Test
     void scoreTest_centerCell_countsFriendlyFraction_forRedToMove() {
         Board b = new Board(3);
-        GameState s = new GameState(b, Player.RED);
+        GameState s = new GameState(new BoardAdapter(b), Player.RED);
         ConnectivityHeuristic h = new ConnectivityHeuristic();
 
         place(b, 0, 1, Color.RED);
@@ -59,7 +61,7 @@ class ConnectivityHeuristicTest {
     @Test
     void scoreTest_centerCell_allNeighborsFriendly_returnsOne() {
         Board b = new Board(3);
-        GameState s = new GameState(b, Player.RED);
+        GameState s = new GameState(new BoardAdapter(b), Player.RED);
         ConnectivityHeuristic h = new ConnectivityHeuristic();
 
         place(b, 0, 1, Color.RED);
@@ -77,7 +79,7 @@ class ConnectivityHeuristicTest {
     @Test
     void scoreTest_cornerCell_totalNeighborsLessThanSix_andFractionCorrect() {
         Board b = new Board(3);
-        GameState s = new GameState(b, Player.RED);
+        GameState s = new GameState(new BoardAdapter(b), Player.RED);
         ConnectivityHeuristic h = new ConnectivityHeuristic();
 
     
@@ -96,7 +98,7 @@ class ConnectivityHeuristicTest {
     @Test
     void scoreTest_usesToMoveColor_blackToMoveCountsBlackNeighborsNotRed() {
         Board b = new Board(3);
-        GameState s = new GameState(b, Player.BLACK);
+        GameState s = new GameState(new BoardAdapter(b), Player.BLACK);
         ConnectivityHeuristic h = new ConnectivityHeuristic();
 
         place(b, 0, 1, Color.BLACK);
@@ -123,8 +125,8 @@ class ConnectivityHeuristicTest {
 
         int total = b.neighbors(1, 1).size();
 
-        GameState redState = new GameState(b, Player.RED);
-        GameState blackState = new GameState(b, Player.BLACK);
+        GameState redState = new GameState(new BoardAdapter(b), Player.RED);
+        GameState blackState = new GameState(new BoardAdapter(b), Player.BLACK);
 
         double redScore = h.score(redState, new Move(1, 1));    
         double blackScore = h.score(blackState, new Move(1, 1)); 

@@ -3,6 +3,7 @@ import AI.mcts.HexGame.GameState;
 import AI.mcts.HexGame.Move;
 import AI.mcts.Optimazation.Heuristic.Heuristic;
 import Game.Board;
+import Game.BoardAdapter;
 import Game.Player;
 import org.junit.jupiter.api.Test;
 
@@ -35,7 +36,7 @@ class HeuristicTest {
 
         
         Board b = new Board(1);
-        GameState s = new GameState(b, Player.RED);
+        GameState s = new GameState(new BoardAdapter(b), Player.RED);
         Move m = new Move(0, 0);
 
         assertEquals(42.0, h.score(s, m), 0.0);

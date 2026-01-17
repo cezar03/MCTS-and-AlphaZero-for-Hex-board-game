@@ -1,5 +1,6 @@
 
 import Game.Board;
+import Game.BoardAdapter;
 import Game.Color;
 import org.junit.jupiter.api.Test;
 
@@ -25,38 +26,38 @@ class ShortestPathTest {
     void shortestPathTest() {
         Board b = new Board(1);
 
-        assertEquals(1, ShortestPath.shortestPath(b, Color.RED));
-        assertEquals(1, ShortestPath.shortestPath(b, Color.BLACK));
+        assertEquals(1, ShortestPath.shortestPath(new BoardAdapter(b), Color.RED));
+        assertEquals(1, ShortestPath.shortestPath(new BoardAdapter(b), Color.BLACK));
     }
 
     @Test
     void costZeroTest() {
         Board red = new Board(1);
         place(red, 0, 0, Color.RED);
-        assertEquals(0, ShortestPath.shortestPath(red, Color.RED));
+        assertEquals(0, ShortestPath.shortestPath(new BoardAdapter(red), Color.RED));
 
         Board black = new Board(1);
         place(black, 0, 0, Color.BLACK);
-        assertEquals(0, ShortestPath.shortestPath(black, Color.BLACK));
+        assertEquals(0, ShortestPath.shortestPath(new BoardAdapter(black), Color.BLACK));
     }
 
     @Test
     void opponentStoneBlockedTest() {
         Board b1 = new Board(1);
         place(b1, 0, 0, Color.BLACK);
-        assertEquals(INF, ShortestPath.shortestPath(b1, Color.RED));
+        assertEquals(INF, ShortestPath.shortestPath(new BoardAdapter(b1), Color.RED));
 
         Board b2 = new Board(1);
         place(b2, 0, 0, Color.RED);
-        assertEquals(INF, ShortestPath.shortestPath(b2, Color.BLACK));
+        assertEquals(INF, ShortestPath.shortestPath(new BoardAdapter(b2), Color.BLACK));
     }
 
     @Test
     void emptyReturnsTwoTest() {
         Board b = new Board(2);
 
-        assertEquals(2, ShortestPath.shortestPath(b, Color.RED));
-        assertEquals(2, ShortestPath.shortestPath(b, Color.BLACK));
+        assertEquals(2, ShortestPath.shortestPath(new BoardAdapter(b), Color.RED));
+        assertEquals(2, ShortestPath.shortestPath(new BoardAdapter(b), Color.BLACK));
     }
 
     @Test
@@ -64,7 +65,7 @@ class ShortestPathTest {
         Board b = new Board(2);
         place(b, 0, 0, Color.RED);
 
-        assertEquals(1, ShortestPath.shortestPath(b, Color.RED));
+        assertEquals(1, ShortestPath.shortestPath(new BoardAdapter(b), Color.RED));
     }
 
     @Test
@@ -72,7 +73,7 @@ class ShortestPathTest {
         Board b = new Board(2);
         place(b, 0, 0, Color.BLACK);
 
-        assertEquals(1, ShortestPath.shortestPath(b, Color.BLACK));
+        assertEquals(1, ShortestPath.shortestPath(new BoardAdapter(b), Color.BLACK));
     }
 
     @Test
@@ -83,7 +84,7 @@ class ShortestPathTest {
         place(b, 1, 1, Color.RED);
         place(b, 2, 1, Color.RED);
 
-        assertEquals(0, ShortestPath.shortestPath(b, Color.RED));
+        assertEquals(0, ShortestPath.shortestPath(new BoardAdapter(b), Color.RED));
     }
 
     @Test
@@ -94,7 +95,7 @@ class ShortestPathTest {
         place(b, 1, 1, Color.BLACK);
         place(b, 1, 2, Color.BLACK);
 
-        assertEquals(0, ShortestPath.shortestPath(b, Color.BLACK));
+        assertEquals(0, ShortestPath.shortestPath(new BoardAdapter(b), Color.BLACK));
     }
 
     @Test
@@ -104,7 +105,7 @@ class ShortestPathTest {
         place(b, 1, 0, Color.BLACK);
         place(b, 1, 1, Color.BLACK);
 
-        assertEquals(INF, ShortestPath.shortestPath(b, Color.RED));
+        assertEquals(INF, ShortestPath.shortestPath(new BoardAdapter(b), Color.RED));
     }
 
     @Test
@@ -114,7 +115,7 @@ class ShortestPathTest {
         place(b, 0, 1, Color.RED);
         place(b, 1, 1, Color.RED);
 
-        assertEquals(INF, ShortestPath.shortestPath(b, Color.BLACK));
+        assertEquals(INF, ShortestPath.shortestPath(new BoardAdapter(b), Color.BLACK));
     }
 
     @Test
@@ -125,7 +126,7 @@ class ShortestPathTest {
         place(b, 1, 0, Color.RED);
         // (2,0) empty → cost 1
 
-        assertEquals(1, ShortestPath.shortestPath(b, Color.RED));
+        assertEquals(1, ShortestPath.shortestPath(new BoardAdapter(b), Color.RED));
     }
 
     @Test
@@ -133,7 +134,7 @@ class ShortestPathTest {
         Board b = new Board(2);
 
         Color before = b.getCell(0, 0);
-        ShortestPath.shortestPath(b, Color.RED);
+        ShortestPath.shortestPath(new BoardAdapter(b), Color.RED);
         Color after = b.getCell(0, 0);
 
         assertEquals(before, after);
