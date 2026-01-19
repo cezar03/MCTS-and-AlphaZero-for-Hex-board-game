@@ -4,9 +4,7 @@ import AI.mcts.HexGame.Move;
 import AI.mcts.Optimazation.MovePruner;
 import AI.mcts.Optimazation.Heuristic.Heuristic;
 import org.junit.jupiter.api.Test;
-
 import java.util.*;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class MovePrunerTest {
@@ -163,7 +161,7 @@ class MovePrunerTest {
         List<Move> legal = new ArrayList<>(List.of(a, b, c));
         List<Move> pruned = pruner.pruneMoves(null, legal);
 
-        assertEquals(3, pruned.size(), "Если threshold=0 и все scores равны max, должны остаться все");
+        assertEquals(3, pruned.size(), "Anything should be pruned");
     }
 
     @Test

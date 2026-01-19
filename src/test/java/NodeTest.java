@@ -1,9 +1,6 @@
-
-
 import AI.mcts.Node;
 import AI.mcts.HexGame.Move;
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class NodeTest {
@@ -33,16 +30,12 @@ class NodeTest {
     void constructorWithDefault() {
         Move m = new Move(0, 0);
         Node parent = new Node(null, null, 1);
-
         Node n = new Node(m, parent, 2, 0.75);
-
         assertSame(m, n.move);
         assertSame(parent, n.parent);
         assertEquals(2, n.playerThatMoved);
-
         assertNotNull(n.children);
         assertTrue(n.children.isEmpty());
-
         assertEquals(0, n.visits);
         assertEquals(0.0, n.wins, 0.0);
         assertEquals(0.0, n.heuristicBias, 0.0);
@@ -89,10 +82,10 @@ class NodeTest {
         Move equivalentKey = new Move(4, 5);
         Node retrieved = parent.children.get(equivalentKey);
 
-        //if equals/hashCode doesn't work correctly null will be returned
+        //if equals/hashCode doesn't work correctly null value will be returned
         assertSame(child, retrieved, "Check equals/hashCode!!!");
     }
-    //Test checks whether children in Node class return null value
+
     @Test
     void childrenNullKeyNullValueTest() {
         Node parent = new Node(null, null, 1);
@@ -141,5 +134,58 @@ class NodeTest {
 
         Node inf = new Node(null, null, 1, Double.POSITIVE_INFINITY);
         assertTrue(Double.isInfinite(inf.priorProbability));
+    }
+    @Test
+    void removeChildTest() {
+        Node parent = new Node(null, null, 1);
+
+        Move key = new Move(2, 2);
+        Node child = new Node(key, parent, 1);
+
+        parent.children.put(key, child);
+        assertEquals(1, parent.children.size());
+
+        Node removed = parent.children.remove(key);
+        assertSame(child, removed);
+        assertTrue(parent.children.isEmpty());
+        assertNull(parent.children.get(key));
+    }
+    @Test
+    void childPontsParentNode() {
+        Node parent = new Node(null, null, 1);
+
+        Move m = new Move(0, 0);
+        Node child = new Node(m, parent, 2);
+
+        parent.children.put(m, child);
+
+        assertSame(child, parent.children.get(m));
+        assertSame(parent, child.parent, "Child node should reference to the parent node");
+    }
+    @Test
+    void multipleChildrenTest() {
+        Node parent = new Node(null, null, 1);
+        Move m1 = new Move(0, 1);
+        Move m2 = new Move(1, 0);
+        Node c1 = new Node(m1, parent, 1);
+        Node c2 = new Node(m2, parent, 1);
+        parent.children.put(m1, c1);
+        parent.children.put(m2, c2);
+
+        assertEquals(2, parent.children.size());
+        assertSame(parent, c1.parent);
+        assertSame(parent, c2.parent);
+    }
+    @Test
+    void removingChildrenTest() {
+        Node parent = new Node(null, null, 1);
+
+        parent.children.put(new Move(0, 0), new Node(new Move(0, 0), parent, 1));
+        parent.children.put(new Move(0, 1), new Node(new Move(0, 1), parent, 1));
+
+        assertEquals(2, parent.children.size());
+
+        parent.children.clear();
+        assertTrue(parent.children.isEmpty());
     }
 }

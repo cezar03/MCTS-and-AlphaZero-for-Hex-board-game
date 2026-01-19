@@ -4,6 +4,10 @@ import AI.AiPlayer.AIAgent;
 import AI.AiPlayer.AITester;
 import AI.AiPlayer.MCTSPlayer;
 import AI.AiPlayer.RandomPlayer;
+import AI.AlphaZero.AlphaZeroConfig;
+import AI.AlphaZero.AlphaZeroMCTS;
+import AI.AlphaZero.AlphaZeroNet;
+import AI.AlphaZero.AlphaZeroPlayer;
 import AI.mcts.HexGame.Move;
 import Game.Board;
 import Game.BoardAdapter;
@@ -35,6 +39,9 @@ public class RunExperimentCSV {
 
         // Base vs Optimized
         // runBaseVsOpt(BOARD_SIZE, GAMES, ALTERNATE_COLORS);
+        // Test Matches
+        testAlphaZerovsRandom();
+        testMCTSvsAlphaZero();
     }
 
     private static void runMctsVsRandomSweep(int boardSize, int gamesPerSetting, boolean alternateColors) {
@@ -207,4 +214,31 @@ public class RunExperimentCSV {
         AIAgent tuned = new MCTSPlayer(Player.BLACK, 1000, THR, CENT, CONN, BIAS, SP, C_EXPL);
         AITester.runMatch(base, tuned, 30, 11, false);
     }
+    private static void testMCTSvsAlphaZero(){
+        AIAgent mcts = new MCTSPlayer(Player.RED, 1000, THR, CENT, CONN, BIAS, SP, C_EXPL);
+        AlphaZeroNet aiNet = new AlphaZeroNet(BOARD_SIZE);
+        AlphaZeroMCTS alphaZeroMCTS = new AlphaZeroMCTS(aiNet);
+        AlphaZeroConfig alphaConfig = new AlphaZeroConfig.Builder()
+                .boardSize(11)
+                .modelPath("src/main/resources/models/hex_model_latest.zip")
+                .loadExistingModel(true)
+                .build();
+        AIAgent alphaZero = new AlphaZeroPlayer(Player.BLACK, alphaZeroMCTS, alphaConfig);
+       
+        AITester.runMatch(mcts, alphaZero, GAMES, BOARD_SIZE, false);
+    }
+    private static void testAlphaZerovsRandom(){
+        AlphaZeroNet aiNet = new AlphaZeroNet(BOARD_SIZE);
+        AlphaZeroMCTS alphaZeroMCTS = new AlphaZeroMCTS(aiNet);
+        AlphaZeroConfig alphaConfig = new AlphaZeroConfig.Builder()
+                .boardSize(11)
+                .modelPath("src/main/resources/models/hex_model_latest.zip")
+                .loadExistingModel(true)
+                .build();
+        AIAgent alphaZero = new AlphaZeroPlayer(Player.RED, alphaZeroMCTS, alphaConfig);
+        AIAgent random = new RandomPlayer(Player.BLACK);
+        AITester.runMatch(alphaZero, random, GAMES, BOARD_SIZE, false);
+    }
 }
+
+
