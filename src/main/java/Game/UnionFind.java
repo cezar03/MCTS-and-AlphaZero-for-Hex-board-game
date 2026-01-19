@@ -99,24 +99,44 @@ public class UnionFind {
     public boolean connected(int a, int b) {
         return find(a) == find(b);
     }
-    
-    /**
-     * Resets the Union-Find structure to its initial state where each element
-     * is in its own separate set.
-     * <p>
-     * This method reinitializes both the parent and rank arrays, making each
-     * element its own parent (root) and setting all ranks to zero. This is
-     * useful for reusing the same Union-Find instance for a new game or when
-     * the board needs to be cleared and rebuilt.
-     * <p>
-     * After calling this method, all previous union operations are forgotten
-     * and the structure behaves as if freshly constructed.
-     */
+
     public void reset() {
         Arrays.fill(rank, 0);
         for (int i = 0; i < parent.length; i++) {
             parent[i] = i;
         }
+    }
+
+    public UnionFind copy() {
+    UnionFind newParams = new UnionFind(this.parent.length); // Create empty
+    // RAW COPY: extremely fast
+    System.arraycopy(this.parent, 0, newParams.parent, 0, this.parent.length);
+    System.arraycopy(this.rank, 0, newParams.rank, 0, this.rank.length);
+    return newParams;
+}
+
+    /**
+     * Gets the parent array for undo/redo support.
+     * @return copy of the parent array
+     */
+    public int[] getParentArray() {
+        return Arrays.copyOf(parent, parent.length);
+    }
+    
+    /**
+     * Gets the rank array for undo/redo support.
+     * @return copy of the rank array
+     */
+    public int[] getRankArray() {
+        return Arrays.copyOf(rank, rank.length);
+    }
+    
+    /**
+     * Restores UnionFind state from arrays (for undo).
+     */
+    public void restore(int[] parentArray, int[] rankArray) {
+        System.arraycopy(parentArray, 0, this.parent, 0, this.parent.length);
+        System.arraycopy(rankArray, 0, this.rank, 0, this.rank.length);
     }
 }
 

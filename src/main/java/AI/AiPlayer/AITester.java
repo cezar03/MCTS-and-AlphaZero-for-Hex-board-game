@@ -1,9 +1,8 @@
 package AI.AiPlayer;
 
-import Game.Board;
-import Game.BoardAdapter;
-import Game.Player;
 import AI.mcts.HexGame.Move;
+import Game.Board;
+import Game.Player;
 
 /**
  * Framework for testing AI agents against each other.
@@ -68,14 +67,13 @@ public class AITester {
 
             Player winner = playGame(redAgent, blackAgent, boardSize);
 
-            switch (winner) {
-                case RED -> {
-                    redWins++;
-                    if (extensivePrints) System.out.println("  Result: RED wins");
-                }
-                case BLACK -> {
-                    blackWins++;
-                    if (extensivePrints) System.out.println("  Result: BLACK wins");
+            if (winner == null) {
+                draws++;
+                if (extensivePrints) System.out.println("  Result: DRAW/UNKNOWN");
+            } else {
+                switch (winner) {
+                    case RED -> { redWins++; if (extensivePrints) System.out.println("  Result: RED wins"); }
+                    case BLACK -> { blackWins++; if (extensivePrints) System.out.println("  Result: BLACK wins"); }
                 }
             }
 
@@ -117,32 +115,33 @@ public class AITester {
 
     private static Player playGame(AIAgent redAgent, AIAgent blackAgent, int boardSize) {
         Board board = new Board(boardSize);
-        BoardAdapter adapter = new BoardAdapter(board);
+        AIBoardAdapter adapter = new GameBoardAdapter(board);
+
         Player currentPlayer = Player.RED;
         int maxMoves = boardSize * boardSize;
         int moveCount = 0;
 
-        while (!adapter.isGameOver() && moveCount < maxMoves) {
+        while (!adapter.isTerminal() && moveCount < maxMoves) {
             AIAgent currentAgent = (currentPlayer == Player.RED) ? redAgent : blackAgent;
             Move move = currentAgent.getBestMove(adapter, currentPlayer);
 
-            if (move == null) {
-                break;
-            }
+            if (move == null) return null;
 
             boolean success = adapter.makeMove(move.row, move.col, currentPlayer);
-
             if (!success) {
                 System.err.println("Warning: Invalid move returned by " + getAgentName(currentAgent));
-                break;
+                return null;
             }
 
             currentPlayer = currentPlayer.other();
             moveCount++;
         }
 
-        return adapter.getWinner();
+        if (adapter.redWins()) return Player.RED;
+        if (adapter.blackWins()) return Player.BLACK;
+        return null;
     }
+
 
     private static String getAgentName(AIAgent agent) {
         if (agent == null) {

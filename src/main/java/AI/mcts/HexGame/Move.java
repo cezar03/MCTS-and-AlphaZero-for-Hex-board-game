@@ -2,71 +2,61 @@ package AI.mcts.HexGame;
 
 import java.util.Objects;
 
-/**
- * Represents a move in the Hex game, defined by row and column coordinates.
- * This class is immutable and provides proper equals, hashCode, and toString implementations
- * for use in collections and maps.
-*/
 public class Move {
     public final int row;
     public final int col;
 
-    /**
-     * Constructs a Move with the specified row and column coordinates.
-     *
-     * @param row the row position of the move
-     * @param col the column position of the move
-    */
-    public Move(int row, int col){
+    // --- CACHE START ---
+    // 1. Create a static cache for board sizes up to 20x20 (Adjust if needed)
+    private static final Move[][] CACHE = new Move[20][20];
+
+    // 2. Static initializer to fill the cache at startup
+    static {
+        for (int r = 0; r < 20; r++) {
+            for (int c = 0; c < 20; c++) {
+                CACHE[r][c] = new Move(r, c);
+            }
+        }
+    }
+
+    // 3. Static Factory Method - USE THIS instead of 'new Move()'
+    public static Move get(int row, int col) {
+        // If within cache bounds, return cached instance
+        if (row >= 0 && row < 20 && col >= 0 && col < 20) {
+            return CACHE[row][col];
+        }
+        // Fallback for weird edge cases (rare)
+        return new Move(row, col);
+    }
+    // --- CACHE END ---
+
+    // 4. Make constructor PRIVATE so you are forced to use Move.get()
+    private Move(int row, int col){
         this.row = row;
         this.col = col;
     }
 
-    /**
-     * Returns a string representation of the move's coordinates in the format "(row,col)".
-     *
-     * @return a string containing the coordinate representation
-    */
     public String getCoordinate(){
         return "(" + row + "," + col + ")";
     }
 
-    /**
-     * Compares this move to another object for equality.
-     * Two moves are equal if they have the same row and column values.
-     *
-     * @param o the object to compare with
-     * @return true if the objects are equal, false otherwise
-     */
+    @Override
+    public String toString(){
+        return getCoordinate();
+    }
+    
+    // Equals and HashCode are still useful, though strict reference equality (==) 
+    // often works when caching is perfect. We keep them for safety.
     @Override
     public boolean equals(Object o){
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof Move)) {
-            return false;
-        }
+        if (this == o) return true;
+        if (!(o instanceof Move)) return false;
         Move m = (Move) o;
         return row == m.row && col == m.col;
     }
 
-    /**
-     * Generates a hash code for this move based on its row and column values.
-     *
-     * @return the hash code value for this move
-     */
     @Override
     public int hashCode() {
         return Objects.hash(row, col);
-    }
-
-    /**
-     * Returns a string representation of this move using its coordinates.
-     *
-     * @return a string representation of the move
-     */
-    @Override
-    public String toString(){
-        return getCoordinate();
     }
 }

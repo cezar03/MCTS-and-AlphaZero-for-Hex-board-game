@@ -1,334 +1,258 @@
 package UI;
 
+import java.util.EnumMap;
+import java.util.Map;
+
+import javafx.animation.PauseTransition;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
+import javafx.util.Duration;
+
+import AI.AiPlayer.AIAdaptationConfig;
+import AI.AiPlayer.AIAgent;
+import AI.AiPlayer.AIAgentFactory;
+import AI.AiPlayer.AIBoardAdapter;
+import AI.mcts.HexGame.Move;
 import Game.BoardAdapter;
 import Game.Color;
 import Game.Player;
 import Game.Rules;
-import AI.AiPlayer.AIAgent;
-import AI.AiPlayer.AIAgentFactory;
-import AI.AiPlayer.AIAdaptationConfig;
-import AI.mcts.HexGame.Move;
-import javafx.application.Platform;
-import javafx.concurrent.Task;
 
-import java.util.HashMap;
-import java.util.Map;
+/**
+ * GameController: owns turn logic + mediates between UI.BoardView and Game.BoardAdapter.
+ * Runs AI on background thread and applies move on FX thread.
+ */
+public final class GameController {
 
-/** Controller class to manage game logic and interactions between the BoardAdapter and BoardView 
- * refactoring this is highly advised as this class is getting really big however if anyone has the time and ability please go ahead i am really tired and curious
- * @author Team 04
-*/
-public class GameController {
-    private final BoardView boardView;
-    private Player currentPlayer;
-    private boolean gameOver;
+    private final HexBoardView boardView;          // IMPORTANT: UI.BoardView (JavaFX)
     private final BoardAdapter adapter;
-    private int moveCount = 0;
-    
-    // Map with AI player(s) (can be more than one when testing performance of agents)
-    private Map<Player, AIAgent> aiAgents = new HashMap<>();
+
+    private final Map<Player, AIAgent> aiAgents = new EnumMap<>(Player.class);
+
+    private Player currentPlayer = Player.RED;
+    private boolean gameOver = false;
     private boolean aiThinking = false;
-    
-    // Callback for when game ends
+    private int moveCount = 0;
+
+    // Used to ignore stale AI results after reset/back/menu etc.
+    private long revision = 0;
+
     private GameEndListener gameEndListener;
-    
-    /**
-     * Interface for listening to game end events.
-     */
+
     public interface GameEndListener {
         void onGameEnd(Player winner);
     }
 
-    /**
-     * Constructor for GameController
-     * @param adapter0 The BoardAdapter to interact with the game board.
-     * @param boardView The BoardView to update the UI.
-     */
-    public GameController(BoardAdapter adapter0, BoardView boardView) {
+    public GameController(BoardAdapter adapter, HexBoardView boardView) {
+        if (adapter == null) throw new IllegalArgumentException("BoardAdapter cannot be null");
+        if (boardView == null) throw new IllegalArgumentException("BoardView cannot be null");
+
+        this.adapter = adapter;
         this.boardView = boardView;
-        this.currentPlayer = Player.RED; // can switch to Player.BLACK to let black start
-        this.gameOver = false;
-        this.adapter = adapter0; // Initialize the adapter
-        this.aiAgents = new HashMap<>();
+
         boardView.setController(this);
-        boardView.updateTurnDisplay(currentPlayer);
-    }
-
-    /**
-     * Sets the listener that will be called when the game ends.
-     * @param listener The GameEndListener to be notified when game ends
-     */
-    public void setGameEndListener(GameEndListener listener) {
-        this.gameEndListener = listener;
-    }
-
-    /**
-     * Sets up an AI agent for a specific player (direct agent setup).
-     * @param player The player this AI will control (RED or BLACK).
-     * @param agent The AI agent to use.
-     */
-    public void setupAIAgent(Player player, AIAgent agent) {
-        if (agent == null) {
-            throw new IllegalArgumentException("Agent cannot be null");
-        }
-        aiAgents.put(player, agent);
-        agent.initialize();
-        System.out.println("AI Agent set up for: " + player);
-        
-        // If it's this player's turn, make the AI move
-        if (aiAgents.get(currentPlayer) != null && !gameOver) {
-            makeAIMove();
-        }
-    }
-    
-    /**
-     * Sets up an AI agent using a factory and configuration.
-     * Decouples agent instantiation from GameController.
-     * @param player The player this AI will control (RED or BLACK).
-     * @param factory The factory for creating the AI agent.
-     * @param config The configuration for the AI agent.
-     */
-    public void setupAIAgent(Player player, AIAgentFactory factory, AIAdaptationConfig config) {
-        if (factory == null || config == null) {
-            throw new IllegalArgumentException("Factory and config cannot be null");
-        }
-        AIAgent agent = factory.createAgent(config);
-        setupAIAgent(player, agent);
-    }
-
-    /**
-     * Removes the AI agent for a specific player.
-     * @param player The player whose AI should be removed
-     */
-    public void removeAIAgent(Player player) {
-        AIAgent agent = aiAgents.remove(player);
-        if (agent != null) {
-            agent.cleanup();
-        }
-        System.out.println("AI Agent removed for: " + player);
-    }
-
-    /**
-     * Removes all AI agents from the game.
-     */
-    public void removeAllAIAgents() {
-        for (AIAgent agent : aiAgents.values()) {
-            agent.cleanup();
-        }
-        aiAgents.clear();
-        this.aiThinking = false;
-        System.out.println("All AI Agents removed");
-    }
-
-    /**
-     * Checks if any AI agents are active.
-     */
-    public boolean hasAnyAIAgent() {
-        return !aiAgents.isEmpty();
-    }
-
-    /**
-     * Checks if a specific player is controlled by an AI.
-     */
-    public boolean isAIControlled(Player player) {
-        return aiAgents.containsKey(player);
-    }
-
-    /**
-     * Gets the AI agent for a specific player, if one exists.
-     */
-    public AIAgent getAIAgent(Player player) {
-        return aiAgents.get(player);
-    }
-
-    /**
-     * Resets the game state for a new game while keeping AI agents intact.
-     * Resets the board, current player, and game over flag.
-     */
-    public void resetForNewGame() {
-        this.adapter.reset();
-        this.currentPlayer = Player.RED;
-        this.gameOver = false;
-        this.moveCount = 0;
         boardView.update(adapter);
         boardView.updateTurnDisplay(currentPlayer);
-        
-        // If current player is AI-controlled, make the AI move
-        if (isAIControlled(currentPlayer) && !gameOver) {
-            makeAIMove();
-        }
     }
 
-    /**
-     * Returns the current player whose turn it is to make a move.
-     * 
-     * @return the current player (either RED or BLACK)
-    */
     public Player getCurrentPlayer() {
         return currentPlayer;
     }
 
-    /** Handle a cell click at the given row, col from the BoardView. 
-     * @param row The row of the clicked cell.
-     * @param col The column of the clicked cell.
-    */
-    public void handleCellClick(int row, int col) {
-        if (gameOver || aiThinking) {
-            return;
-        }
-        
-        // Block clicks if current player is AI-controlled
-        if(isAIControlled(currentPlayer)){
-            return;
-        }
-        
-        // Check if pie rule is available (second player's first move)
-        if (Rules.pieRuleAvailable(moveCount, currentPlayer)) {
-            // Check if clicking on opponent's stone
-            Color clickedCell = adapter.getCellColor(row, col);
-            if (clickedCell == currentPlayer.other().stone) {
-                adapter.undoMove(row, col); 
-                adapter.makeMove(row, col, currentPlayer);
-                boardView.update(adapter);
- 
-                moveCount++;
-                System.out.println(moveCount);
-                currentPlayer = currentPlayer.other();
-                boardView.updateTurnDisplay(currentPlayer);
+    public void setGameEndListener(GameEndListener listener) {
+        this.gameEndListener = listener;
+    }
 
+    public boolean hasAnyAIAgent() {
+        return !aiAgents.isEmpty();
+    }
+
+    public boolean isAIControlled(Player player) {
+        return aiAgents.containsKey(player);
+    }
+
+    public void setupAIAgent(Player player, AIAgent agent) {
+        if (player == null) throw new IllegalArgumentException("Player cannot be null");
+        if (agent == null) throw new IllegalArgumentException("Agent cannot be null");
+
+        aiAgents.put(player, agent);
+        agent.initialize();
+
+        // If it's already this agent's turn, start thinking immediately.
+        if (!gameOver && currentPlayer == player) {
+            requestAIMove(false);
+        }
+    }
+
+    public void setupAIAgent(Player player, AIAgentFactory factory, AIAdaptationConfig config) {
+        if (factory == null) throw new IllegalArgumentException("Factory cannot be null");
+        if (config == null) throw new IllegalArgumentException("Config cannot be null");
+        if (config.getPlayer() != player) {
+            throw new IllegalArgumentException("Config player " + config.getPlayer() + " != requested slot " + player);
+        }
+        setupAIAgent(player, factory.createAgent(config));
+    }
+
+    public void removeAIAgent(Player player) {
+        AIAgent agent = aiAgents.remove(player);
+        if (agent != null) agent.cleanup();
+    }
+
+    public void removeAllAIAgents() {
+        for (AIAgent a : aiAgents.values()) {
+            try { a.cleanup(); } catch (Exception ignored) {}
+        }
+        aiAgents.clear();
+        aiThinking = false;
+        revision++; // invalidate any pending AI result
+    }
+
+    public void resetForNewGame() {
+        revision++;
+        aiThinking = false;
+
+        adapter.reset();
+        currentPlayer = Player.RED;
+        gameOver = false;
+        moveCount = 0;
+
+        boardView.update(adapter);
+        boardView.updateTurnDisplay(currentPlayer);
+
+        if (isAIControlled(currentPlayer)) {
+            requestAIMove(false);
+        }
+    }
+
+    /**
+     * Called by UI.BoardView on click.
+     */
+    public void handleCellClick(int row, int col) {
+        if (gameOver || aiThinking) return;
+
+        // If current player is AI-controlled, ignore human clicks.
+        if (isAIControlled(currentPlayer)) return;
+
+        // Pie rule (second player's first move): click opponent stone to "swap" (your implementation)
+        if (Rules.pieRuleAvailable(moveCount, currentPlayer)) {
+            Color clicked = adapter.getCell(row, col); // FIX: getCell, not getCellColor
+            if (clicked == currentPlayer.other().stone) {
+                adapter.undoMove(row, col);
+                adapter.makeMove(row, col, currentPlayer);
+
+                boardView.update(adapter);
+                moveCount++;
+
+                advanceTurnOrEnd();
                 return;
             }
         }
-        
-        boolean ok = adapter.makeMove(row, col, currentPlayer);
-        if (!ok) {
-            return;
-        }
-        // Update the BoardView to reflect the move
+
+        if (!adapter.makeMove(row, col, currentPlayer)) return;
+
         boardView.update(adapter);
         moveCount++;
 
+        advanceTurnOrEnd();
+    }
+
+    private void advanceTurnOrEnd() {
         if (adapter.isGameOver()) {
-            gameOver = true;
-            Player winner = adapter.getWinner();
-            System.out.println("Player " + winner + " wins!");
-            boardView.updateWinDisplay(winner);
-            if (gameEndListener != null) {
-                gameEndListener.onGameEnd(winner);
-            }
+            endGame(adapter.getWinner());
             return;
         }
 
-        // No win yet, switch players
         currentPlayer = currentPlayer.other();
         boardView.updateTurnDisplay(currentPlayer);
-        System.out.println("Current player: " + currentPlayer);
-        
-        // Check if the new current player is AI-controlled
+
         if (isAIControlled(currentPlayer)) {
-            makeAIMove();
+            requestAIMove(false);
         }
     }
 
-    /**
-     * Makes an AI move on a background thread to avoid blocking the UI.
-     */
-    private void makeAIMove() {
-        if (aiThinking || gameOver) {
-            return;
-        }
+    private void endGame(Player winner) {
+        gameOver = true;
+        boardView.updateWinDisplay(winner);
+        if (gameEndListener != null) gameEndListener.onGameEnd(winner);
+    }
 
-        AIAgent currentAIAgent = aiAgents.get(currentPlayer);
-        if (currentAIAgent == null) {
-            return; // No AI agent for current player
-        }
+    /**
+     * Computes an AI move in background. Applies it safely if still current (revision token).
+     */
+    private void requestAIMove(boolean delayed) {
+        if (gameOver || aiThinking) return;
+
+        final AIAgent agent = aiAgents.get(currentPlayer);
+        if (agent == null) return;
 
         aiThinking = true;
-        
-        // Run AI move calculation on a background thread
-        Task<Move> aiTask = new Task<Move>() {
-            @Override
-            protected Move call() throws Exception {
-                // Get the best move from the AI (pass adapter as AIBoardAdapter)
-                return currentAIAgent.getBestMove(adapter, currentPlayer);
-            }
+        final long myRevision = revision;
+        final Player myPlayer = currentPlayer;
+
+        Runnable start = () -> {
+            Task<Move> task = new Task<>() {
+                @Override
+                protected Move call() {
+                    // IMPORTANT: never give AI the live adapter.
+                    AIBoardAdapter snapshot = adapter.copy();
+                    return agent.getBestMove(snapshot, myPlayer);
+                }
+            };
+
+            task.setOnSucceeded(e -> {
+                aiThinking = false;
+
+                // Ignore stale result
+                if (revision != myRevision || gameOver || currentPlayer != myPlayer) return;
+
+                Move move = task.getValue();
+                if (move == null) return;
+
+                Platform.runLater(() -> applyAIMove(move));
+            });
+
+            task.setOnFailed(e -> {
+                aiThinking = false;
+                System.out.println("AI move failed: " + task.getException());
+            });
+
+            Thread t = new Thread(task, "AI-Move");
+            t.setDaemon(true);
+            t.start();
         };
 
-        aiTask.setOnSucceeded(event -> {
-            Move bestMove = aiTask.getValue();
-            if (bestMove != null) {
-                Platform.runLater(() -> {
-                    handleAIMove(bestMove.row, bestMove.col);
-                });
-            }
-            aiThinking = false;
-        });
-
-        aiTask.setOnFailed(event -> {
-            System.out.println("AI move calculation failed: " + aiTask.getException());
-            aiThinking = false;
-        });
-
-        Thread aiThread = new Thread(aiTask);
-        aiThread.setDaemon(true);
-        aiThread.start();
+        if (!delayed) {
+            start.run();
+        } else {
+            PauseTransition pause = new PauseTransition(Duration.millis(80));
+            pause.setOnFinished(ev -> start.run());
+            pause.play();
+        }
     }
 
-    /**
-     * Handles the actual placement of the AI's move on the board.
-     * @param row The row of the move
-     * @param col The column of the move
-     */
-    private void handleAIMove(int row, int col) {
-        System.out.println("AI (" + currentPlayer + ") makes move at: (" + row + ", " + col + ")");
-        
-        // Make the move
-        boolean ok = adapter.makeMove(row, col, currentPlayer);
+    private void applyAIMove(Move move) {
+        if (gameOver) return;
+
+        boolean ok = adapter.makeMove(move.row, move.col, currentPlayer);
         if (!ok) {
-            System.out.println("AI move failed!");
-            aiThinking = false;
+            System.out.println("AI produced illegal move: (" + move.row + "," + move.col + ")");
             return;
         }
 
-        // Update the BoardView
         boardView.update(adapter);
         moveCount++;
 
-        // Check for a win condition
         if (adapter.isGameOver()) {
-            gameOver = true;
-            Player winner = adapter.getWinner();
-            System.out.println("Player " + winner + " wins!");
-            boardView.updateWinDisplay(winner);
-            if (gameEndListener != null) {
-                gameEndListener.onGameEnd(winner);
-            }
+            endGame(adapter.getWinner());
             return;
         }
 
-        // Switch to the other player
         currentPlayer = currentPlayer.other();
         boardView.updateTurnDisplay(currentPlayer);
 
-
-        // // If the next player is also AI, continue
-        // if (isAIControlled(currentPlayer)) {
-        //     // Add a small delay to make the game more watchable
-        //     Timer timer = new Timer(200, e -> makeAIMove());
-        //     timer.setRepeats(false);
-        //     timer.start();
-        // }
+        // AI vs AI chaining
         if (isAIControlled(currentPlayer)) {
-            // after a long time of trying to fix why ai vs ai mode is not working i realized this part was missing :) god bless this code
-            new Thread(() -> {
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-                Platform.runLater(this::makeAIMove);
-            }).start();
+            requestAIMove(true);
         }
     }
-
 }

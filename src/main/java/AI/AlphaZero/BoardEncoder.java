@@ -1,72 +1,62 @@
 package AI.AlphaZero;
 
-import org.nd4j.linalg.api.ndarray.INDArray;
-import org.nd4j.linalg.factory.Nd4j;
-
 import Game.Board;
 import Game.Color;
 
-/**
- * Encodes Hex board states into a tensor format suitable for neural network input.
- * The encoding uses a 3-plane representation to capture all relevant game state information.
- * 
- * <p>Plane representation:
- * <ul>
- *   <li><strong>Plane 0:</strong> Red piece positions (1.0 where Red has a piece, 0.0 elsewhere)</li>
- *   <li><strong>Plane 1:</strong> Black piece positions (1.0 where Black has a piece, 0.0 elsewhere)</li>
- *   <li><strong>Plane 2:</strong> Current player indicator (1.0 everywhere if Red to move, 0.0 if Black to move)</li>
- * </ul>
- * 
- * <p>This representation allows the neural network to:
- * <ul>
- *   <li>Identify piece positions for both players</li>
- *   <li>Determine whose turn it is</li>
- *   <li>Process spatial patterns using convolutional layers</li>
- * </ul>
-*/
 public class BoardEncoder {
-    
-    /**
-     * Converts a Hex board and current player into a 3-plane tensor representation.
-     * 
-     * <p>The output tensor has shape [1, 3, boardSize, boardSize] where:
-     * <ul>
-     *   <li>Dimension 0: Batch size (always 1 for single board encoding)</li>
-     *   <li>Dimension 1: Channels (3 planes as described above)</li>
-     *   <li>Dimensions 2-3: Spatial dimensions matching the board size</li>
-     * </ul>
-     * 
-     * @param board the current Hex board state to encode
-     * @param currentPlayer the player whose turn it is (Color.RED or Color.BLACK)
-     * @return an INDArray tensor of shape [1, 3, boardSize, boardSize] representing the encoded board
-    */
-    public static INDArray encode(Board board, Color currentPlayer) {
+
+    public static float[] encode(Board board, Color currentPlayer) {
         int size = board.getSize();
+        int planeSize = size * size;
+        
+        // Allocate flat array: 3 planes * width * height
+        float[] flatData = new float[3 * planeSize];
 
-        // Shape: [BatchSize, Channels, Height, Width] -> [1, 3, size, size]
-        // BatchSize is 1 since we are encoding a single board state.
-        // Channels is 3 for the three planes described above.
-        // Height and Width are both equal to the board size.
-        INDArray convertedBoard = Nd4j.zeros(1, 3, size, size);
+        int offsetRed = 0;
+        int offsetBlack = planeSize;
+        int offsetTurn = 2 * planeSize;
 
-        for (int row = 0; row < size; row++) {
-            for (int col = 0; col < size; col++) {
-                Color cell = board.getCell(row, col); // Get the color of the cell at (row, col)
+        // Fill array using standard Java loops (Extremely fast L1 cache access)
+        if (currentPlayer == Color.RED) {
+            // RED Perspective: Standard
+            for (int row = 0; row < size; row++) {
+                for (int col = 0; col < size; col++) {
+                    Color cell = board.getCell(row, col);
+                    int idx = row * size + col;
 
-                if (cell == Color.RED) {
-                    // Batch is 0 since we only encode 1 board state, and plane 0 indicates Red stones.
-                    convertedBoard.putScalar(0, 0, row, col, 1.0);
-                } else if (cell == Color.BLACK) {
-                    // Plane 1 indicates Black stones.
-                    convertedBoard.putScalar(0, 1, row, col, 1.0);
+                    if (cell == Color.RED) {
+                        flatData[offsetRed + idx] = 1.0f;
+                    } else if (cell == Color.BLACK) {
+                        flatData[offsetBlack + idx] = 1.0f;
+                    }
+                    flatData[offsetTurn + idx] = 1.0f; // Always 1.0 for "Current" (Red)
                 }
-                
-                // Plane 2 indicates whose turn it is
-                // If it is RED's turn, fill the whole plane with 1s.
-                double turnValue = (currentPlayer == Color.RED) ? 1.0 : 0.0;
-                convertedBoard.putScalar(0, 2, row, col, turnValue);
+            }
+        } else {
+            // BLACK Perspective: Canonicalize to RED
+            // Transpose board: (row, col) -> (col, row)
+            // Swap colors: My Stone (Black) -> Plane 0 (Red), Opponent (Red) -> Plane 1 (Black)
+            for (int row = 0; row < size; row++) {
+                for (int col = 0; col < size; col++) {
+                    Color cell = board.getCell(row, col);
+                    
+                    // Transposed index for the output buffer
+                    // We are mapping board(row,col) to canonical(col,row)
+                    // So we write to idx = col * size + row
+                    int idx = col * size + row;
+
+                    if (cell == Color.BLACK) {
+                        // My stone (Black) becomes "Red" (Plane 0) in canonical view
+                        flatData[offsetRed + idx] = 1.0f;
+                    } else if (cell == Color.RED) {
+                        // Opponent (Red) becomes "Black" (Plane 1) in canonical view
+                        flatData[offsetBlack + idx] = 1.0f;
+                    }
+                    flatData[offsetTurn + idx] = 1.0f; // Always 1.0 for "Current"
+                }
             }
         }
-        return convertedBoard;
+        
+        return flatData;
     }
 }
