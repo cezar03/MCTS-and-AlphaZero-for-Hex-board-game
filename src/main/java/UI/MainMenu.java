@@ -44,7 +44,7 @@ public class MainMenu extends Application {
         Button aboutBtn = new Button("ABOUT"); aboutBtn.getStyleClass().add("btn-ghost");
 
         playBtn.setOnAction(e -> nav.showGame(11, 55));
-        aiBtn.setOnAction(e -> nav.showDifficultySelection());
+        aiBtn.setOnAction(e -> nav.showAgentSelection());
         //alphaZeroBtn.setOnAction(e -> nav.showGameWithAlphaZero());
         testAIvsAIBtn.setOnAction(e -> nav.showAITesting());
         //skinsBtn.setOnAction(e -> nav.showSkins());

@@ -128,7 +128,7 @@ public class AlphaZeroConfig {
      *   <li>mctsIterations: 100</li>
      *   <li>temperature: 1.0</li>
      *   <li>cpuct: 1.4</li>
-     *   <li>modelPath: "hex_alphazero_model.zip"</li>
+     *   <li>modelPath: "src/main/resources/models/hex_model_correct.zip"</li>
      *   <li>loadExistingModel: false</li>
      * </ul>
      * 
@@ -139,7 +139,7 @@ public class AlphaZeroConfig {
         private int mctsIterations = 100;
         private double temperature = 1.0;
         private double cpuct = 1.4;
-        private String modelPath = "hex_alphazero_model.zip";
+        private String modelPath = "src/main/resources/models/hex_model_correct.zip";
         private boolean loadExistingModel = false;
         
         /**

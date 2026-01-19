@@ -34,6 +34,7 @@ import AI.AlphaZero.AlphaZeroNet;
 
 public final class NavigationService {
     private final Stage stage;
+    private final String PATH = "src/main/resources/models/hex_model_correct.zip";
     public NavigationService(Stage stage) {
         this.stage = stage;
     }
@@ -157,10 +158,10 @@ public final class NavigationService {
         AlphaZeroNet network = new AlphaZeroNet(11);
         AlphaZeroMCTS alphaMcts = new AlphaZeroMCTS(network);
         AlphaZeroConfig alphaConfig = new AlphaZeroConfig.Builder()
-            .boardSize(11)
-            .mctsIterations(1000)
-            .temperature(1.0)
-            .build();
+                .boardSize(11)
+                .modelPath(PATH)
+                .loadExistingModel(true)
+                .build();
         
         AlphaZeroPlayer alphaAgent = new AlphaZeroPlayer(Player.BLACK, alphaMcts, alphaConfig);
         
@@ -397,9 +398,9 @@ public final class NavigationService {
     /**
      * Shows a difficulty selection dialog for playing against the AI.
      */
-    public void showDifficultySelection() {
+    public void showAgentSelection() {
         Alert dialog = new Alert(Alert.AlertType.INFORMATION);
-        dialog.setTitle("AI Difficulty");
+        dialog.setTitle("Agent Selection");
         dialog.setHeaderText("Select AI Agent");
         dialog.setContentText("Choose which AI agent to play against:");
         styleDialog(dialog);
@@ -487,7 +488,12 @@ public final class NavigationService {
         dialog.getDialogPane().setContent(buttonBox);
         dialog.showAndWait();
     }
-
+    /**
+     * Creates an AI agent based on the specified type.
+     * @param type type of AI agent ("MCTS", "Random", "AlphaZero")
+     * @param player the player color for the agent
+     * @return the created AI agent
+     */
     private AIAgent createAgent(String type, Player player) {
         if ("MCTS".equals(type)) {
             AIAdaptationConfig config = new AIAdaptationConfig.Builder(player)
@@ -508,8 +514,8 @@ public final class NavigationService {
             AlphaZeroMCTS alphaMcts = new AlphaZeroMCTS(network);
             AlphaZeroConfig alphaConfig = new AlphaZeroConfig.Builder()
                 .boardSize(11)
-                .mctsIterations(1000)
-                .temperature(1.0)
+                .modelPath(PATH)
+                .loadExistingModel(true)
                 .build();
             return new AlphaZeroPlayer(player, alphaMcts, alphaConfig);
         }  else {

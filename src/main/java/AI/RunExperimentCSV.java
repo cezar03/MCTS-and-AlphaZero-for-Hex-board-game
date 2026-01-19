@@ -21,6 +21,7 @@ public class RunExperimentCSV {
     private static int lastPlyCount = 0;
     private static final int SIMULATIONS = 5;
     private static final double[] cValues = {0.5, 0.8, 1.0, Math.sqrt(2), 2.0};
+    private static final String MODEL_PATH = "src/main/resources/models/hex_model_correct.zip";
 
     //Optimized vaiables
     private static final double THR  = 0.9;
@@ -220,9 +221,10 @@ public class RunExperimentCSV {
         AlphaZeroMCTS alphaZeroMCTS = new AlphaZeroMCTS(aiNet);
         AlphaZeroConfig alphaConfig = new AlphaZeroConfig.Builder()
                 .boardSize(11)
-                .modelPath("src/main/resources/models/hex_model_latest.zip")
+                .modelPath(MODEL_PATH)
                 .loadExistingModel(true)
                 .build();
+        System.out.println(alphaConfig.getModelPath());
         AIAgent alphaZero = new AlphaZeroPlayer(Player.BLACK, alphaZeroMCTS, alphaConfig);
        
         AITester.runMatch(mcts, alphaZero, GAMES, BOARD_SIZE, false);
@@ -232,9 +234,10 @@ public class RunExperimentCSV {
         AlphaZeroMCTS alphaZeroMCTS = new AlphaZeroMCTS(aiNet);
         AlphaZeroConfig alphaConfig = new AlphaZeroConfig.Builder()
                 .boardSize(11)
-                .modelPath("src/main/resources/models/hex_model_latest.zip")
+                .modelPath(MODEL_PATH)
                 .loadExistingModel(true)
                 .build();
+        System.out.println(alphaConfig.getModelPath());
         AIAgent alphaZero = new AlphaZeroPlayer(Player.RED, alphaZeroMCTS, alphaConfig);
         AIAgent random = new RandomPlayer(Player.BLACK);
         AITester.runMatch(alphaZero, random, GAMES, BOARD_SIZE, false);
