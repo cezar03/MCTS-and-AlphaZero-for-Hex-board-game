@@ -1,7 +1,7 @@
-package AI.mcts.Optimazation.Heuristic;
+package ai.mcts.Optimazation.Heuristic;
 
-import AI.mcts.HexGame.GameState;
-import AI.mcts.HexGame.Move;
+import ai.mcts.HexGame.GameState;
+import game.core.Move;
 
 /**
  * A heuristic interface for evaluating the quality of moves in a game state.
@@ -22,3 +22,14 @@ public interface Heuristic {
      */
     double score(GameState state, Move move);
 }
+
+
+
+
+
+
+
+
+
+
+

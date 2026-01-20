@@ -1,12 +1,11 @@
 
-import AI.mcts.HexGame.GameState;
-import AI.mcts.HexGame.Move;
-import AI.mcts.Optimazation.Heuristic.ConnectivityHeuristic;
-import Game.Board;
-import Game.BoardAdapter;
-import Game.BoardAdapter;
-import Game.Color;
-import Game.Player;
+import ai.mcts.HexGame.GameState;
+import game.core.Move;
+import ai.mcts.Optimazation.Heuristic.ConnectivityHeuristic;
+import game.core.Board;
+import bridge.BoardAdapter;
+import game.core.Color;
+import game.core.Player;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Constructor;
@@ -98,7 +97,7 @@ class ConnectivityHeuristicTest {
         Board b = new Board(1);
         GameState s = newState(b, Player.RED);
 
-        double score = H.score(s, new Move(0, 0));
+        double score = H.score(s, Move.get(0, 0));
         assertEquals(0.0, score, 0.0);
     }
 
@@ -106,7 +105,7 @@ class ConnectivityHeuristicTest {
     void scoreNoFriendNeighboursTest() {
         Board b = new Board(3);
         GameState s = newState(b, Player.RED);
-        double score = H.score(s, new Move(1, 1));
+        double score = H.score(s, Move.get(1, 1));
         assertEquals(0.0, score, 0.0);
     }
 
@@ -121,7 +120,7 @@ class ConnectivityHeuristicTest {
         assertTrue(total > 0);
 
         double expected = 3.0 / total;
-        double score = H.score(s, new Move(1, 1));
+        double score = H.score(s, Move.get(1, 1));
         assertEquals(expected, score, 1e-12);
     }
 
@@ -132,7 +131,7 @@ class ConnectivityHeuristicTest {
         for (int[] nb : b.neighbors(1, 1)) {
             place(b, nb[0], nb[1], Color.RED);
         }
-        double score = H.score(s, new Move(1, 1));
+        double score = H.score(s, Move.get(1, 1));
         assertEquals(1.0, score, 1e-12);
     }
 
@@ -147,7 +146,7 @@ class ConnectivityHeuristicTest {
         int[] nb = b.neighbors(0, 0).get(0);
         place(b, nb[0], nb[1], Color.RED);
 
-        double score = H.score(s, new Move(0, 0));
+        double score = H.score(s, Move.get(0, 0));
         assertEquals(1.0 / total, score, 1e-12);
     }
 
@@ -165,7 +164,7 @@ class ConnectivityHeuristicTest {
         int total = b.neighbors(1, 1).size();
         double expected = 2.0 / total;
 
-        double score = H.score(s, new Move(1, 1));
+        double score = H.score(s, Move.get(1, 1));
         assertEquals(expected, score, 1e-12);
     }
     //Should return the score for a certain player and the num of their stones near on the board
@@ -181,10 +180,19 @@ class ConnectivityHeuristicTest {
         GameState redState = newState(b, Player.RED);
         GameState blackState = newState(b, Player.BLACK);
 
-        double redScore = H.score(redState, new Move(1, 1));
-        double blackScore = H.score(blackState, new Move(1, 1));
+        double redScore = H.score(redState, Move.get(1, 1));
+        double blackScore = H.score(blackState, Move.get(1, 1));
 
         assertEquals(1.0 / total, redScore, 1e-12);
         assertEquals(1.0 / total, blackScore, 1e-12);
     }
 }
+
+
+
+
+
+
+
+
+

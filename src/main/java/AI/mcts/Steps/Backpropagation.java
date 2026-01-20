@@ -1,6 +1,6 @@
-package AI.mcts.Steps;
+package ai.mcts.Steps;
 
-import AI.mcts.Node;
+import ai.mcts.Node;
 
 /**
  * Implements the backpropagation phase of Monte Carlo Tree Search (MCTS).
@@ -31,3 +31,14 @@ public class Backpropagation {
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+

@@ -1,10 +1,10 @@
-package AI.mcts.Steps.Tuner;
+package ai.mcts.Steps.Tuner;
 
-import Game.Player;
+import game.core.Player;
 import java.util.Random;
-import AI.AiPlayer.AIAgent;
-import AI.AiPlayer.AITester;
-import AI.AiPlayer.MCTSPlayer;
+import ai.api.AIAgent;
+import ai.tools.AITester;
+import ai.mcts.MCTSPlayer;
 
 /**
  * A hyperparameter tuning utility for MCTS MovePruner heuristics.
@@ -202,3 +202,14 @@ public final class MCTSTuner {
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+

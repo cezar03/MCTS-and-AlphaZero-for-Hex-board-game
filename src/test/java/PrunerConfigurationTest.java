@@ -1,6 +1,6 @@
 
 import org.junit.jupiter.api.Test;
-import AI.mcts.Steps.Tuner.PrunerConfig;
+import ai.mcts.Steps.Tuner.PrunerConfig;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PrunerConfigTest {
@@ -60,3 +60,12 @@ class PrunerConfigTest {
     }
 
 }
+
+
+
+
+
+
+
+
+

@@ -1,9 +1,9 @@
-package AI.mcts.Steps.SimulationStep;
+package ai.mcts.Steps.SimulationStep;
 
 import java.util.*;
-import AI.mcts.HexGame.GameState;
-import AI.mcts.HexGame.Move;
-import AI.mcts.Optimazation.MovePruner;
+import ai.mcts.HexGame.GameState;
+import game.core.Move;
+import ai.mcts.Optimazation.MovePruner;
 
 /**
  * Implements an optimized simulation strategy for Monte Carlo Tree Search
@@ -94,3 +94,14 @@ public class OptimizedSimulation implements Simulation {
         return best;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
