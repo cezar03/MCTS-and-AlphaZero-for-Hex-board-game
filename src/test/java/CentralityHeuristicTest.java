@@ -1,10 +1,10 @@
-import AI.mcts.HexGame.GameState;
-import AI.mcts.HexGame.Move;
-import AI.mcts.Optimazation.Heuristic.CentralityHeuristic;
-import Game.Board;
-import Game.BoardAdapter;
-import Game.Color;
-import Game.Player;
+import ai.mcts.HexGame.GameState;
+import game.core.Move;
+import ai.mcts.Optimazation.Heuristic.CentralityHeuristic;
+import game.core.Board;
+import bridge.BoardAdapter;
+import game.core.Color;
+import game.core.Player;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Constructor;
@@ -82,7 +82,7 @@ class CentralityHeuristicTest {
         GameState state = newState(b, Player.RED);
         CentralityHeuristic h = new CentralityHeuristic();
 
-        double s = h.score(state, new Move(2, 2));
+        double s = h.score(state, Move.get(2, 2));
         assertEquals(1.0, s, 1e-12);
     }
 
@@ -92,8 +92,8 @@ class CentralityHeuristicTest {
         GameState state = newState(b, Player.RED);
         CentralityHeuristic h = new CentralityHeuristic();
 
-        double corner = h.score(state, new Move(0, 0));
-        double nearCenter = h.score(state, new Move(2, 1));
+        double corner = h.score(state, Move.get(0, 0));
+        double nearCenter = h.score(state, Move.get(2, 1));
 
         assertTrue(corner >= 0.0, "Central scores should not be negative");
         assertTrue(nearCenter > corner, "Moves closer to the center have to be scored higher than corner ones");
@@ -105,9 +105,9 @@ class CentralityHeuristicTest {
         GameState state = newState(b, Player.RED);
         CentralityHeuristic h = new CentralityHeuristic();
 
-        double center = h.score(state, new Move(2, 2));
-        double near   = h.score(state, new Move(2, 1));
-        double far    = h.score(state, new Move(0, 0));
+        double center = h.score(state, Move.get(2, 2));
+        double near   = h.score(state, Move.get(2, 1));
+        double far    = h.score(state, Move.get(0, 0));
 
         assertTrue(center > near);
         assertTrue(near > far);
@@ -119,8 +119,8 @@ class CentralityHeuristicTest {
         GameState state = newState(b, Player.RED);
         CentralityHeuristic h = new CentralityHeuristic();
 
-        double top = h.score(state, new Move(0, 2));
-        double bot = h.score(state, new Move(4, 2));
+        double top = h.score(state, Move.get(0, 2));
+        double bot = h.score(state, Move.get(4, 2));
 
         assertEquals(top, bot, 1e-12);
     }
@@ -131,8 +131,8 @@ class CentralityHeuristicTest {
         GameState state = newState(b, Player.RED);
         CentralityHeuristic h = new CentralityHeuristic();
 
-        double s11 = h.score(state, new Move(1, 1));
-        double s22 = h.score(state, new Move(2, 2));
+        double s11 = h.score(state, Move.get(1, 1));
+        double s22 = h.score(state, Move.get(2, 2));
 
         assertEquals(s11, s22, 1e-12);
         assertTrue(s11 <= 1.0, "Score must be <= 1.0");
@@ -145,9 +145,9 @@ class CentralityHeuristicTest {
         GameState state = newState(b, Player.RED);
         CentralityHeuristic h = new CentralityHeuristic();
 
-        double s1 = h.score(state, new Move(0, 0));
-        double s2 = h.score(state, new Move(5, 5));
-        double s3 = h.score(state, new Move(3, 2));
+        double s1 = h.score(state, Move.get(0, 0));
+        double s2 = h.score(state, Move.get(5, 5));
+        double s3 = h.score(state, Move.get(3, 2));
 
         assertTrue(s1 >= 0.0 && s1 <= 1.0);
         assertTrue(s2 >= 0.0 && s2 <= 1.0);
@@ -160,7 +160,16 @@ class CentralityHeuristicTest {
         GameState state = newState(b, Player.RED);
         CentralityHeuristic h = new CentralityHeuristic();
 
-        double s = h.score(state, new Move(-1, 0));
+        double s = h.score(state, Move.get(-1, 0));
         assertTrue(s < 0.0, "move out of bounds - then negative score");
     }
 }
+
+
+
+
+
+
+
+
+

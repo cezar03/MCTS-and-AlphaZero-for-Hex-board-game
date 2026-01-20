@@ -1,8 +1,8 @@
-package AI.mcts;
+package ai.mcts;
 import java.util.HashMap;
 import java.util.Map;
 
-import AI.mcts.HexGame.Move;
+import game.core.Move;
 public final class Node { // this is not a final version. it's just a skeleton to compile and try the selection class
     // fields 
     public Move move; // the move that led to this node. null for the root node
@@ -30,3 +30,14 @@ public final class Node { // this is not a final version. it's just a skeleton t
         this.priorProbability = priorProbability;
     }
 }
+
+
+
+
+
+
+
+
+
+
+

@@ -1,11 +1,11 @@
-package AI.mcts.Optimazation;
+package ai.mcts.Optimazation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import Game.Board;
-import Game.Color;
+import game.core.Board;
+import game.core.Color;
 
 public final class ShortestPath {
 
@@ -106,3 +106,14 @@ public final class ShortestPath {
         return best;
     }
 }
+
+
+
+
+
+
+
+
+
+
+

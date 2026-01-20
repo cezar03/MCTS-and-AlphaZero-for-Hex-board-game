@@ -1,5 +1,5 @@
-import AI.mcts.Node;
-import AI.mcts.HexGame.Move;
+import ai.mcts.Node;
+import game.core.Move;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -7,7 +7,7 @@ class NodeTest {
 
     @Test
     void constructorTests() {
-        Move m = new Move(2, 3);
+        Move m = Move.get(2, 3);
         Node parent = new Node(null, null, 1);
 
         Node n = new Node(m, parent, 2);
@@ -28,7 +28,7 @@ class NodeTest {
 
     @Test
     void constructorWithDefault() {
-        Move m = new Move(0, 0);
+        Move m = Move.get(0, 0);
         Node parent = new Node(null, null, 1);
         Node n = new Node(m, parent, 2, 0.75);
         assertSame(m, n.move);
@@ -59,7 +59,7 @@ class NodeTest {
         Node a = new Node(null, null, 1);
         Node b = new Node(null, null, 2);
 
-        Move m = new Move(1, 1);
+        Move m = Move.get(1, 1);
         a.children.put(m, new Node(m, a, 1));
 
         assertEquals(1, a.children.size());
@@ -70,7 +70,7 @@ class NodeTest {
     void retrievingChildrenTest() {
         Node parent = new Node(null, null, 1);
 
-        Move key = new Move(4, 5);
+        Move key = Move.get(4, 5);
         Node child = new Node(key, parent, 1);
 
         parent.children.put(key, child);
@@ -79,7 +79,7 @@ class NodeTest {
         assertSame(child, parent.children.get(key));
 
         // Testing realisation of eguals/hashCode
-        Move equivalentKey = new Move(4, 5);
+        Move equivalentKey = Move.get(4, 5);
         Node retrieved = parent.children.get(equivalentKey);
 
         //if equals/hashCode doesn't work correctly null value will be returned
@@ -139,7 +139,7 @@ class NodeTest {
     void removeChildTest() {
         Node parent = new Node(null, null, 1);
 
-        Move key = new Move(2, 2);
+        Move key = Move.get(2, 2);
         Node child = new Node(key, parent, 1);
 
         parent.children.put(key, child);
@@ -154,7 +154,7 @@ class NodeTest {
     void childPontsParentNode() {
         Node parent = new Node(null, null, 1);
 
-        Move m = new Move(0, 0);
+        Move m = Move.get(0, 0);
         Node child = new Node(m, parent, 2);
 
         parent.children.put(m, child);
@@ -165,8 +165,8 @@ class NodeTest {
     @Test
     void multipleChildrenTest() {
         Node parent = new Node(null, null, 1);
-        Move m1 = new Move(0, 1);
-        Move m2 = new Move(1, 0);
+        Move m1 = Move.get(0, 1);
+        Move m2 = Move.get(1, 0);
         Node c1 = new Node(m1, parent, 1);
         Node c2 = new Node(m2, parent, 1);
         parent.children.put(m1, c1);
@@ -180,8 +180,8 @@ class NodeTest {
     void removingChildrenTest() {
         Node parent = new Node(null, null, 1);
 
-        parent.children.put(new Move(0, 0), new Node(new Move(0, 0), parent, 1));
-        parent.children.put(new Move(0, 1), new Node(new Move(0, 1), parent, 1));
+        parent.children.put(Move.get(0, 0), new Node(Move.get(0, 0), parent, 1));
+        parent.children.put(Move.get(0, 1), new Node(Move.get(0, 1), parent, 1));
 
         assertEquals(2, parent.children.size());
 
@@ -189,3 +189,12 @@ class NodeTest {
         assertTrue(parent.children.isEmpty());
     }
 }
+
+
+
+
+
+
+
+
+

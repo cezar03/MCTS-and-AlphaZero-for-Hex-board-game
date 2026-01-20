@@ -1,6 +1,6 @@
-package AI.mcts.Steps.SimulationStep;
+package ai.mcts.Steps.SimulationStep;
 
-import AI.mcts.HexGame.GameState;
+import ai.mcts.HexGame.GameState;
 
 /**
  * Interface for simulation strategies in Monte Carlo Tree Search.
@@ -20,4 +20,15 @@ public interface Simulation {
      */
     int simulate(GameState start);
 }
+
+
+
+
+
+
+
+
+
+
+
 

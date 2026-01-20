@@ -1,13 +1,14 @@
-package AI.mcts.HexGame;
+package ai.mcts.HexGame;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import AI.mcts.Optimazation.ShortestPath;
-import Game.Board;
-import Game.Color;
-import Game.Player;
-import Game.Rules;
+import ai.mcts.Optimazation.ShortestPath;
+import game.core.Board;
+import game.core.Color;
+import game.core.Move;
+import game.core.Player;
+import game.core.Rules;
 
 public class GameState {
     private final Board board;
@@ -104,3 +105,14 @@ public class GameState {
         return ShortestPath.shortestPath(board, toColor(p));
     }
 }
+
+
+
+
+
+
+
+
+
+
+

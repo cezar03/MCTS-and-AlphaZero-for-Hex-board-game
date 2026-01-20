@@ -1,11 +1,10 @@
-import AI.mcts.HexGame.GameState;
-import AI.mcts.HexGame.Move;
-import AI.mcts.Optimazation.Heuristic.ShortestPathHeuristic;
-import Game.Board;
-import Game.BoardAdapter;
-import Game.BoardAdapter;
-import Game.Color;
-import Game.Player;
+import ai.mcts.HexGame.GameState;
+import game.core.Move;
+import ai.mcts.Optimazation.Heuristic.ShortestPathHeuristic;
+import game.core.Board;
+import bridge.BoardAdapter;
+import game.core.Color;
+import game.core.Player;
 import org.junit.jupiter.api.Test;
 import java.lang.reflect.Constructor;
 import static org.junit.jupiter.api.Assertions.*;
@@ -91,7 +90,7 @@ class ShortestPathHeuristicTest {
         GameState state = newState(b, Player.RED);
 
         ShortestPathHeuristic h = new ShortestPathHeuristic();
-        double s = h.score(state, new Move(1, 1));
+        double s = h.score(state, Move.get(1, 1));
 
         assertEquals(0.0, s, 1e-12);
     }
@@ -104,7 +103,7 @@ class ShortestPathHeuristicTest {
         GameState state = newState(b, Player.RED);
         ShortestPathHeuristic h = new ShortestPathHeuristic();
 
-        double s = h.score(state, new Move(1, 1));
+        double s = h.score(state, Move.get(1, 1));
         assertEquals(0.0, s, 1e-12);
     }
 
@@ -117,7 +116,7 @@ class ShortestPathHeuristicTest {
         assertTrue(state.isTerminal());
 
         ShortestPathHeuristic h = new ShortestPathHeuristic();
-        double s = h.score(state, new Move(0, 0));
+        double s = h.score(state, Move.get(0, 0));
 
         assertEquals(0.0, s, 1e-12);
     }
@@ -130,7 +129,7 @@ class ShortestPathHeuristicTest {
         Color before = b.getCell(1, 1);
 
         ShortestPathHeuristic h = new ShortestPathHeuristic();
-        h.score(state, new Move(1, 1));
+        h.score(state, Move.get(1, 1));
 
         assertEquals(before, b.getCell(1, 1));
     }
@@ -141,7 +140,7 @@ class ShortestPathHeuristicTest {
         GameState state = newState(b, Player.RED);
 
         ShortestPathHeuristic h = new ShortestPathHeuristic();
-        double s = h.score(state, new Move(0, 0));
+        double s = h.score(state, Move.get(0, 0));
 
         assertTrue(Double.isFinite(s));
         assertTrue(s > -1.0 && s < 1.0);
@@ -156,3 +155,12 @@ class ShortestPathHeuristicTest {
         assertThrows(RuntimeException.class, () -> h.score(state, null));
     }
 }
+
+
+
+
+
+
+
+
+

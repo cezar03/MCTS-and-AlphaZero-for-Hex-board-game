@@ -1,8 +1,8 @@
-package AI.mcts.Optimazation;
+package ai.mcts.Optimazation;
 
-import AI.mcts.HexGame.GameState;
-import AI.mcts.HexGame.Move;
-import AI.mcts.Optimazation.Heuristic.*;
+import ai.mcts.HexGame.GameState;
+import game.core.Move;
+import ai.mcts.Optimazation.Heuristic.*;
 
 import java.util.*;
 
@@ -111,3 +111,14 @@ public class MovePruner {
         return heuristic;
     }
 }
+
+
+
+
+
+
+
+
+
+
+

@@ -1,9 +1,6 @@
-import AI.AiPlayer.AIBoardAdapter;
-import AI.mcts.Optimazation.ShortestPath;
-import Game.Board;
-import Game.BoardAdapter;
-import Game.BoardAdapter;
-import Game.Color;
+import ai.mcts.Optimazation.ShortestPath;
+import game.core.Board;
+import game.core.Color;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,10 +19,8 @@ class ShortestPathTest {
         }
     }
 
-    // Wrap Board into BoardAdapter, so we can implement AIBoardAdapter
     private static int sp(Board board, Color player) {
-        AIBoardAdapter adapter = new BoardAdapter(board);
-        return ShortestPath.shortestPath(adapter, player);
+        return ShortestPath.shortestPath(board, player);
     }
 
     @Test
@@ -146,3 +141,12 @@ class ShortestPathTest {
         assertEquals(before, after);
     }
 }
+
+
+
+
+
+
+
+
+

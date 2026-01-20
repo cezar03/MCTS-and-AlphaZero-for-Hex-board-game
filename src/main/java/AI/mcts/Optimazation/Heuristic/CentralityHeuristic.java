@@ -1,8 +1,8 @@
-package AI.mcts.Optimazation.Heuristic;
+package ai.mcts.Optimazation.Heuristic;
 
-import AI.mcts.HexGame.GameState;
-import AI.mcts.HexGame.Move;
-import Game.Board;
+import ai.mcts.HexGame.GameState;
+import game.core.Move;
+import game.core.Board;
 
 /**
  * A heuristic that favors moves closer to the center of the board.
@@ -28,3 +28,14 @@ public final class CentralityHeuristic implements Heuristic {
         return 1.0 - distCenter / (maxDist + 1e-9);
     }
 }
+
+
+
+
+
+
+
+
+
+
+

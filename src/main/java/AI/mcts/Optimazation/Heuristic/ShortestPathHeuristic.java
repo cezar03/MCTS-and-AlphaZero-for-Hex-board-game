@@ -1,7 +1,7 @@
-package AI.mcts.Optimazation.Heuristic;
+package ai.mcts.Optimazation.Heuristic;
 
-import AI.mcts.HexGame.GameState;
-import AI.mcts.HexGame.Move;
+import ai.mcts.HexGame.GameState;
+import game.core.Move;
 
 /**
  * A heuristic that evaluates moves based on their impact on the shortest path
@@ -40,3 +40,14 @@ public final class ShortestPathHeuristic implements Heuristic {
         return Math.tanh(delta / 3.0);
     }
 }
+
+
+
+
+
+
+
+
+
+
+

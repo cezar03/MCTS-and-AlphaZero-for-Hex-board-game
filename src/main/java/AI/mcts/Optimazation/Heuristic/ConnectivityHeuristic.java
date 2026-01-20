@@ -1,10 +1,10 @@
-package AI.mcts.Optimazation.Heuristic;
+package ai.mcts.Optimazation.Heuristic;
 
-import AI.mcts.HexGame.GameState;
-import AI.mcts.HexGame.Move;
-import Game.Board;
-import Game.Color;
-import Game.Player;
+import ai.mcts.HexGame.GameState;
+import game.core.Move;
+import game.core.Board;
+import game.core.Color;
+import game.core.Player;
 
 /**
  * A heuristic that favors moves adjacent to the current player's existing stones.
@@ -33,3 +33,14 @@ public final class ConnectivityHeuristic implements Heuristic {
         return (total == 0) ? 0.0 : (double) friendly / total;
     }
 }
+
+
+
+
+
+
+
+
+
+
+

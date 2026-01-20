@@ -1,10 +1,10 @@
-import AI.mcts.HexGame.GameState;
-import AI.mcts.HexGame.Move;
-import AI.mcts.Optimazation.Heuristic.Heuristic;
-import Game.Board;
-import Game.BoardAdapter;
-import Game.Color;
-import Game.Player;
+import ai.mcts.HexGame.GameState;
+import game.core.Move;
+import ai.mcts.Optimazation.Heuristic.Heuristic;
+import game.core.Board;
+import bridge.BoardAdapter;
+import game.core.Color;
+import game.core.Player;
 import org.junit.jupiter.api.Test;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -95,7 +95,16 @@ class HeuristicTest {
         Heuristic h = (state, move) -> 42.0;
         Board b = new Board(1);
         GameState s = newState(b, Player.RED);
-        Move m = new Move(0, 0);
+        Move m = Move.get(0, 0);
         assertEquals(42.0, h.score(s, m), 0.0);
     }
 }
+
+
+
+
+
+
+
+
+
