@@ -3,8 +3,8 @@ package ui.controller;
 import ai.api.AIAdaptationConfig;
 import ai.api.AIAgent;
 import ai.api.AIAgentFactory;
-import game.core.Move;
 import bridge.BoardAdapter;
+import game.core.Move;
 import game.core.Player;
 import ui.session.GameSession;
 import ui.view.HexBoardView;
@@ -58,7 +58,6 @@ public final class GameController {
     public void setupAIAgent(Player player, AIAgent agent) {
         aiCoordinator.addAgent(player, agent);
 
-        // If it's already this agent's turn, start thinking immediately.
         if (!session.isGameOver() && session.getCurrentPlayer() == player) {
             requestAIMove(false);
         }
@@ -98,12 +97,8 @@ public final class GameController {
      */
     public void handleCellClick(int row, int col) {
         if (session.isGameOver() || aiCoordinator.isThinking()) return;
-
-        // If current player is AI-controlled, ignore human clicks.
         if (isAIControlled(session.getCurrentPlayer())) return;
-
         if (!session.applyHumanMove(row, col)) return;
-
         boardView.update(adapter);
         advanceTurnOrEnd();
     }
@@ -157,7 +152,6 @@ public final class GameController {
 
         boardView.updateTurnDisplay(session.getCurrentPlayer());
 
-        // AI vs AI chaining
         if (isAIControlled(session.getCurrentPlayer())) {
             requestAIMove(true);
         }

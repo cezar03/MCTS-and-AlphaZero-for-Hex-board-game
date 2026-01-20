@@ -10,7 +10,6 @@ public final class Board {
     private final UnionFind uf;
     private final int redTop, redBottom, blackLeft, blackRight;
     
-    // Undo/Redo support for MCTS optimization
     private static class MoveSnapshot {
         final int cellIndex;
         final Color previousColor;
@@ -20,7 +19,6 @@ public final class Board {
         MoveSnapshot(int cellIndex, Color previousColor, UnionFind uf) {
             this.cellIndex = cellIndex;
             this.previousColor = previousColor;
-            // Snapshot UnionFind state
             this.ufParent = Arrays.copyOf(uf.getParentArray(), uf.getParentArray().length);
             this.ufRank = Arrays.copyOf(uf.getRankArray(), uf.getRankArray().length);
         }
@@ -28,7 +26,6 @@ public final class Board {
     
     private final ArrayList<MoveSnapshot> moveHistory = new ArrayList<>();
 
-    // --- 1. PUBLIC CONSTRUCTOR (Restored) ---
     public Board(int n) {
         if (n <= 0) throw new IllegalArgumentException("The board can t have less than 1 row, 1 column");
         this.n = n;
@@ -37,69 +34,39 @@ public final class Board {
         int unionFindSize = n * n + 4;
         this.uf = new UnionFind(unionFindSize);
 
-        // Indices for edge nodes
         redTop = n * n;
         redBottom = n * n + 1;
         blackLeft = n * n + 2;
         blackRight = n * n + 3;
     }
 
-    // --- 2. PRIVATE CONSTRUCTOR (For Fast Copy) ---
     private Board(int n, Color[] cells, UnionFind uf) {
         this.n = n;
         this.cells = cells;
         this.uf = uf;
-        
-        // Recalculate constants
         this.redTop = n * n;
         this.redBottom = n * n + 1;
         this.blackLeft = n * n + 2;
         this.blackRight = n * n + 3;
     }
 
-    // --- 3. FAST COPY METHOD ---
     public Board fastCopy() {
-        // Clone the cell array (Fast System Copy)
         Color[] newCells = new Color[this.cells.length];
         System.arraycopy(this.cells, 0, newCells, 0, this.cells.length);
-        
-        // Clone the UnionFind (Fast System Copy)
-        // Ensure your UnionFind class has a .copy() method as discussed!
         UnionFind newUf = this.uf.copy();
-        
         return new Board(this.n, newCells, newUf);
     }
 
-    /* Get methods */
     public int getSize() { return n; }
-    
-    public Color getCell(int row, int column) {
-        return cells[idx(row, column)];
-    }
+    public Color getCell(int row, int column) { return cells[idx(row, column)];}
+    public void getMoveRed(int row, int column, Color _ignored) { terminate(row, column, Color.RED);}
+    public void getMoveBlack(int row, int column, Color _ignored) { terminate(row, column, Color.BLACK); }
 
-    public void getMoveRed(int row, int column, Color _ignored) {
-        terminate(row, column, Color.RED);
-    }
-
-    public void getMoveBlack(int row, int column, Color _ignored) {
-        terminate(row, column, Color.BLACK);
-    }
-
-    /* Helpers */
-    public boolean inBounds(int row, int column) {
-        return row >= 0 && column >= 0 && row < n && column < n;
-    }
-
-    public boolean isEmpty(int row, int column) {
-        return inBounds(row, column) && getCell(row, column) == Color.EMPTY;
-    }
-
+    public boolean inBounds(int row, int column) { return row >= 0 && column >= 0 && row < n && column < n;}
+    public boolean isEmpty(int row, int column) { return inBounds(row, column) && getCell(row, column) == Color.EMPTY;}
     public boolean redWins() { return uf.connected(redTop, redBottom); }
     public boolean blackWins() { return uf.connected(blackLeft, blackRight); }
-
-    public boolean isTerminal() {
-        return redWins() || blackWins();
-    }
+    public boolean isTerminal() { return redWins() || blackWins();}
 
     public List<int[]> legalMoves() {
         List<int[]> legalMovesList = new ArrayList<>();
@@ -118,8 +85,7 @@ public final class Board {
 
         int cellIndex = idx(row, column);
         if (cells[cellIndex] != Color.EMPTY) throw new IllegalStateException("Cell not empty");
-        
-        // Save state for undo (before making the move)
+
         Color previousColor = cells[cellIndex];
         MoveSnapshot snapshot = new MoveSnapshot(cellIndex, previousColor, uf);
         moveHistory.add(snapshot);
@@ -129,9 +95,7 @@ public final class Board {
         
         for (var neighbor : list_of_neighbors) {
             int neighborIndex = idx(neighbor[0], neighbor[1]);
-            if (cells[neighborIndex] == stone) {
-                uf.union(cellIndex, neighborIndex);
-            }
+            if (cells[neighborIndex] == stone) { uf.union(cellIndex, neighborIndex);}
         }
 
         if (stone == Color.RED) {
@@ -149,28 +113,16 @@ public final class Board {
      */
     public boolean undoMove() {
         if (moveHistory.isEmpty()) return false;
-        
         MoveSnapshot snapshot = moveHistory.remove(moveHistory.size() - 1);
-        
-        // Restore cell
         cells[snapshot.cellIndex] = snapshot.previousColor;
-        
-        // Restore UnionFind state
         uf.restore(snapshot.ufParent, snapshot.ufRank);
-        
         return true;
     }
     
-    /**
-     * Gets the number of moves in history (for debugging).
-     */
     public int getMoveHistorySize() {
         return moveHistory.size();
     }
     
-    /**
-     * Clears move history (useful when resetting or starting new game).
-     */
     public void clearMoveHistory() {
         moveHistory.clear();
     }

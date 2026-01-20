@@ -16,17 +16,12 @@ import org.nd4j.linalg.learning.config.Adam;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 
 public class AlphaZeroNet {
-    // The actual neural network model. 
-    // It is called a ComputationGraph instead of a simple Network, because it has a branching structure with two heads. (For policy and value outputs)
     private ComputationGraph model;
-
-    // Size of the Hex board.
     private final int boardSize;
 
-    // Constructor to initialize the network with the given board size.
     public AlphaZeroNet(int boardSize) {
         this.boardSize = boardSize;
-        initModel(); // Method to build the neural network structure.
+        initModel();
     }
 
     public int getBoardSize() { return boardSize; }
@@ -99,17 +94,14 @@ public class AlphaZeroNet {
         model.init();
     }
 
-    // Getter for the model
     public ComputationGraph getModel() {
         return model;
     }
     
-    // Save the model to a file so you do not lose progress after training.
     public void save(String path) throws IOException {
         model.save(new File(path), true);
     }
     
-    // Method that creates a new empty network and then immediately overwrites its brain with data loaded from a file.
     public static AlphaZeroNet load(String path, int size) throws IOException {
         AlphaZeroNet net = new AlphaZeroNet(size);
         net.model = ComputationGraph.load(new File(path), true);

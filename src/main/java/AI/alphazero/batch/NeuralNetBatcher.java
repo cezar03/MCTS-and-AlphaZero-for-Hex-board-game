@@ -23,15 +23,11 @@ public class NeuralNetBatcher implements Runnable, Batcher {
     private final AtomicBoolean running = new AtomicBoolean(true);
     private final AtomicBoolean paused = new AtomicBoolean(false);
     private final int maxBatchSize;
-    private final int deviceIndex; // New: Device to pin this batcher to
-    
-    // ... constants ...
+    private final int deviceIndex;
 
     public void updateModelWeights(AlphaZeroNet master) {
-        // Pause first to ensure no inference is running
         pause();
         try {
-            // Simple parameter copy
             this.network.getModel().setParams(master.getModel().params().dup());
         } catch (Exception e) {
             e.printStackTrace();
@@ -39,13 +35,12 @@ public class NeuralNetBatcher implements Runnable, Batcher {
         resume();
     }
     
-    // Revert to 5ms. With drainTo(), we will fill batches instantly if load is high.
-    private static final long MAX_WAIT_NANOS = 5_000_000; // 5ms
+    private static final long MAX_WAIT_NANOS = 5_000_000;
     private final AtomicLong totalSamplesProcessed = new AtomicLong(0);
 
     public NeuralNetBatcher(AlphaZeroNet network, int maxBatchSize, int deviceIndex) {
         this.network = network;
-        this.maxBatchSize = Math.min(Math.max(maxBatchSize, 256), 8192); // Cap at 8192
+        this.maxBatchSize = Math.min(Math.max(maxBatchSize, 256), 8192);
         this.deviceIndex = deviceIndex;
         this.inputQueue = new LinkedBlockingQueue<>((int)(this.maxBatchSize * 1.5));
         this.gpuQueue = new LinkedBlockingQueue<>(2);
@@ -75,16 +70,9 @@ public class NeuralNetBatcher implements Runnable, Batcher {
         while (running.get()) {
             try {
                 while (paused.get() && running.get()) Thread.sleep(10);
-
                 Request first = inputQueue.take();
                 batchBuffer.add(first);
-                
-                // OPTIMIZATION: Use drainTo to grab everything available instantly (Single Lock)
-                // instead of polling 8000 times (8000 Locks).
                 inputQueue.drainTo(batchBuffer, maxBatchSize - 1);
-                
-                // If we still have room and haven't hit timeout, wait a tiny bit for more?
-                // For high throughput, drainTo is usually enough if queue is busy.
                 if (batchBuffer.size() < maxBatchSize) {
                     long start = System.nanoTime();
                     while (batchBuffer.size() < maxBatchSize && (System.nanoTime() - start) < MAX_WAIT_NANOS) {
@@ -93,11 +81,9 @@ public class NeuralNetBatcher implements Runnable, Batcher {
                         else Thread.onSpinWait();
                     }
                 }
-
                 BatchJob job = prepareBatch(new ArrayList<>(batchBuffer));
                 batchBuffer.clear();
                 gpuQueue.put(job);
-
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 break;
@@ -109,64 +95,40 @@ public class NeuralNetBatcher implements Runnable, Batcher {
         int batchSize = requests.size();
         int singleInputLength = requests.get(0).inputData.length;
         int side = (int) Math.sqrt(singleInputLength / 3);
-
         float[] batchBuffer = new float[batchSize * singleInputLength];
         for (int i = 0; i < batchSize; i++) {
             System.arraycopy(requests.get(i).inputData, 0, batchBuffer, i * singleInputLength, singleInputLength);
         }
-        // Native allocation (Must be closed later!)
         INDArray inputTensor = Nd4j.create(batchBuffer, new int[]{batchSize, 3, side, side});
         return new BatchJob(inputTensor, requests);
     }
 
     private void runGpuInference() {
-        // Pin this thread to the specific device
         try {
-            // Attempt logging to verify this runs
-            // System.out.println("DEBUG: Batcher for device " + deviceIndex + " starting on thread " + Thread.currentThread().getName());
-            
-            // Try explicit pointer setting. Note: unsafeSetDevice is often available where attach is not.
-            // Nd4j.getAffinityManager().unsafeSetDevice(deviceIndex);
-            // System.out.println("DEBUG: Successfully called unsafeSetDevice(" + deviceIndex + ")");
         } catch (Exception e) {
             System.err.println("ERROR: Failed to set device affinity: " + e.getMessage());
             System.err.println("WARNING: Worker for device " + deviceIndex + " will run on the DEFAULT device (likely 0).");
-            // e.printStackTrace(); // Optional: reduce noise since we expect this now
         }
         
         while (running.get()) {
             try {
                 BatchJob job = gpuQueue.poll(1, TimeUnit.SECONDS);
                 if (job == null) continue;
-
-                // 1. INFERENCE
                 INDArray[] results = network.getModel().output(job.input);
-                
-                // 2. IMMEDIATE EXTRACTION & CLEANUP
-                // Extract data to Java Heap (GC safe)
                 INDArray policyBatch = results[0];
                 INDArray valueBatch = results[1];
-                
                 float[][] policies = policyBatch.toFloatMatrix();
                 double[] values = valueBatch.toDoubleVector();
-
-                // *** CRITICAL: Close Native Pointers Immediately ***
                 policyBatch.close();
                 valueBatch.close();
-                job.input.close(); // Close the input batch we created
-                
-                // 3. DISTRIBUTE (Safe Java Objects)
+                job.input.close();
                 int currentBatchSize = job.requests.size();
                 IntStream.range(0, currentBatchSize).parallel().forEach(i -> {
                     job.requests.get(i).future.complete(new Output(policies[i], values[i]));
                 });
-
                 long processed = totalSamplesProcessed.addAndGet(currentBatchSize);
-                
-                // PERIODIC CLEANUP: Force GC to reclaim GPU memory from deleted INDArrays
-                if ((processed / maxBatchSize) % 50 == 0) { // Every ~50 batches
+                if ((processed / maxBatchSize) % 50 == 0) {
                      Nd4j.getMemoryManager().invokeGc(); 
-                     // System.gc(); // Optional, heavier
                 }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
@@ -187,8 +149,7 @@ public class NeuralNetBatcher implements Runnable, Batcher {
     }
 
     private void startHeartbeat() {
-        // Disabled local heartbeat to prevent console spam with 100+ workers.
-        // MultiGpuBatcher will handle the global heartbeat.
+        // TODO: Implement heartbeat logging if needed
     }
 
     private static class Request {
@@ -202,7 +163,6 @@ public class NeuralNetBatcher implements Runnable, Batcher {
         BatchJob(INDArray i, List<Request> r) { input = i; requests = r; }
     }
     
-    // UPDATED: Now uses standard Java arrays, NOT INDArray
     public static class Output {
         public float[] policy; 
         public double value;

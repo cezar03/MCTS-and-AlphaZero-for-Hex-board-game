@@ -8,13 +8,8 @@ package game.core;
  * and check cell states.
  */
 public enum Color {
-    /** Represents an unoccupied cell on the board. */
     EMPTY, 
-
-    /** Represents a cell occupied by the RED player's stone. */
     RED, 
-
-    /** Represents a cell occupied by the BLACK player's stone. */
     BLACK
 }
 

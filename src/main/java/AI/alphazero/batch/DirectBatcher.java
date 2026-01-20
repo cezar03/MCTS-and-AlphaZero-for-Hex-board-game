@@ -34,8 +34,8 @@ public final class DirectBatcher implements Batcher {
             p = out[0];
             v = out[1];
 
-            float[] policy = p.toFloatMatrix()[0];   // shape (1, N)
-            double value = v.getDouble(0);           // shape (1, 1)
+            float[] policy = p.toFloatMatrix()[0];
+            double value = v.getDouble(0);
 
             return CompletableFuture.completedFuture(new NeuralNetBatcher.Output(policy, value));
         } finally {

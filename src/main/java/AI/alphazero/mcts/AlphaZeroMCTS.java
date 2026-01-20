@@ -29,39 +29,27 @@ public class AlphaZeroMCTS {
         this.boardSize = cfg.getBoardSize();
 
         this.cPuct = cfg.getCpuct();
-        this.dirEps = 0.25;   // later: put into config if you want
-        this.dirAlpha = 0.10; // later: put into config if you want
+        this.dirEps = 0.25;
+        this.dirAlpha = 0.10;
 
         this.gammaDist = new GammaDistribution(dirAlpha, 1.0);
     }
 
     public Node search(Board rootBoard, Color rootPlayer, int iterations, boolean training) {
-        // 1. Create Root
         Node root = new Node(null, null, rootPlayer == Color.RED ? 1 : 2);
-        
-        // 2. Expand Root (First evaluation) - cache encoding for training data reuse
         expandAndEvaluate(root, rootBoard, rootPlayer);
         if (training) {
             addDirichletNoiseToRoot(root);
         }
-
-        // 3. Simulation Loop - use undo/redo instead of copying
-        // Create a working board that we'll modify and undo
-        // Note: fastCopy() creates a new Board with empty moveHistory, so no need to clear
         Board workingBoard = rootBoard.fastCopy();
 
         for (int i = 0; i < iterations; i++) {
             Node node = root;
             Color currentPlayer = rootPlayer;
-            
-            // Track moves made in this iteration for undo
             int movesMade = 0;
 
-            // Traverse down the tree (Selection)
             while (!node.children.isEmpty()) {
                 node = selectBestChild(node);
-                
-                // Apply move to working board
                 if (currentPlayer == Color.RED) {
                     workingBoard.getMoveRed(node.move.row, node.move.col, null);
                 } else {
@@ -70,25 +58,18 @@ public class AlphaZeroMCTS {
                 movesMade++;
                 currentPlayer = (currentPlayer == Color.RED) ? Color.BLACK : Color.RED;
             }
-
-            // Expansion & Evaluation
             double value;
             if (!workingBoard.isTerminal()) {
                 value = expandAndEvaluate(node, workingBoard, currentPlayer);
             } else {
                 boolean redWon = workingBoard.redWins();
-                // Value is from the perspective of the *current* player at this leaf
                 if (redWon) {
                     value = (currentPlayer == Color.RED) ? 1.0 : -1.0;
                 } else {
                     value = (currentPlayer == Color.BLACK) ? 1.0 : -1.0; 
                 }
             }
-
-            // Backpropagation
             backpropagate(node, value);
-            
-            // Undo all moves made in this iteration to restore working board
             for (int j = 0; j < movesMade; j++) {
                 workingBoard.undoMove();
             }
@@ -101,43 +82,29 @@ public class AlphaZeroMCTS {
         while (node != null) {
             node.visits++;
             node.wins += value; 
-            value = -value; // Flip perspective for parent
+            value = -value;
             node = node.parent;
         }
     }
 
     private double expandAndEvaluate(Node node, Board board, Color player) {
-        // Encode board for Neural Net
         float[] input = BoardEncoder.encode(board, player);
-        
-        // Cache encoding in root node for training data reuse (only for root)
         if (node.parent == null && node.cachedEncoding == null) {
-            node.cachedEncoding = input.clone(); // Clone to avoid mutation
+            node.cachedEncoding = input.clone();
         }
-        
-        // ASYNC INFERENCE via Batcher
         NeuralNetBatcher.Output output;
         try {
-            // This .get() will block, but the Batcher ensures we wait efficiently
             output = batcher.predict(input).get();
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException("Error during Neural Net Inference", e);
         }
-
         float[] policy = output.policy;
         double value = output.value;
-
-        // Expand children
         List<int[]> legalMoves = board.legalMoves();
         double policySum = 0;
-
         for (int[] move : legalMoves) {
             int row = move[0];
             int col = move[1];
-            
-            // Map Real(row, col) to Canonical Index
-            // If RED:   Canonical = Real(row, col) => idx = row * size + col
-            // If BLACK: Canonical = Real(col, row) => idx = col * size + row
             int idx;
             if (player == Color.RED) {
                 idx = row * (int)boardSize + col;
@@ -155,13 +122,11 @@ public class AlphaZeroMCTS {
             policySum += prob;
         }
 
-        // Normalize probabilities
         if (policySum > 0) {
             for (Node child : node.children.values()) {
                 child.priorProbability /= policySum;
             }
         } else {
-            // Fallback if network outputs all zeros (rare)
             double uniform = 1.0 / Math.max(1, node.children.size());
             for (Node child : node.children.values()) child.priorProbability = uniform;
         }
@@ -172,12 +137,9 @@ public class AlphaZeroMCTS {
     private Node selectBestChild(Node parent) {
         Node bestChild = null;
         double bestScore = Double.NEGATIVE_INFINITY;
-        
-        // Pre-calculate sqrt(visits) for speed
         double sqrtParentVisits = Math.sqrt(parent.visits);
 
         for (Node child : parent.children.values()) {
-            // FIX: Negate Q-value because child.wins is from opponent's perspective
             double Q = (child.visits > 0) ? -(child.wins / child.visits) : 0;
             double U = cPuct * child.priorProbability * (sqrtParentVisits / (1 + child.visits));
             double score = Q + U; 
@@ -228,17 +190,14 @@ public class AlphaZeroMCTS {
     private void addDirichletNoiseToRoot(Node root) {
         int k = root.children.size();
         if (k == 0) return;
-
-        // OPTIMIZATION: Reuse cached gamma distribution instead of creating new one
         double[] noise = new double[k];
         double sum = 0.0;
 
         for (int i = 0; i < k; i++) {
-            noise[i] = gammaDist.sample(); // Use cached distribution
+            noise[i] = gammaDist.sample();
             sum += noise[i];
         }
 
-        // Apply noise
         int i = 0;
         double priorSum = 0.0;
         for (Node child : root.children.values()) {
@@ -248,7 +207,6 @@ public class AlphaZeroMCTS {
             i++;
         }
         
-        // Re-normalize to ensure sum is exactly 1.0
         if (priorSum > 0) {
             for (Node child : root.children.values()) child.priorProbability /= priorSum;
         }

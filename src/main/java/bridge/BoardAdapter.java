@@ -22,8 +22,6 @@ public final class BoardAdapter implements AIBoardAdapter {
         updateMatrix();
     }
 
-    // ---------------- AIBoardAdapter implementation ----------------
-
     @Override
     public Color getCell(int row, int col) {
         return board.getCell(row, col);
@@ -66,9 +64,8 @@ public final class BoardAdapter implements AIBoardAdapter {
 
     @Override
     public AIBoardAdapter copy() {
-        // Fast copy of board state; matrix rebuilt from board.
         Board b2 = board.fastCopy();
-        b2.clearMoveHistory(); // no need to keep snapshots in copies
+        b2.clearMoveHistory();
         return new BoardAdapter(b2);
     }
 
@@ -76,7 +73,6 @@ public final class BoardAdapter implements AIBoardAdapter {
     public boolean makeMove(int row, int col, Player player) {
         if (!Rules.validMove(board, row, col)) return false;
 
-        // Update board
         if (player == Player.RED) {
             board.getMoveRed(row, col, null);
             matrix[row][col] = 1;
@@ -104,8 +100,6 @@ public final class BoardAdapter implements AIBoardAdapter {
         return board.neighbors(row, col);
     }
 
-    // ---------------- extra helpers you already had ----------------
-
     public int[][] getMatrix() {
         return matrix;
     }
@@ -125,7 +119,6 @@ public final class BoardAdapter implements AIBoardAdapter {
 
     public void updateBoard() {
         board.reset();
-        // rebuild by applying matrix stones
         int n = board.getSize();
         for (int r = 0; r < n; r++) {
             for (int c = 0; c < n; c++) {
@@ -134,7 +127,6 @@ public final class BoardAdapter implements AIBoardAdapter {
                 else if (v == 2) board.getMoveBlack(r, c, null);
             }
         }
-        // important: reconstruction should not accumulate undo snapshots forever
         board.clearMoveHistory();
     }
 

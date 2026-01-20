@@ -9,11 +9,7 @@ import org.nd4j.linalg.factory.Nd4j;
 
 import ai.alphazero.net.AlphaZeroNet;
 
-// This class acts as a Load Balancer / Router for multiple GPUs.
-// It effectively replaces the single NeuralNetBatcher.
 public class MultiGpuBatcher implements Runnable, Batcher {
-    
-    // We maintain a list of workers (one per GPU)
     private final List<NeuralNetBatcher> workers = new ArrayList<>();
     private final List<AlphaZeroNet> workerNets = new ArrayList<>();
     private final AtomicInteger counter = new AtomicInteger(0);
@@ -21,12 +17,10 @@ public class MultiGpuBatcher implements Runnable, Batcher {
     public MultiGpuBatcher(AlphaZeroNet masterNet, int batchSize, int numWorkers) {
         int numDevices = 0;
         
-        // If numWorkers is specified (CPU Mode scaling), use it directly
         if (numWorkers > 0) {
             numDevices = numWorkers;
             System.out.println("MultiGpuBatcher: Manual worker count specified: " + numWorkers);
         } else {
-            // Auto-detect GPUs
             try {
                 numDevices = Nd4j.getAffinityManager().getNumberOfDevices();
             } catch (Exception e) {
@@ -43,31 +37,17 @@ public class MultiGpuBatcher implements Runnable, Batcher {
         System.out.println("MultiGpuBatcher: Detected " + numDevices + " GPUs. Initializing workers...");
         
         for (int i = 0; i < numDevices; i++) {
-            // 1. Create a NEW network instance for this GPU (Topology only)
-            // We assume safe separation of memory.
-            // Ideally we clone the master configuration.
-            // Since AlphaZeroNet(size) creates a fresh initialized net, that's fine.
-            // We will overwrite weights immediately.
             AlphaZeroNet childNet = new AlphaZeroNet(masterNet.getBoardSize()); 
-            
-            // 2. Create the worker (pinned to device i)
             NeuralNetBatcher worker = new NeuralNetBatcher(childNet, batchSize, i);
-            
             workers.add(worker);
             workerNets.add(childNet);
             System.out.println("  -> Worker " + i + " created.");
         }
         
-        // Initial sync to ensure they start with master weights
         updateWeights(masterNet);
     }
 
-    /**
-     * Distributes the prediction request to one of the workers.
-     * User Requested: Round-Robin using AtomicInteger.
-     */
     public CompletableFuture<NeuralNetBatcher.Output> predict(float[] input) {
-        // Round-Robin: 0, 1, 0, 1... mechanism
         int idx = Math.abs(counter.getAndIncrement() % workers.size());
         return workers.get(idx).predict(input);
     }
@@ -81,10 +61,9 @@ public class MultiGpuBatcher implements Runnable, Batcher {
     
     public int getBoardSize() {
         if (!workerNets.isEmpty()) return workerNets.get(0).getBoardSize();
-        return 11; // Default
+        return 11;
     }
 
-    // Lifecycle methods delegate to all workers
     @Override
     public void run() {
         startGlobalHeartbeat();
@@ -101,15 +80,12 @@ public class MultiGpuBatcher implements Runnable, Batcher {
             long lastTime = System.currentTimeMillis();
             while (true) {
                 try {
-                    Thread.sleep(10000); // 10 seconds (Global update)
+                    Thread.sleep(10000);
                     long total = 0;
                     for (NeuralNetBatcher w : workers) total += w.getSamplesProcessed();
-                    
                     long now = System.currentTimeMillis();
                     double rate = (total - lastCount) / ((now - lastTime) / 1000.0);
-                    
                     System.out.println(String.format("GLOBAL HEARTBEAT: Total Processed: %d. (Rate: %.1f samples/sec)", total, rate));
-                    
                     lastCount = total;
                     lastTime = now;
                 } catch (Exception e) { break; }

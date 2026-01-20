@@ -2,8 +2,8 @@ package ai.random;
 
 import ai.api.AIAgent;
 import ai.api.AIBoardAdapter;
-import game.core.Move;
 import game.core.Color;
+import game.core.Move;
 import game.core.Player;
 
 public class RandomPlayer implements AIAgent {
@@ -16,9 +16,8 @@ public class RandomPlayer implements AIAgent {
     @Override
     public Move getBestMove(AIBoardAdapter board, Player currentPlayer) {
         int n = board.getSize();
-
-        // Count empties first
         int empties = 0;
+
         for (int r = 0; r < n; r++)
             for (int c = 0; c < n; c++)
                 if (board.getCell(r, c) == Color.EMPTY) empties++;
@@ -29,9 +28,7 @@ public class RandomPlayer implements AIAgent {
 
         for (int r = 0; r < n; r++) {
             for (int c = 0; c < n; c++) {
-                if (board.getCell(r, c) == Color.EMPTY) {
-                    if (k-- == 0) return Move.get(r, c);
-                }
+                if (board.getCell(r, c) == Color.EMPTY) { if (k-- == 0) return Move.get(r, c); }
             }
         }
         return null;

@@ -1,9 +1,9 @@
 package ai.alphazero.net;
 
 public class TrainingExampleData {
-    public float[] inputBoard;  // Was INDArray
-    public float[] targetPolicy; // Was INDArray
-    public float[] targetValue;  // Was INDArray (or scalar)
+    public float[] inputBoard;
+    public float[] targetPolicy;
+    public float[] targetValue;
 
     public TrainingExampleData(float[] input, float[] policy, float value) {
         this.inputBoard = input;

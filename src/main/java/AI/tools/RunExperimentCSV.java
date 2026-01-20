@@ -227,7 +227,7 @@ public class RunExperimentCSV {
     private static AIAgent createAlphaZeroAgent(Player player, AlphaZeroConfig cfg) {
         AlphaZeroNet net = loadOrCreateNet(cfg);
         Batcher batcher = new DirectBatcher(net);
-        AlphaZeroMCTS mcts = new AlphaZeroMCTS(batcher, cfg); // <-- FIX
+        AlphaZeroMCTS mcts = new AlphaZeroMCTS(batcher, cfg);
         return new AlphaZeroPlayer(player, mcts, cfg);
     }
 
