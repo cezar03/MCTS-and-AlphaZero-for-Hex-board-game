@@ -9,14 +9,10 @@ import game.core.Color;
 
 public final class ShortestPath {
 
-<<<<<<< HEAD
     /** Utility class, no instances. */
     private ShortestPath() {
         // utility class, no instances
     }
-=======
-    private ShortestPath() {}
->>>>>>> 1165bedc5af5867e936278ee2626c1ff7663bbd5
 
     /**
      * 0–1 BFS shortest path:

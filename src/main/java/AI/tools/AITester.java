@@ -43,7 +43,6 @@ public class AITester {
             this.draws = draws;
         }
 
-<<<<<<< HEAD
         /**
          * Calculates the win rate of the red agent as a percentage.
          * @return the red agent's win rate
@@ -59,10 +58,6 @@ public class AITester {
         public double getBlackWinRate() {
             return totalGames > 0 ? (blackWins * 100.0 / totalGames) : 0;
         }
-=======
-        public double getRedWinRate() { return totalGames > 0 ? (redWins * 100.0 / totalGames) : 0; }
-        public double getBlackWinRate() { return totalGames > 0 ? (blackWins * 100.0 / totalGames) : 0; }
->>>>>>> 1165bedc5af5867e936278ee2626c1ff7663bbd5
 
         /**
          * Prints a summary of the test results to the console.

@@ -34,7 +34,6 @@ public class GameState {
         recomputeTerminal();
     }
 
-<<<<<<< HEAD
     /**
      * Checks if the game has ended in this state.
      * * @return true if a winner has been determined
@@ -66,12 +65,6 @@ public class GameState {
     public Board getBoard() {
         return board;
     }
-=======
-    public boolean isTerminal() { return terminal; }
-    public int getWinnerId() { return winnerId; }
-    public Player getToMove() { return toMove; }
-    public Board getBoard() { return board; }
->>>>>>> 1165bedc5af5867e936278ee2626c1ff7663bbd5
 
     /**
      * Generates a list of all legal moves available from this state.
@@ -129,7 +122,6 @@ public class GameState {
         }
     }
 
-<<<<<<< HEAD
     /**
      * Converts a Player enum to the corresponding Color.
      * @param p the player
@@ -147,10 +139,6 @@ public class GameState {
      * * @param m the move to evaluate
      * @return the estimated shortest path distance after the move
      */
-=======
-    private Color toColor(Player p) { return (p == Player.RED ? Color.RED : Color.BLACK);}
-
->>>>>>> 1165bedc5af5867e936278ee2626c1ff7663bbd5
     public int estimateAfterMove(Move m) {
         Player mover = toMove;
         GameState copy = this.copy();
@@ -158,7 +146,6 @@ public class GameState {
         return copy.estimateShortestPathForPlayer(mover);
     }
 
-<<<<<<< HEAD
     /**
      * Calculates the shortest path distance for the player whose turn it is.
      * * @return the length of the shortest path
@@ -175,10 +162,6 @@ public class GameState {
     public int estimateShortestPathForPlayer(Player p) {
         return ShortestPath.shortestPath(board, toColor(p));
     }
-=======
-    public int estimateShortestPathForCurrentPlayer() { return ShortestPath.shortestPath(board, toColor(toMove));}
-    public int estimateShortestPathForPlayer(Player p) { return ShortestPath.shortestPath(board, toColor(p)); }
->>>>>>> 1165bedc5af5867e936278ee2626c1ff7663bbd5
 }
 
 

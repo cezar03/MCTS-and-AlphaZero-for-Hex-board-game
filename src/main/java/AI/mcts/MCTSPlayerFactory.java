@@ -50,7 +50,6 @@ public class MCTSPlayerFactory implements AIAgentFactory {
         );
     }
     
-<<<<<<< HEAD
     /**
      * Returns the identifier for this agent type.
      * * @return "MCTS"
@@ -59,9 +58,6 @@ public class MCTSPlayerFactory implements AIAgentFactory {
     public String getAgentTypeName() {
         return "MCTS";
     }
-=======
-    @Override public String getAgentTypeName() { return "MCTS"; }
->>>>>>> 1165bedc5af5867e936278ee2626c1ff7663bbd5
 }
 
 

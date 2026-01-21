@@ -78,7 +78,6 @@ public final class AgentRegistry {
         return new AIAdaptationConfig.Builder(player).build();
     }
 
-<<<<<<< HEAD
     /**
      * Convenience method to create a fully initialized AI agent in one step.
      * * @param type the agent type
@@ -89,7 +88,4 @@ public final class AgentRegistry {
     public AIAgent createAgent(String type, Player player, int iterations) {
         return createFactory(type).createAgent(createConfig(type, player, iterations));
     }
-=======
-    public AIAgent createAgent(String type, Player player, int iterations) { return createFactory(type).createAgent(createConfig(type, player, iterations)); }
->>>>>>> 1165bedc5af5867e936278ee2626c1ff7663bbd5
 }

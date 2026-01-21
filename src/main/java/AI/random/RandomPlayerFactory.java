@@ -27,7 +27,6 @@ public class RandomPlayerFactory implements AIAgentFactory {
         return new RandomPlayer(config.getPlayer());
     }
     
-<<<<<<< HEAD
     /**
      * Returns the unique string identifier for this agent type.
      * * @return "Random"
@@ -36,9 +35,6 @@ public class RandomPlayerFactory implements AIAgentFactory {
     public String getAgentTypeName() {
         return "Random";
     }
-=======
-    @Override public String getAgentTypeName() { return "Random";}
->>>>>>> 1165bedc5af5867e936278ee2626c1ff7663bbd5
 }
 
 

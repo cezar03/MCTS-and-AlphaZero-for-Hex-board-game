@@ -51,7 +51,6 @@ public class RandomPlayer implements AIAgent {
         return null;
     }
 
-<<<<<<< HEAD
     /**
      * Returns the player this agent represents.
      * * @return the Player enum
@@ -70,10 +69,6 @@ public class RandomPlayer implements AIAgent {
     public boolean controlsPlayer(Player player) {
         return this.randomPlayer == player;
     }
-=======
-    @Override public Player getPlayer() { return randomPlayer;}
-    @Override public boolean controlsPlayer(Player player) { return this.randomPlayer == player; }
->>>>>>> 1165bedc5af5867e936278ee2626c1ff7663bbd5
 }
 
 
