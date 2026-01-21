@@ -34,15 +34,8 @@ public class RandomPlayer implements AIAgent {
         return null;
     }
 
-    @Override
-    public Player getPlayer() {
-        return randomPlayer;
-    }
-
-    @Override
-    public boolean controlsPlayer(Player player) {
-        return this.randomPlayer == player;
-    }
+    @Override public Player getPlayer() { return randomPlayer;}
+    @Override public boolean controlsPlayer(Player player) { return this.randomPlayer == player; }
 }
 
 

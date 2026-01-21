@@ -33,9 +33,7 @@ public final class AgentRegistry {
 
     public AIAgentFactory createFactory(String type) {
         Supplier<AIAgentFactory> supplier = factories.get(type);
-        if (supplier == null) {
-            throw new IllegalArgumentException("Unknown agent type: " + type);
-        }
+        if (supplier == null) { throw new IllegalArgumentException("Unknown agent type: " + type);}
         return supplier.get();
     }
 
@@ -48,7 +46,5 @@ public final class AgentRegistry {
         return new AIAdaptationConfig.Builder(player).build();
     }
 
-    public AIAgent createAgent(String type, Player player, int iterations) {
-        return createFactory(type).createAgent(createConfig(type, player, iterations));
-    }
+    public AIAgent createAgent(String type, Player player, int iterations) { return createFactory(type).createAgent(createConfig(type, player, iterations)); }
 }

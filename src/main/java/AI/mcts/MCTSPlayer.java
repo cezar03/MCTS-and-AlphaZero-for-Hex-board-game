@@ -73,26 +73,17 @@ public class MCTSPlayer implements AIAgent {
     @Override
     public Move getBestMove(AIBoardAdapter boardAdapter, Player currentPlayer) {
         Board board = BoardConverters.toBoard(boardAdapter);
-
         GameState gameState = new GameState(board, currentPlayer);
-
         if (gameState.getLegalMoves().isEmpty()) return null;
-
         GameState simState = gameState.copy();
         Node root = new Node(null, null, currentPlayer.other().id);
-
         Node bestNode = mcts.search(root, simState);
-        if (bestNode == null || bestNode.move == null) {
-            return gameState.getLegalMoves().get(0);
-        }
+        if (bestNode == null || bestNode.move == null) { return gameState.getLegalMoves().get(0);}
         return bestNode.move;
     }
 
-    @Override
-    public Player getPlayer() { return mctsPlayer; }
-
-    @Override
-    public boolean controlsPlayer(Player player) { return this.mctsPlayer == player; }
+    @Override public Player getPlayer() { return mctsPlayer; }
+    @Override public boolean controlsPlayer(Player player) { return this.mctsPlayer == player; }
 
     public int getIterations() { return iterations; }
     public MovePruner getPruner() { return mcts.getPruner(); }

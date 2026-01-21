@@ -7,10 +7,10 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Polyline;
 
+import UI.controller.GameController;
 import bridge.BoardAdapter;
 import game.core.Color;
 import game.core.Player;
-import UI.controller.GameController;
 
 public class HexBoardView extends Pane {
     private final int boardSize;
@@ -27,18 +27,13 @@ public class HexBoardView extends Pane {
         drawEmptyBoard();
     }
 
-    public void setController(GameController controller) {
-        this.controller = controller;
-    }
-
-    public void setTurnLabel(Label turnLabel) {
-        this.turnLabel = turnLabel;
-    }
+    public void setController(GameController controller) { this.controller = controller; }
+    public void setTurnLabel(Label turnLabel) { this.turnLabel = turnLabel; }
 
     public void update(BoardAdapter adapter) {
         for (int row = 0; row < boardSize; row++) {
             for (int col = 0; col < boardSize; col++) {
-                Color cellColor = adapter.getCell(row, col); // FIX: was getCellColor
+                Color cellColor = adapter.getCell(row, col);
                 hexCells[row][col].setFill(paintForColor(cellColor));
             }
         }
@@ -113,7 +108,6 @@ public class HexBoardView extends Pane {
     }
 
     private void drawBoardBorders(double padding, double radius, double width, double height) {
-        // Top border
         Polyline topBorder = new Polyline();
         for (int col = 0; col < boardSize; col++) {
             double x = padding + col * width * Math.sqrt(3) / 2;
@@ -140,7 +134,6 @@ public class HexBoardView extends Pane {
         topBorder.setStrokeWidth(3);
         getChildren().add(topBorder);
 
-        // Left border
         Polyline leftBorder = new Polyline();
         double x0 = padding;
         double y0 = padding;
@@ -167,7 +160,6 @@ public class HexBoardView extends Pane {
         leftBorder.setStrokeWidth(3);
         getChildren().add(leftBorder);
 
-        // Bottom border
         Polyline bottomBorder = new Polyline();
         for (int col = boardSize - 1; col >= 0; col--) {
             int row = boardSize - 1;
@@ -188,7 +180,6 @@ public class HexBoardView extends Pane {
         bottomBorder.setStrokeWidth(3);
         getChildren().add(bottomBorder);
 
-        // Right border
         Polyline rightBorder = new Polyline();
         for (int row = 0; row < boardSize; row++) {
             int col = boardSize - 1;

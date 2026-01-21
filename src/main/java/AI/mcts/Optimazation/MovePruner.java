@@ -1,10 +1,13 @@
 package AI.mcts.Optimazation;
 
-import AI.mcts.HexGame.GameState;
-import game.core.Move;
-import AI.mcts.Optimazation.Heuristic.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import java.util.*;
+import AI.mcts.HexGame.GameState;
+import AI.mcts.Optimazation.Heuristic.Heuristic;
+import game.core.Move;
 
 /**
  * A move pruning utility that reduces the branching factor in game tree search
@@ -19,11 +22,7 @@ import java.util.*;
  * computational resources on more promising moves.
  */
 public class MovePruner {
-
-    //set thershold to represent how many moves we want to keep (smaller=fewer)
     private final double threshold;
-
-    // heuristics
     private final int minMoves;
     private final Heuristic heuristic;
 
@@ -69,10 +68,10 @@ public class MovePruner {
         Map<Move, Double> scores = new HashMap<>();
         double maxScore = Double.NEGATIVE_INFINITY;
 
-        for (Move m : legalMoves) {
-            double s = heuristic.score(state, m);
-            scores.put(m, s);
-            if (s > maxScore) maxScore = s;
+        for (Move move : legalMoves) {
+            double score = heuristic.score(state, move);
+            scores.put(move, score);
+            if (score > maxScore) maxScore = score;
         }
 
         double min = maxScore - threshold;

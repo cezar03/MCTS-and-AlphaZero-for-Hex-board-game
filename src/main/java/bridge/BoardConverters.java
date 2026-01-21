@@ -1,8 +1,8 @@
 package bridge;
 
+import AI.api.AIBoardAdapter;
 import game.core.Board;
 import game.core.Color;
-import AI.api.AIBoardAdapter;
 
 /**
  * Shared utilities for converting adapters to Board efficiently.
@@ -20,17 +20,17 @@ public final class BoardConverters {
      */
     public static Board toBoard(AIBoardAdapter adapter) {
         int n = adapter.getSize();
-        Board b = new Board(n);
+        Board board = new Board(n);
 
         for (int r = 0; r < n; r++) {
             for (int c = 0; c < n; c++) {
                 Color cell = adapter.getCell(r, c);
-                if (cell == Color.RED) b.getMoveRed(r, c, null);
-                else if (cell == Color.BLACK) b.getMoveBlack(r, c, null);
+                if (cell == Color.RED) board.getMoveRed(r, c, null);
+                else if (cell == Color.BLACK) board.getMoveBlack(r, c, null);
             }
         }
-        b.clearMoveHistory();
-        return b;
+        board.clearMoveHistory();
+        return board;
     }
 }
 

@@ -17,17 +17,11 @@ public class RandomPlayerFactory implements AIAgentFactory {
     
     @Override
     public AIAgent createAgent(AIAdaptationConfig config) {
-        if (config == null) {
-            throw new IllegalArgumentException("Configuration cannot be null");
-        }
-        
+        if (config == null) { throw new IllegalArgumentException("Configuration cannot be null");}
         return new RandomPlayer(config.getPlayer());
     }
     
-    @Override
-    public String getAgentTypeName() {
-        return "Random";
-    }
+    @Override public String getAgentTypeName() { return "Random";}
 }
 
 

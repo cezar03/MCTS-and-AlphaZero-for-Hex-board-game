@@ -34,13 +34,8 @@ public class AITester {
             this.draws = draws;
         }
 
-        public double getRedWinRate() {
-            return totalGames > 0 ? (redWins * 100.0 / totalGames) : 0;
-        }
-
-        public double getBlackWinRate() {
-            return totalGames > 0 ? (blackWins * 100.0 / totalGames) : 0;
-        }
+        public double getRedWinRate() { return totalGames > 0 ? (redWins * 100.0 / totalGames) : 0; }
+        public double getBlackWinRate() { return totalGames > 0 ? (blackWins * 100.0 / totalGames) : 0; }
 
         public void printResults() {
             System.out.println("\n========== TEST RESULTS ==========");
@@ -66,9 +61,7 @@ public class AITester {
         System.out.println("Playing " + numGames + " games on " + boardSize + "x" + boardSize + " board\n");
 
         for (int gameNum = 1; gameNum <= numGames; gameNum++) {
-            if (extensivePrints) {
-                System.out.println("Playing game " + gameNum + "/" + numGames + "...");
-            }
+            if (extensivePrints) { System.out.println("Playing game " + gameNum + "/" + numGames + "..."); }
 
             Player winner = playGame(redAgent, blackAgent, boardSize);
 
@@ -82,21 +75,14 @@ public class AITester {
                 }
             }
 
-            if (!extensivePrints && gameNum % 10 == 0) {
-                System.out.println("Progress: " + gameNum + "/" + numGames + " games completed");
-            }
+            if (!extensivePrints && gameNum % 10 == 0) { System.out.println("Progress: " + gameNum + "/" + numGames + " games completed"); }
         }
 
         TestResult result = new TestResult(redName, blackName, numGames, redWins, blackWins, draws);
         result.printResults();
 
-        if (redAgent instanceof MCTSPlayer p) {
-            printMctsPruningConfig("RED", p);
-        }
-
-        if (blackAgent instanceof MCTSPlayer p) {
-            printMctsPruningConfig("BLACK", p);
-        }
+        if (redAgent instanceof MCTSPlayer p) { printMctsPruningConfig("RED", p); }
+        if (blackAgent instanceof MCTSPlayer p) { printMctsPruningConfig("BLACK", p); }
 
         return result;
     }
