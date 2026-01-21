@@ -1,7 +1,7 @@
 # Project 2-1 Team_04
 
 ## Name
-Team_04
+Team_04 
 
 ## Description
 In this project, our team created multiple versions of the game Hex. First, a human vs human version of the game Hex was built.
