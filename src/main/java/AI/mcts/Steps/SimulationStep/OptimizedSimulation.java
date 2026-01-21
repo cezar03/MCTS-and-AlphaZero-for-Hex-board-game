@@ -2,7 +2,7 @@ package AI.mcts.Steps.SimulationStep;
 
 import java.util.*;
 import AI.mcts.HexGame.GameState;
-import AI.mcts.HexGame.Move;
+import game.core.Move;
 import AI.mcts.Optimazation.MovePruner;
 
 /**
@@ -94,3 +94,14 @@ public class OptimizedSimulation implements Simulation {
         return best;
     }
 }
+
+
+
+
+
+
+
+
+
+
+

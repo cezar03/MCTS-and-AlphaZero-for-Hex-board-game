@@ -1,12 +1,14 @@
 package AI.mcts.Steps;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
-import AI.mcts.Node;
 import AI.mcts.HexGame.GameState;
-import AI.mcts.HexGame.Move;
-import AI.mcts.Optimazation.*;
-import AI.mcts.Optimazation.Heuristic.*;
-import Game.Player;
+import AI.mcts.Node;
+import AI.mcts.Optimazation.Heuristic.Heuristic;
+import AI.mcts.Optimazation.MovePruner;
+import game.core.Move;
+import game.core.Player;
 
 /**
  * Implements the expansion phase of Monte Carlo Tree Search (MCTS).
@@ -17,10 +19,8 @@ import Game.Player;
  * and heuristic biasing to guide the search toward more promising moves.</p>
  */
 public class Expansion {
-
-    // pruner
-    private final MovePruner pruner; // may be null
-    private final Heuristic heuristic;  // may be null
+    private final MovePruner pruner;
+    private final Heuristic heuristic;
     private final Random random = new Random();
     private final double biasScale; 
 
@@ -50,15 +50,9 @@ public class Expansion {
      * @return the newly created child node, or the original node if no expansion is possible
      */
     public Node expand(Node node, GameState currentState) {
-        // in case  the game is over there is nothing to expand
-        if (currentState.isTerminal()) {
-            return node;
-        }
+        if (currentState.isTerminal()) { return node;}
 
-        // getting all legal moves from the current state
         List<Move> legalMoves = currentState.getLegalMoves();
-
-        // find moves that have not been tried yet
         List<Move> untriedMoves = new ArrayList<>();
         for (Move moves : legalMoves) {
             if (!node.children.containsKey(moves)) {
@@ -66,11 +60,8 @@ public class Expansion {
             }
         }
 
-        if (untriedMoves.isEmpty()) {
-            return node;
-        }
+        if (untriedMoves.isEmpty()) { return node; }
 
-        //  pruner applied
         List<Move> prunedUntried = untriedMoves;
         if (pruner != null) {
             List<Move> pruned = pruner.pruneMoves(currentState, untriedMoves);
@@ -79,7 +70,6 @@ public class Expansion {
             }
         }
 
-        // pick a random untried move
         Move chosenMove = prunedUntried.get(random.nextInt(prunedUntried.size()));
         Player toMove = currentState.getToMove();
         Node child = new Node(chosenMove, node, toMove.id);
@@ -90,8 +80,6 @@ public class Expansion {
         }
         
         node.children.put(chosenMove, child);
-
-        // return the newly created child
         return child;
     }
 
@@ -104,4 +92,15 @@ public class Expansion {
         return pruner;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
 

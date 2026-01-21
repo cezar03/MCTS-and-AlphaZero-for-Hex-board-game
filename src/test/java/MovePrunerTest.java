@@ -1,12 +1,10 @@
 
 import AI.mcts.HexGame.GameState;
-import AI.mcts.HexGame.Move;
+import game.core.Move;
 import AI.mcts.Optimazation.MovePruner;
 import AI.mcts.Optimazation.Heuristic.Heuristic;
 import org.junit.jupiter.api.Test;
-
 import java.util.*;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class MovePrunerTest {
@@ -29,9 +27,9 @@ class MovePrunerTest {
     void pruneMovesTest() {
         //threshold = 2.0, minMoves = 1
         //maxScore = 10.0, them min = 8.0 (the only moves that should be left are with 8.0 value)
-        Move a = new Move(0, 0);
-        Move b = new Move(0, 1);
-        Move c = new Move(1, 0);
+        Move a = Move.get(0, 0);
+        Move b = Move.get(0, 1);
+        Move c = Move.get(1, 0);
 
         Map<Move, Double> scores = new HashMap<>();
         scores.put(a, 10.0);
@@ -62,9 +60,9 @@ class MovePrunerTest {
 
     @Test
     void largeThresholdTest() {
-        Move a = new Move(0, 0);
-        Move b = new Move(0, 1);
-        Move c = new Move(1, 0);
+        Move a = Move.get(0, 0);
+        Move b = Move.get(0, 1);
+        Move c = Move.get(1, 0);
 
         Map<Move, Double> scores = Map.of(
                 a, 10.0,
@@ -82,10 +80,10 @@ class MovePrunerTest {
 
     @Test
     void smallThresholdTest() {
-        Move a = new Move(0, 0);
-        Move b = new Move(0, 1);
-        Move c = new Move(1, 0);
-        Move d = new Move(1, 1);
+        Move a = Move.get(0, 0);
+        Move b = Move.get(0, 1);
+        Move c = Move.get(1, 0);
+        Move d = Move.get(1, 1);
 
         Map<Move, Double> scores = new HashMap<>();
         scores.put(a, 10.0);
@@ -106,8 +104,8 @@ class MovePrunerTest {
 
     @Test
     void returnSortedByScoreMovesTest() {
-        Move a = new Move(0, 0);
-        Move b = new Move(0, 1);
+        Move a = Move.get(0, 0);
+        Move b = Move.get(0, 1);
 
         Map<Move, Double> scores = Map.of(
                 a, 2.0,
@@ -126,9 +124,9 @@ class MovePrunerTest {
 
     @Test
     void negativeThresholdTest() {
-        Move a = new Move(0, 0);
-        Move b = new Move(0, 1);
-        Move c = new Move(1, 0);
+        Move a = Move.get(0, 0);
+        Move b = Move.get(0, 1);
+        Move c = Move.get(1, 0);
 
         Map<Move, Double> scores = Map.of(
                 a, 10.0,
@@ -148,9 +146,9 @@ class MovePrunerTest {
 
     @Test
     void equalScoresTest() {
-        Move a = new Move(0, 0);
-        Move b = new Move(0, 1);
-        Move c = new Move(1, 0);
+        Move a = Move.get(0, 0);
+        Move b = Move.get(0, 1);
+        Move c = Move.get(1, 0);
 
         Map<Move, Double> scores = Map.of(
                 a, 1.0,
@@ -163,7 +161,7 @@ class MovePrunerTest {
         List<Move> legal = new ArrayList<>(List.of(a, b, c));
         List<Move> pruned = pruner.pruneMoves(null, legal);
 
-        assertEquals(3, pruned.size(), "Если threshold=0 и все scores равны max, должны остаться все");
+        assertEquals(3, pruned.size(), "Anything should be pruned");
     }
 
     @Test
@@ -180,3 +178,12 @@ class MovePrunerTest {
         assertSame(h, pruner.getHeuristic());
     }
 }
+
+
+
+
+
+
+
+
+

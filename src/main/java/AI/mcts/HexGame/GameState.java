@@ -1,93 +1,90 @@
-// AI/mcts/GameState.java
 package AI.mcts.HexGame;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import AI.AiPlayer.AIBoardAdapter;
 import AI.mcts.Optimazation.ShortestPath;
-import Game.Color;
-import Game.Player;
-import Game.Rules;
+import game.core.Board;
+import game.core.Color;
+import game.core.Move;
+import game.core.Player;
+import game.core.Rules;
 
 /**
- * Represents the state of a Hex game, including the board configuration, current player,
- * and terminal state information. This class provides methods for game state manipulation,
- * move validation, and heuristic evaluation.
- * 
- * <p>The GameState maintains immutability through copy operations and tracks game progression
- * by monitoring win conditions for both players.</p>
-*/
+ * Encapsulates the state of a Hex game for use within the MCTS simulation.
+ * <p>
+ * This class wraps the core {@link Board} object and tracks the current player,
+ * winner status, and terminal state. It provides methods for cloning states
+ * and applying moves during tree traversal and rollouts.
+ */
 public class GameState {
-    private final AIBoardAdapter board;
-    private Player toMove;          // RED starts typically
+    private final Board board;
+    private Player toMove;
     private boolean terminal = false;
-    private int winnerId = 0;       // 0 = none, 1 = RED, 2 = BLACK
+    private int winnerId = 0;
 
-    public GameState(AIBoardAdapter board, Player toMove) {
+    /**
+     * Constructs a new game state.
+     * * @param board the board configuration
+     * @param toMove the player whose turn it is
+     */
+    public GameState(Board board, Player toMove) {
         this.board = board;
         this.toMove = toMove;
         recomputeTerminal();
     }
 
     /**
-     * Checks if the game has reached a terminal state (a player has won).
-     *
-     * @return true if the game is over, false otherwise
-    */
-    public boolean isTerminal(){
+     * Checks if the game has ended in this state.
+     * * @return true if a winner has been determined
+     */
+    public boolean isTerminal() {
         return terminal;
     }
 
     /**
      * Returns the ID of the winning player.
-     *
-     * @return 0 if no winner, 1 if RED won, 2 if BLACK won
-    */
-    public int getWinnerId(){
+     * * @return 0 if no winner, 1 for RED, 2 for BLACK
+     */
+    public int getWinnerId() {
         return winnerId;
     }
 
     /**
-     * Returns the player whose turn it is to move.
-     *
-     * @return the current player to move
-    */
-    public Player getToMove(){
+     * Returns the player whose turn it is to move in this state.
+     * * @return the Player enum
+     */
+    public Player getToMove() {
         return toMove;
     }
 
-    public AIBoardAdapter getBoard(){
+    /**
+     * Retrieves the underlying board object.
+     * * @return the Board
+     */
+    public Board getBoard() {
         return board;
     }
 
     /**
-     * Retrieves all legal moves available in the current game state.
-     *
-     * @return a list of Move objects representing all valid moves
-    */
+     * Generates a list of all legal moves available from this state.
+     * * @return a list of {@link Move} objects representing empty cells
+     */
     public List<Move> getLegalMoves() {
         List<Move> out = new ArrayList<>();
-        for (int[] rc : board.legalMoves()) {
-            out.add(new Move(rc[0], rc[1]));
-        }
+        for (int[] rc : board.legalMoves()) { out.add(Move.get(rc[0], rc[1]));}
         return out;
     }
 
     /**
-     * Applies a move to the game state, updating the board and switching players.
-     * If the game is already terminal or the move is invalid, no action is taken.
-     *
-     * @param move the move to be executed
-    */
+     * Applies the specified move to the state.
+     * <p>
+     * Updates the board, switches the active player, and checks for a terminal condition.
+     * * @param move the move to execute
+     */
     public void doMove(Move move) {
-        if (terminal){
-            return;
-        }
-        if (!Rules.validMove(board, move.row, move.col)) {
-            return;
-        }
-
+        if (terminal) { return; }
+        if (!Rules.validMove(board, move.row, move.col)) { return;}
         if (toMove == Player.RED) {
             board.getMoveRed(move.row, move.col, Color.RED);
             toMove = Player.BLACK;
@@ -97,22 +94,23 @@ public class GameState {
         }
         recomputeTerminal();
     }
-    
+
     /**
-     * Creates a deep copy of this game state, including a copy of the board.
-     * The copied state is independent and can be modified without affecting the original.
-     *
-     * @return a new GameState object that is a copy of this state
-    */
+     * Creates a deep copy of this game state.
+     * <p>
+     * Uses efficient copying mechanisms for the board to support rapid MCTS simulations.
+     * * @return a new GameState instance identical to the current one
+     */
     public GameState copy() {
-        AIBoardAdapter board2 = board.copy();
+        Board board2 = board.fastCopy();
         return new GameState(board2, toMove);
     }
 
     /**
-     * Recomputes the terminal status of the game by checking win conditions
-     * for both players. Updates the terminal flag and winnerId accordingly.
-    */
+     * Recomputes the terminal status and winner based on the current board.
+     * <p>
+     * Called after moves to update the game state accordingly.
+     */
     private void recomputeTerminal() {
         if (board.redWins()) {
             terminal = true;
@@ -123,25 +121,24 @@ public class GameState {
             winnerId = 2;
         }
     }
-    
+
     /**
-     * Converts a Player enum to its corresponding Color enum.
-     *
-     * @param p the player to convert
-     * @return Color.RED if player is RED, Color.BLACK otherwise
-    */
+     * Converts a Player enum to the corresponding Color.
+     * @param p the player
+     * @return the corresponding Color
+     */
     private Color toColor(Player p) {
         return (p == Player.RED ? Color.RED : Color.BLACK);
     }
-    
+
     /**
-     * Estimates the board quality after applying the given move using shortest path heuristics.
-     * This method creates a copy of the state, applies the move, and evaluates the resulting
-     * position from the perspective of the player who made the move.
-     *
-     * @param m the move to evaluate
-     * @return the shortest path distance for the player after making the move
-    */
+     * Estimates the strategic value of the board for the current player after making a specific move.
+     * <p>
+     * This is often used by heuristics to score moves based on how much they reduce
+     * the shortest path to victory.
+     * * @param m the move to evaluate
+     * @return the estimated shortest path distance after the move
+     */
     public int estimateAfterMove(Move m) {
         Player mover = toMove;
         GameState copy = this.copy();
@@ -150,23 +147,30 @@ public class GameState {
     }
 
     /**
-     * Calculates the shortest path distance for the current player to move.
-     * A lower value indicates the player is closer to winning.
-     *
-     * @return the shortest path distance for the player whose turn it is
-    */
+     * Calculates the shortest path distance for the player whose turn it is.
+     * * @return the length of the shortest path
+     */
     public int estimateShortestPathForCurrentPlayer() {
         return ShortestPath.shortestPath(board, toColor(toMove));
     }
 
     /**
-     * Calculates the shortest path distance for a specific player.
-     * This is useful for evaluating positions from different perspectives.
-     *
-     * @param p the player for whom to calculate the shortest path
-     * @return the shortest path distance for the specified player
-    */
+     * Calculates the shortest path distance for the specified player.
+     * * @param p the player whose path to evaluate
+     * @return the length of the shortest path
+     */
     public int estimateShortestPathForPlayer(Player p) {
         return ShortestPath.shortestPath(board, toColor(p));
     }
 }
+
+
+
+
+
+
+
+
+
+
+

@@ -21,3 +21,14 @@ public interface Simulation {
     int simulate(GameState start);
 }
 
+
+
+
+
+
+
+
+
+
+
+

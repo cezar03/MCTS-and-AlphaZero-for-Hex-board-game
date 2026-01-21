@@ -2,7 +2,7 @@ package AI.mcts.Steps.SimulationStep;
 
 import java.util.*;
 import AI.mcts.HexGame.GameState;
-import AI.mcts.HexGame.Move;
+import game.core.Move;
 
 /**
  * Implements a basic random simulation strategy for Monte Carlo Tree Search.
@@ -36,3 +36,13 @@ public class BaseSimulation implements Simulation {
         return state.getWinnerId();
     }
 }
+
+
+
+
+
+
+
+
+
+

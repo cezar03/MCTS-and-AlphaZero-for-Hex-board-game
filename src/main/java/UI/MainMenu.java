@@ -1,22 +1,33 @@
 package UI;
 
 import javafx.application.Application;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import UI.nav.NavigationService;
+
+/**
+ * JavaFX application entry point for the Connections game.
+ *
+ * <p>This class bootstraps the JavaFX runtime and initializes the
+ * {@link NavigationService}, which is responsible for screen management
+ * and navigation throughout the application.</p>
+ *
+ * <p>On startup, the main menu screen is shown immediately.</p>
+ */
 public class MainMenu extends Application {
 
+    /**
+     * Called by the JavaFX runtime to start the application.
+     *
+     * <p>This method:</p>
+     * <ul>
+     *   <li>Creates a {@link NavigationService} bound to the primary stage</li>
+     *   <li>Displays the main menu screen</li>
+     *   <li>Shows the primary stage</li>
+     * </ul>
+     *
+     * @param primaryStage the primary window provided by the JavaFX runtime
+     */
     @Override
     public void start(Stage primaryStage) {
         var nav = new NavigationService(primaryStage);
@@ -24,50 +35,26 @@ public class MainMenu extends Application {
         primaryStage.show();
     }
 
-    //Builds the main Menu Window
-    public static Parent createRoot(NavigationService nav) {
-        BorderPane root = new BorderPane();
-        root.setPadding(new Insets(24));
-        root.setStyle("-fx-background-color: linear-gradient(to bottom, #1f3b7c, #111827);");
-
-        Text title = new Text("Connections");
-        title.setFill(javafx.scene.paint.Color.WHITE);
-        title.setFont(Font.font("Inter", FontWeight.EXTRA_BOLD, 42));
-
-        VBox header = new VBox(6, title);
-        header.setAlignment(Pos.CENTER_LEFT);
-        Button playBtn  = new Button("PLAY");  playBtn.getStyleClass().add("btn-primary");
-        Button aiBtn    = new Button("VS COMPUTER"); aiBtn.getStyleClass().add("btn-primary");
-        Button alphaZeroBtn = new Button("VS ALPHAZERO"); alphaZeroBtn.getStyleClass().add("btn-primary");
-        Button testAIvsAIBtn = new Button("AI vs AI game"); testAIvsAIBtn.getStyleClass().add("btn-tertiary");
-        //Button skinsBtn = new Button("GAMBLING"); skinsBtn.getStyleClass().add("btn-secondary");
-        Button aboutBtn = new Button("ABOUT"); aboutBtn.getStyleClass().add("btn-ghost");
-
-        playBtn.setOnAction(e -> nav.showGame(11, 55));
-        aiBtn.setOnAction(e -> nav.showDifficultySelection());
-        alphaZeroBtn.setOnAction(e -> nav.showGameWithAlphaZero());
-        testAIvsAIBtn.setOnAction(e -> nav.showAITesting());
-        //skinsBtn.setOnAction(e -> nav.showSkins());
-        aboutBtn.setOnAction(e -> nav.info("About Connections", "About the Game","Put the link to the game's rules here."));
-
-        VBox buttons = new VBox(12, playBtn, aiBtn, alphaZeroBtn, testAIvsAIBtn, aboutBtn);
-        buttons.setAlignment(Pos.CENTER_LEFT);
-        buttons.setPadding(new Insets(20, 0, 0, 0));
-
-        HBox footer = new HBox(12, spacer());
-        footer.setAlignment(Pos.CENTER_LEFT);
-        footer.setPadding(new Insets(24, 0, 0, 0));
-
-        VBox content = new VBox(8, header, buttons, footer);
-        content.setAlignment(Pos.TOP_LEFT);
-        root.setCenter(content);
-
-        return root;
+    /**
+     * Standard Java entry point.
+     *
+     * <p>Delegates application startup to the JavaFX runtime via
+     * {@link #launch(String...)}.</p>
+     *
+     * @param args command-line arguments passed to the application
+     */
+    public static void main(String[] args) {
+        launch(args);
     }
-
-    private static Region spacer() {
-        Region r = new Region(); HBox.setHgrow(r, Priority.ALWAYS); return r;
-    }
-
-    public static void main(String[] args) { launch(args); }
 }
+
+
+
+
+
+
+
+
+
+
+

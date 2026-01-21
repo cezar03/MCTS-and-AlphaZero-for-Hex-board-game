@@ -1,7 +1,7 @@
 package AI.mcts.Optimazation.Heuristic;
 
 import AI.mcts.HexGame.GameState;
-import AI.mcts.HexGame.Move;
+import game.core.Move;
 
 /**
  * A composite heuristic that combines multiple individual heuristics using
@@ -74,3 +74,14 @@ public final class LinearCombinationHeuristic implements Heuristic {
         return score;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
