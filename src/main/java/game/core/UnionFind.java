@@ -100,6 +100,11 @@ public class UnionFind {
         return find(a) == find(b);
     }
 
+    /**
+     * Resets the UnionFind structure to its initial state.
+     * <p>
+     * All elements are disconnected and become their own parents. Ranks are reset to zero.
+     */
     public void reset() {
         Arrays.fill(rank, 0);
         for (int i = 0; i < parent.length; i++) {
@@ -107,13 +112,17 @@ public class UnionFind {
         }
     }
 
+    /**
+     * Creates a fast, deep copy of this UnionFind structure.
+     * * @return a new UnionFind instance with identical parent and rank arrays
+     */
     public UnionFind copy() {
-    UnionFind newParams = new UnionFind(this.parent.length); // Create empty
-    // RAW COPY: extremely fast
-    System.arraycopy(this.parent, 0, newParams.parent, 0, this.parent.length);
-    System.arraycopy(this.rank, 0, newParams.rank, 0, this.rank.length);
-    return newParams;
-}
+        UnionFind newParams = new UnionFind(this.parent.length); // Create empty
+        // RAW COPY: extremely fast
+        System.arraycopy(this.parent, 0, newParams.parent, 0, this.parent.length);
+        System.arraycopy(this.rank, 0, newParams.rank, 0, this.rank.length);
+        return newParams;   
+    }
 
     /**
      * Gets the parent array for undo/redo support.

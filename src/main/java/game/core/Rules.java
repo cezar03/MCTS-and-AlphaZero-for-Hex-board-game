@@ -1,5 +1,8 @@
 package game.core;
 
+/**
+ * Utility class containing static methods to validate moves and enforce game rules.
+ */
 public final class Rules {
     /**
      * Private constructor to prevent instantiation of this utility class.

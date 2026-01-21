@@ -8,9 +8,9 @@ package game.core;
  * and check cell states.
  */
 public enum Color {
-    EMPTY, 
-    RED, 
-    BLACK
+    EMPTY, /** Represents an unoccupied cell on the board. */
+    RED, /** Represents a cell occupied by the Red player (connects Top to Bottom). */
+    BLACK /** Represents a cell occupied by the Black player (connects Left to Right). */
 }
 
 

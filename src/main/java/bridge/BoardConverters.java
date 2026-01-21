@@ -10,6 +10,14 @@ import AI.api.AIBoardAdapter;
 public final class BoardConverters {
     private BoardConverters() {}
 
+    /**
+     * Converts an abstract {@link AIBoardAdapter} back into a concrete {@link Board} instance.
+     * <p>
+     * This constructs a new Board and populates it with moves corresponding to the 
+     * state of the adapter.
+     * * @param adapter the source adapter
+     * @return a new Board instance reflecting the adapter's state
+     */
     public static Board toBoard(AIBoardAdapter adapter) {
         int n = adapter.getSize();
         Board b = new Board(n);
