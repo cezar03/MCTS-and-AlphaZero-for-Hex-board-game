@@ -70,9 +70,7 @@ public class AlphaZeroMCTS {
                 }
             }
             backpropagate(node, value);
-            for (int j = 0; j < movesMade; j++) {
-                workingBoard.undoMove();
-            }
+            for (int j = 0; j < movesMade; j++) { workingBoard.undoMove(); }
         }
 
         return root;
@@ -88,13 +86,13 @@ public class AlphaZeroMCTS {
     }
 
     private double expandAndEvaluate(Node node, Board board, Color player) {
-        float[] input = BoardEncoder.encode(board, player);
+        float[] inputBoard = BoardEncoder.encode(board, player);
         if (node.parent == null && node.cachedEncoding == null) {
-            node.cachedEncoding = input.clone();
+            node.cachedEncoding = inputBoard.clone();
         }
         NeuralNetBatcher.Output output;
         try {
-            output = batcher.predict(input).get();
+            output = batcher.predict(inputBoard).get();
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException("Error during Neural Net Inference", e);
         }
@@ -107,9 +105,9 @@ public class AlphaZeroMCTS {
             int col = move[1];
             int idx;
             if (player == Color.RED) {
-                idx = row * (int)boardSize + col;
+                idx = row * boardSize + col;
             } else {
-                idx = col * (int)boardSize + row;
+                idx = col * boardSize + row;
             }
             
             double prob = policy[idx];

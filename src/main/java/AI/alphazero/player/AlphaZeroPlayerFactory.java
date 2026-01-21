@@ -25,23 +25,14 @@ public class AlphaZeroPlayerFactory implements AIAgentFactory {
     @Override
     public AIAgent createAgent(AIAdaptationConfig config) {
         if (config == null) throw new IllegalArgumentException("Configuration cannot be null");
-
         Player player = config.getPlayer();
-
         AlphaZeroNet network = createNetwork();
-
-        // UI mode: DirectBatcher. Training mode uses MultiGpuBatcher elsewhere (AlphaZeroTrainer).
         Batcher batcher = new DirectBatcher(network);
-
         AlphaZeroMCTS mcts = new AlphaZeroMCTS(batcher, alphaZeroConfig);
-
         return new AlphaZeroPlayer(player, mcts, alphaZeroConfig);
     }
 
-    @Override
-    public String getAgentTypeName() {
-        return "AlphaZero";
-    }
+    @Override public String getAgentTypeName() { return "AlphaZero";}
 
     private AlphaZeroNet createNetwork() {
         if (alphaZeroConfig.isLoadExistingModel()) {
@@ -55,9 +46,7 @@ public class AlphaZeroPlayerFactory implements AIAgentFactory {
         return new AlphaZeroNet(alphaZeroConfig.getBoardSize());
     }
 
-    public AlphaZeroConfig getConfig() {
-        return alphaZeroConfig;
-    }
+    public AlphaZeroConfig getConfig() { return alphaZeroConfig; }
 }
 
 
