@@ -16,6 +16,13 @@ import game.core.Player;
  * connected paths is the primary objective.
  */
 public final class ConnectivityHeuristic implements Heuristic {
+    
+    /**
+     * Scores a move based on the proportion of adjacent friendly stones.
+     * * @param state the current game state
+     * @param move the move to evaluate
+     * @return a score between 0 and 1, with higher scores for moves with
+     */
     @Override
     public double score(GameState state, Move move) {
         Board board = state.getBoard();

@@ -14,6 +14,19 @@ import game.core.Board;
 import game.core.Color;
 import game.core.Move;
 
+/**
+ * Implements a Monte Carlo Tree Search (MCTS) specifically designed for AlphaZero.
+ * <p>
+ * Unlike standard MCTS, this implementation uses a neural network to guide the search.
+ * The network provides:
+ * <ul>
+ * <li><b>Prior probabilities (Policy)</b>: Used to bias selection towards promising moves.</li>
+ * <li><b>Value evaluation</b>: Used to estimate the win probability of leaf nodes without random rollouts.</li>
+ * </ul>
+ * This class also supports adding Dirichlet noise to the root node during training
+ * to encourage exploration.
+ */
+
 public class AlphaZeroMCTS {
     private final Batcher batcher;
     private final int boardSize;
@@ -24,6 +37,11 @@ public class AlphaZeroMCTS {
 
     private final GammaDistribution gammaDist;
 
+    /**
+     * Constructs an AlphaZero MCTS instance.
+     * * @param batcher the batching service used to query the neural network
+     * @param cfg the configuration containing hyperparameters like CPUCT
+     */
     public AlphaZeroMCTS(Batcher batcher, AlphaZeroConfig cfg) {
         this.batcher = batcher;
         this.boardSize = cfg.getBoardSize();
@@ -35,6 +53,17 @@ public class AlphaZeroMCTS {
         this.gammaDist = new GammaDistribution(dirAlpha, 1.0);
     }
 
+    /**
+     * Performs the MCTS search process.
+     * <p>
+     * If {@code training} is true, Dirichlet noise is added to the root node's priors
+     * to ensure diverse move selection during self-play.
+     * * @param rootBoard the current state of the board
+     * @param rootPlayer the player whose turn it is
+     * @param iterations the number of MCTS simulations to perform
+     * @param training true if training (adds noise), false if playing/evaluating (deterministic)
+     * @return the root {@link Node} of the search tree after simulations are complete
+     */
     public Node search(Board rootBoard, Color rootPlayer, int iterations, boolean training) {
         Node root = new Node(null, null, rootPlayer == Color.RED ? 1 : 2);
         expandAndEvaluate(root, rootBoard, rootPlayer);
@@ -78,6 +107,11 @@ public class AlphaZeroMCTS {
         return root;
     }
 
+    /**
+     * Backpropagates the evaluation value from a leaf node up to the root.
+     * @param node the leaf node from which to start backpropagation
+     * @param value the evaluation value to propagate (from the perspective of the current player at the leaf)
+     */
     private void backpropagate(Node node, double value) {
         while (node != null) {
             node.visits++;
@@ -87,6 +121,14 @@ public class AlphaZeroMCTS {
         }
     }
 
+    /**
+     * Expands the given node by querying the neural network for policy and value.
+     * Creates child nodes for each legal move with prior probabilities from the policy.
+     * @param node the node to expand
+     * @param board the current board state at this node
+     * @param player the player to move at this node
+     * @return the value evaluation from the neural network
+     */
     private double expandAndEvaluate(Node node, Board board, Color player) {
         float[] input = BoardEncoder.encode(board, player);
         if (node.parent == null && node.cachedEncoding == null) {
@@ -134,6 +176,11 @@ public class AlphaZeroMCTS {
         return value;
     }
 
+    /**
+     * Selects the best child node using the PUCT formula.
+     * @param parent the parent node from which to select a child
+     * @return the selected child node
+     */
     private Node selectBestChild(Node parent) {
         Node bestChild = null;
         double bestScore = Double.NEGATIVE_INFINITY;
@@ -152,6 +199,18 @@ public class AlphaZeroMCTS {
         return bestChild;
     }
 
+    /**
+     * Generates a probability distribution (policy) over all possible moves based on visit counts.
+     * <p>
+     * The temperature parameter controls the exploration/exploitation balance:
+     * <ul>
+     * <li><b>High temperature (~1.0)</b>: Probability is proportional to visit counts (used in early training).</li>
+     * <li><b>Low temperature (~0.0)</b>: Probability concentrates on the most visited move (used in competitive play).</li>
+     * </ul>
+     * * @param root the root node of the search tree
+     * @param temperature the temperature parameter controlling distribution sharpness
+     * @return an array of probabilities corresponding to the flattened board indices
+     */
     public double[] getSearchPolicy(Node root, double temperature) {
         int size = boardSize * boardSize;
         double[] policy = new double[size];
@@ -187,6 +246,10 @@ public class AlphaZeroMCTS {
         return policy;
     }
 
+    /**
+     * Adds Dirichlet noise to the root node's prior probabilities to encourage exploration.
+     * @param root the root node of the search tree
+     */
     private void addDirichletNoiseToRoot(Node root) {
         int k = root.children.size();
         if (k == 0) return;

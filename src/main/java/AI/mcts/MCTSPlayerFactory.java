@@ -16,6 +16,15 @@ import game.core.Player;
  */
 public class MCTSPlayerFactory implements AIAgentFactory {
     
+    /**
+     * Creates an MCTSPlayer instance.
+     * <p>
+     * Intelligently decides between creating a basic or optimized MCTS player
+     * based on the weights provided in the configuration.
+     * * @param config the configuration object
+     * @return a new MCTSPlayer instance
+     * @throws IllegalArgumentException if config is null
+     */
     @Override
     public AIAgent createAgent(AIAdaptationConfig config) {
         if (config == null) {
@@ -45,6 +54,10 @@ public class MCTSPlayerFactory implements AIAgentFactory {
         );
     }
     
+    /**
+     * Returns the identifier for this agent type.
+     * * @return "MCTS"
+     */
     @Override
     public String getAgentTypeName() {
         return "MCTS";

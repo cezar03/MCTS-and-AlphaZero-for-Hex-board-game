@@ -15,15 +15,36 @@ import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.learning.config.Adam;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 
+/**
+ * Encapsulates the DeepLearning4J computation graph for the AlphaZero neural network.
+ * <p>
+ * The architecture consists of:
+ * <ul>
+ * <li>A convolutional input layer accepting the board state.</li>
+ * <li>A residual tower (or shared convolutional layers) for feature extraction.</li>
+ * <li><b>Policy Head</b>: Outputs a probability distribution over moves.</li>
+ * <li><b>Value Head</b>: Outputs a scalar evaluation of the position (-1 to 1).</li>
+ * </ul>
+ */
 public class AlphaZeroNet {
     private ComputationGraph model;
     private final int boardSize;
 
+    /**
+     * Constructs a new neural network for the specified board size.
+     * <p>
+     * Initializes the model architecture and weights.
+     * * @param boardSize the dimension of the board
+     */
     public AlphaZeroNet(int boardSize) {
         this.boardSize = boardSize;
         initModel();
     }
 
+    /**
+     * Returns the board size this network was built for.
+     * * @return the board dimension
+     */
     public int getBoardSize() { return boardSize; }
 
     /**
@@ -93,14 +114,30 @@ public class AlphaZeroNet {
         model.init();
     }
 
+    /**
+     * Accesses the underlying DL4J ComputationGraph.
+     * * @return the computation graph
+     */
     public ComputationGraph getModel() {
         return model;
     }
     
+    /**
+     * Saves the current model weights and configuration to a file.
+     * * @param path the file path to save to
+     * @throws IOException if saving fails
+     */
     public void save(String path) throws IOException {
         model.save(new File(path), true);
     }
     
+    /**
+     * Loads a model from the specified file path.
+     * * @param path the file path to load from
+     * * @param size the board size the model was built for
+     * @return the loaded AlphaZeroNet instance
+     * @throws IOException if loading fails
+     */
     public static AlphaZeroNet load(String path, int size) throws IOException {
         AlphaZeroNet net = new AlphaZeroNet(size);
         net.model = ComputationGraph.load(new File(path), true);

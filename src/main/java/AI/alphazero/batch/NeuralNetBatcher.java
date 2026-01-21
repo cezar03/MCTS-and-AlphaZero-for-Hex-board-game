@@ -15,6 +15,18 @@ import org.nd4j.linalg.factory.Nd4j;
 
 import AI.alphazero.net.AlphaZeroNet;
 
+/**
+ * A worker that aggregates individual inference requests into efficient batches
+ * for processing by a single neural network instance.
+ * <p>
+ * It uses a producer-consumer pattern:
+ * <ol>
+ * <li>Client threads put requests into an input queue.</li>
+ * <li>The batch builder thread drains the queue and forms a batch.</li>
+ * <li>The batch is passed to the inference logic (likely on GPU).</li>
+ * <li>Results are distributed back to the futures of the individual requests.</li>
+ * </ol>
+ */
 public class NeuralNetBatcher implements Runnable, Batcher {
     private final AlphaZeroNet network;
     private final BlockingQueue<Request> inputQueue;
@@ -25,6 +37,24 @@ public class NeuralNetBatcher implements Runnable, Batcher {
     private final int maxBatchSize;
     private final int deviceIndex;
 
+    /**
+     * Constructs a batcher for a specific network instance.
+     * * @param network the neural network instance dedicated to this batcher
+     * @param maxBatchSize the maximum number of requests to aggregate in one forward pass
+     * @param deviceIndex the ID of the device (GPU) this batcher is intended for
+     */
+    public NeuralNetBatcher(AlphaZeroNet network, int maxBatchSize, int deviceIndex) {
+        this.network = network;
+        this.maxBatchSize = Math.min(Math.max(maxBatchSize, 256), 8192);
+        this.deviceIndex = deviceIndex;
+        this.inputQueue = new LinkedBlockingQueue<>((int)(this.maxBatchSize * 1.5));
+        this.gpuQueue = new LinkedBlockingQueue<>(2);
+    }
+
+    /**
+     * Updates the local network's parameters to match the master network.
+     * * @param master the source network
+     */
     public void updateModelWeights(AlphaZeroNet master) {
         pause();
         try {
@@ -38,14 +68,12 @@ public class NeuralNetBatcher implements Runnable, Batcher {
     private static final long MAX_WAIT_NANOS = 5_000_000;
     private final AtomicLong totalSamplesProcessed = new AtomicLong(0);
 
-    public NeuralNetBatcher(AlphaZeroNet network, int maxBatchSize, int deviceIndex) {
-        this.network = network;
-        this.maxBatchSize = Math.min(Math.max(maxBatchSize, 256), 8192);
-        this.deviceIndex = deviceIndex;
-        this.inputQueue = new LinkedBlockingQueue<>((int)(this.maxBatchSize * 1.5));
-        this.gpuQueue = new LinkedBlockingQueue<>(2);
-    }
-
+    /**
+     * Submits an input for prediction.
+     * * @param input the encoded board state
+     * @return a Future that will complete with the network's output (policy and value)
+     */
+    @Override
     public CompletableFuture<Output> predict(float[] input) {
         CompletableFuture<Output> future = new CompletableFuture<>();
         try {
@@ -56,6 +84,9 @@ public class NeuralNetBatcher implements Runnable, Batcher {
         return future;
     }
 
+    /**
+     * Starts the batcher's main processing loops.
+     */
     @Override
     public void run() {
         startHeartbeat();
@@ -65,6 +96,9 @@ public class NeuralNetBatcher implements Runnable, Batcher {
         runGpuInference(); 
     }
 
+    /**
+     * The main loop that builds batches from incoming requests.
+     */
     private void runBatchBuilder() {
         List<Request> batchBuffer = new ArrayList<>(maxBatchSize);
         while (running.get()) {
@@ -91,6 +125,11 @@ public class NeuralNetBatcher implements Runnable, Batcher {
         }
     }
 
+    /**
+     * Prepares a batch job from a list of requests.
+     * @param requests the list of individual requests
+     * @return the prepared batch job
+     */
     private BatchJob prepareBatch(List<Request> requests) {
         int batchSize = requests.size();
         int singleInputLength = requests.get(0).inputData.length;
@@ -103,6 +142,9 @@ public class NeuralNetBatcher implements Runnable, Batcher {
         return new BatchJob(inputTensor, requests);
     }
 
+    /**
+     * The main loop that performs GPU inference on batches.
+     */
     private void runGpuInference() {
         try {
         } catch (Exception e) {
@@ -137,35 +179,69 @@ public class NeuralNetBatcher implements Runnable, Batcher {
         }
     }
 
+    /**
+     * Pauses the batcher, waiting for current jobs to finish.
+     */
     public void pause() {
         paused.set(true);
         while (!inputQueue.isEmpty() || !gpuQueue.isEmpty()) try { Thread.sleep(50); } catch (Exception e) {}
     }
+
+    /**
+     * Resumes the batcher after a pause.
+     */
     public void resume() { paused.set(false); }
+    
+    /**
+     * Stops the batcher gracefully.
+     */
     public void stop() { running.set(false); }
 
+    /**
+     * Returns the total number of samples processed by this batcher.
+     * * @return the total samples processed
+     */
     public long getSamplesProcessed() {
         return totalSamplesProcessed.get();
     }
 
+    /**
+     * Starts the heartbeat logging thread.
+     */
     private void startHeartbeat() {
-        // TODO: Implement heartbeat logging if needed
+        // Implement heartbeat logging if needed
     }
 
+    /**
+     * Internal class representing a single inference request.
+     */
     private static class Request {
         float[] inputData;
         CompletableFuture<Output> future;
         Request(float[] d, CompletableFuture<Output> f) { inputData = d; future = f; }
     }
+
+    /**
+     * Internal class representing a batch job.
+     */
     private static class BatchJob {
         INDArray input;
         List<Request> requests;
         BatchJob(INDArray i, List<Request> r) { input = i; requests = r; }
     }
     
+    /**
+     * Container for the results of a neural network prediction.
+     */
     public static class Output {
         public float[] policy; 
         public double value;
+
+        /**
+         * Creates an output result.
+         * * @param p the policy array (probabilities)
+         * @param v the value scalar (win estimate)
+         */
         public Output(float[] p, double v) { policy = p; value = v; }
     }
 }

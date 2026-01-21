@@ -17,6 +17,13 @@ import game.core.Board;
 import game.core.Move;
 import game.core.Player;
 
+/**
+ * A tool to run various AI experiments and output results in CSV format.
+ * <p>
+ * This class includes methods to run matches between different AI agents,
+ * sweep parameters, and compare performance. Results are printed in a
+ * structured CSV format for easy analysis.
+ */
 public class RunExperimentCSV {
     // Simulation configurations
     private static final int BOARD_SIZE = 11;
@@ -36,6 +43,12 @@ public class RunExperimentCSV {
     private static final double SP   = 0.039;
     private static final double C_EXPL = Math.sqrt(2);
 
+    /**
+     * The main method to run experiments.
+     * <p>
+     * Uncomment the desired experiment to execute.
+     * * @param args command line arguments
+     */
     public static void main(String[] args) {
         // runMctsVsRandomSweep(BOARD_SIZE, GAMES, ALTERNATE_COLORS);
         // compareCValues(BOARD_SIZE, GAMES, ALTERNATE_COLORS);
@@ -45,6 +58,15 @@ public class RunExperimentCSV {
         // testMCTSvsAlphaZero();
     }
 
+    // ---------------- MCTS vs Random Sweep ----------------
+    /**
+     * Runs a sweep of MCTS iterations against a Random player.
+     * <p>
+     * For each setting, multiple games are played and results are printed in CSV format.
+     * @param boardSize the size of the game board
+     * @param gamesPerSetting the number of games to play for each iteration setting
+     * @param alternateColors whether to alternate colors between games
+     */
     private static void runMctsVsRandomSweep(int boardSize, int gamesPerSetting, boolean alternateColors) {
         System.out.println("simId,iters,games_played,mcts_wins,random_wins,winrate");
 
@@ -90,7 +112,14 @@ public class RunExperimentCSV {
     }
 
     // ---------------- Base vs Optimized ----------------
-
+    /**
+     * Runs matches between a base MCTS player and an optimized MCTS player.
+     * <p>
+     * Results are printed in CSV format including cumulative wins.
+     * @param boardSize the size of the game board
+     * @param gamesPerSim the number of games to play per simulation
+     * @param alternateColors whether to alternate colors between games
+     */
     private static void runBaseVsOpt(int boardSize, int gamesPerSim, boolean alternateColors) {
         System.out.println("simId,game,base_is_red,winner,ply_count,base_cum,opt_cum");
 
@@ -125,7 +154,14 @@ public class RunExperimentCSV {
     }
 
     // ---------------- Compare C values ----------------
-
+    /**
+     * Compares different exploration constant (C) values in MCTS.
+     * <p>
+     * For each C value, multiple games are played and results are printed in CSV format.
+     * @param boardSize the size of the game board
+     * @param gamesPerC the number of games to play for each C value
+     * @param alternateColors whether to alternate colors between games
+     */
     private static void compareCValues(int boardSize, int gamesPerC, boolean alternateColors) {
         System.out.println("simId,c_value,games_played,base_wins,opt_wins,opt_winrate");
 
@@ -163,7 +199,13 @@ public class RunExperimentCSV {
     }
 
     // ---------------- Shared game loop with ply counting ----------------
-
+    /**
+     * Plays a single game between two AI agents.
+     * @param redAgent the agent playing as RED
+     * @param blackAgent the agent playing as BLACK
+     * @param boardSize the size of the game board
+     * @return the winning Player, or null for a draw/unknown
+     */
     private static Player playSingleGame(AIAgent redAgent, AIAgent blackAgent, int boardSize) {
         Board board = new Board(boardSize);
         AIBoardAdapter adapter = new BoardAdapter(board);
@@ -192,7 +234,12 @@ public class RunExperimentCSV {
     }
 
     // ---------------- Tests ----------------
-
+    /**
+     * Tests MCTS vs AlphaZero matchups.
+     * <p>
+     * An MCTS player with optimized parameters is pitted against an AlphaZero agent.
+     * Results are printed in CSV format.
+     */
     private static void testMCTSvsAlphaZero() {
         AIAgent mcts = new MCTSPlayer(Player.RED, 1000, THR, CENT, CONN, BIAS, SP, C_EXPL);
 
@@ -209,6 +256,12 @@ public class RunExperimentCSV {
         AITester.runMatch(mcts, alphaZero, GAMES, BOARD_SIZE, false);
     }
 
+    /**
+     * Tests AlphaZero vs Random matchups.
+     * <p>
+     * An AlphaZero agent is pitted against a Random player.
+     * Results are printed in CSV format.
+     */
     private static void testAlphaZerovsRandom() {
         AlphaZeroConfig cfg = new AlphaZeroConfig.Builder()
                 .boardSize(BOARD_SIZE)
@@ -224,6 +277,12 @@ public class RunExperimentCSV {
         AITester.runMatch(alphaZero, random, GAMES, BOARD_SIZE, false);
     }
 
+    /**
+     * Creates an AlphaZero agent with the specified configuration.
+     * @param player the player (RED or BLACK) this agent controls
+     * @param cfg the AlphaZero configuration
+     * @return the constructed AlphaZero agent
+     */
     private static AIAgent createAlphaZeroAgent(Player player, AlphaZeroConfig cfg) {
         AlphaZeroNet net = loadOrCreateNet(cfg);
         Batcher batcher = new DirectBatcher(net);
@@ -231,6 +290,11 @@ public class RunExperimentCSV {
         return new AlphaZeroPlayer(player, mcts, cfg);
     }
 
+    /**
+     * Loads an existing AlphaZero neural network or creates a new one.
+     * @param cfg the AlphaZero configuration
+     * @return the AlphaZeroNet instance
+     */
     private static AlphaZeroNet loadOrCreateNet(AlphaZeroConfig cfg) {
         if (cfg.isLoadExistingModel()) {
             try {

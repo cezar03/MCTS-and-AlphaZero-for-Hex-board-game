@@ -20,6 +20,18 @@ import game.core.Board;
 import game.core.Color;
 import game.core.Move;
 
+/**
+ * Orchestrates the AlphaZero training pipeline.
+ * <p>
+ * The pipeline consists of:
+ * <ol>
+ * <li><b>Self-Play</b>: Generating games using the current network and MCTS.</li>
+ * <li><b>Training</b>: Updating the neural network using the generated examples.</li>
+ * <li><b>Evaluation</b>: (Optional) Testing the new network against baselines.</li>
+ * </ol>
+ * This class leverages Java's virtual threads and {@link MultiGpuBatcher} to achieve
+ * high concurrency for data generation.
+ */
 public class AlphaZeroTrainer {
     private final AlphaZeroConfig mctsCfg;
     private AlphaZeroNet network;
@@ -39,6 +51,13 @@ public class AlphaZeroTrainer {
 
     private static final int TRAINING_EPOCHS = 3; 
 
+    /**
+     * Initializes the trainer.
+     * <p>
+     * Attempts to load an existing model ("hex_model_latest.zip") to resume training.
+     * If not found, a new model is created.
+     * * @param boardSize the size of the board
+     */
     public AlphaZeroTrainer(int boardSize) {
         this.boardSize = boardSize;
         
@@ -75,6 +94,17 @@ public class AlphaZeroTrainer {
         Nd4j.getMemoryManager().setAutoGcWindow(5000); 
     }
 
+    /**
+     * Executes the main training loop.
+     * <p>
+     * Divides the total games into generations (batches). For each generation:
+     * 1. Runs massive parallel self-play to collect training data.
+     * 2. Pauses data generation.
+     * 3. Trains the neural network on the collected data.
+     * 4. Saves the model and evaluates performance.
+     * * @param totalGames the total number of self-play games to generate
+     * @param mctsIterations the number of MCTS simulations per move during self-play
+     */
     public void train(int totalGames, int mctsIterations) {
         // Calculate how many "Generations" (Play Batches) we need
         // Each generation runs PLAY_BATCH_SIZE games in parallel
@@ -186,6 +216,13 @@ public class AlphaZeroTrainer {
         }
     }
 
+    /**
+     * Evaluates the current network against a random move baseline.
+     * <p>
+     * Plays a specified number of games, alternating colors, and reports the win rate.
+     * * @param numGames the number of evaluation games to play
+     * @param batcher the MultiGpuBatcher to use for predictions
+     */
     private void evaluate(int numGames, MultiGpuBatcher batcher) {
         AtomicInteger azWins = new AtomicInteger(0);
 
@@ -231,6 +268,11 @@ public class AlphaZeroTrainer {
                 winRate, azWins.get(), numGames);
     }
 
+    /**
+     * Selects a move based on the provided policy probabilities.
+     * @param policy the array of move probabilities from the neural network
+     * @return the selected {@link Move}
+     */
     private Move selectMoveFromPolicy(double[] policy) {
         // policy is already only nonzero on legal root children (from your MCTS)
         double r = Math.random();
@@ -258,6 +300,11 @@ public class AlphaZeroTrainer {
         return null;
     }
 
+    /**
+     * Selects a random legal move from the board.
+     * @param board the current game board
+     * @return the selected {@link Move}
+     */
     private Move randomLegalMove(Board board) {
         var legal = board.legalMoves();
         if (legal.isEmpty()) return null;
@@ -265,7 +312,12 @@ public class AlphaZeroTrainer {
         return Move.get(rc[0], rc[1]);
     }
 
-
+    /**
+     * Performs self-play using MCTS and the current neural network.
+     * @param localMcts the MCTS instance to use for self-play
+     * @param iterations the number of MCTS simulations per move
+     * @return a list of {@link TrainingExampleData} generated from the game
+     */
     private List<TrainingExampleData> selfPlay(AlphaZeroMCTS localMcts, int iterations){
         List<TrainingExampleData> gameHistory = new ArrayList<>();
         Board board = new Board(boardSize);
@@ -317,6 +369,12 @@ public class AlphaZeroTrainer {
         return gameHistory;
     }
 
+    /**
+     * Selects a move based on the provided policy probabilities.
+     * @param policy the array of move probabilities from the neural network
+     * @param board the current game board
+     * @return the selected {@link Move}
+     */
     private Move selectMoveFromPolicy(double[] policy, Board board) {
         double randomNumber = Math.random();
         double sum = 0;
@@ -344,6 +402,14 @@ public class AlphaZeroTrainer {
         return Move.get(row, col);
     }
 
+    /**
+     * Trains the neural network using the provided training examples.
+     * <p>
+     * The training is performed in mini-batches to optimize memory usage.
+     * Each mini-batch is converted to INDArray format just-in-time for training,
+     * and disposed of immediately after to free GPU memory.
+     * * @param examples the list of {@link TrainingExampleData} to train on
+     */
     private void trainNetwork(List<TrainingExampleData> examples) {
         if (examples.isEmpty()) return;
         java.util.Collections.shuffle(examples);

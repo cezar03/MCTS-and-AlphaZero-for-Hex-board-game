@@ -11,11 +11,25 @@ import game.core.Color;
 import game.core.Move;
 import game.core.Player;
 
+/**
+ * An AI agent powered by the AlphaZero algorithm.
+ * <p>
+ * This agent uses a deep neural network combined with Monte Carlo Tree Search (MCTS)
+ * to evaluate positions and select moves. It does not rely on hand-crafted heuristics
+ * but rather on a learned policy and value function.
+ */
 public class AlphaZeroPlayer implements AIAgent {
     private final Player player;
     private final AlphaZeroMCTS mcts;
     private final AlphaZeroConfig config;
 
+    /**
+     * Constructs an AlphaZero player.
+     * * @param player the player this agent controls
+     * @param mcts the AlphaZero-specific MCTS implementation
+     * @param config the configuration settings
+     * @throws IllegalArgumentException if any argument is null
+     */
     public AlphaZeroPlayer(Player player, AlphaZeroMCTS mcts, AlphaZeroConfig config) {
         if (player == null) throw new IllegalArgumentException("Player cannot be null");
         if (mcts == null) throw new IllegalArgumentException("MCTS cannot be null");
@@ -25,6 +39,16 @@ public class AlphaZeroPlayer implements AIAgent {
         this.config = config;
     }
 
+    /**
+     * Determines the best move using the AlphaZero MCTS search.
+     * <p>
+     * The search is guided by the neural network's policy and value outputs.
+     * In this implementation, exploration noise is disabled (deterministic play)
+     * as this method is intended for gameplay, not training.
+     * * @param boardAdapter the current board state
+     * @param currentPlayer the player whose turn it is
+     * @return the best {@link Move} found
+     */
     @Override
     public Move getBestMove(AIBoardAdapter boardAdapter, Player currentPlayer) {
         if (boardAdapter == null) throw new IllegalArgumentException("Board cannot be null");
@@ -46,22 +70,45 @@ public class AlphaZeroPlayer implements AIAgent {
         return selectBestLegalMove(policy, boardAdapter);
     }
 
+    /**
+     * Returns the player controlled by this agent.
+     * * @return the Player enum
+     */
     @Override
     public Player getPlayer() {
         return player;
     }
 
+    /**
+     * Checks if the agent controls the specified player.
+     * * @param p the player to check
+     * @return true if IDs match
+     */
     @Override
     public boolean controlsPlayer(Player p) {
         return this.player == p;
     }
 
+    /**
+     * Lifecycle method for initialization.
+     * Currently a no-op for this implementation.
+     */
     @Override
     public void initialize() {}
 
+    /**
+     * Lifecycle method for cleanup.
+     * Currently a no-op for this implementation.
+     */
     @Override
     public void cleanup() {}
 
+    /**
+     * Selects the best legal move based on the provided policy probabilities.
+     * * @param policy the array of move probabilities from the neural network
+     * @param boardAdapter the current board state to check legality
+     * @return the best legal {@link Move}, or null if no legal moves are available
+     */
     private Move selectBestLegalMove(double[] policy, AIBoardAdapter boardAdapter) {
         int n = boardAdapter.getSize();
 

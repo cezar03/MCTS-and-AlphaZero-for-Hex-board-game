@@ -9,6 +9,7 @@ import game.core.Color;
 
 public final class ShortestPath {
 
+    /** Utility class, no instances. */
     private ShortestPath() {
         // utility class, no instances
     }

@@ -15,6 +15,12 @@ import AI.api.AIAgentFactory;
  */
 public class RandomPlayerFactory implements AIAgentFactory {
     
+    /**
+     * Creates a new RandomPlayer instance based on the provided configuration.
+     * * @param config the configuration containing the player ID
+     * @return a new RandomPlayer instance
+     * @throws IllegalArgumentException if config is null
+     */
     @Override
     public AIAgent createAgent(AIAdaptationConfig config) {
         if (config == null) {
@@ -24,6 +30,10 @@ public class RandomPlayerFactory implements AIAgentFactory {
         return new RandomPlayer(config.getPlayer());
     }
     
+    /**
+     * Returns the unique string identifier for this agent type.
+     * * @return "Random"
+     */
     @Override
     public String getAgentTypeName() {
         return "Random";

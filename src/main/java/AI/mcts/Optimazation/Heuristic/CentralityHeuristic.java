@@ -14,6 +14,13 @@ import game.core.Board;
  * the farthest corner.
  */
 public final class CentralityHeuristic implements Heuristic {
+    
+    /**
+     * Scores a move based on its distance to the center of the board.
+     * * @param state the current game state
+     * @param move the move to evaluate
+     * @return a score between 0 and 1, with higher scores for moves closer
+     */
     @Override
     public double score(GameState state, Move move) {
         Board board = state.getBoard();

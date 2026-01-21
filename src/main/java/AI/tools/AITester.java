@@ -25,6 +25,15 @@ public class AITester {
         public final int blackWins;
         public final int draws;
 
+        /**
+         * Constructs a TestResult instance.
+         * @param redAgentName the name of the red agent
+         * @param blackAgentName the name of the black agent
+         * @param totalGames the total number of games played
+         * @param redWins the number of games won by the red agent
+         * @param blackWins the number of games won by the black agent
+         * @param draws the number of drawn games
+         */
         public TestResult(String redAgentName, String blackAgentName, int totalGames, int redWins, int blackWins, int draws) {
             this.redAgentName = redAgentName;
             this.blackAgentName = blackAgentName;
@@ -34,14 +43,25 @@ public class AITester {
             this.draws = draws;
         }
 
+        /**
+         * Calculates the win rate of the red agent as a percentage.
+         * @return the red agent's win rate
+         */
         public double getRedWinRate() {
             return totalGames > 0 ? (redWins * 100.0 / totalGames) : 0;
         }
 
+        /**
+         * Calculates the win rate of the black agent as a percentage.
+         * @return the black agent's win rate
+         */
         public double getBlackWinRate() {
             return totalGames > 0 ? (blackWins * 100.0 / totalGames) : 0;
         }
 
+        /**
+         * Prints a summary of the test results to the console.
+         */
         public void printResults() {
             System.out.println("\n========== TEST RESULTS ==========");
             System.out.println("RED:   " + redAgentName);
@@ -55,6 +75,15 @@ public class AITester {
         }
     }
 
+    /**
+     * Runs a match between two AI agents for a specified number of games.
+     * @param redAgent the agent playing as RED
+     * @param blackAgent the agent playing as BLACK
+     * @param numGames the number of games to play
+     * @param boardSize the size of the game board
+     * @param extensivePrints whether to print detailed game results
+     * @return a TestResult object containing the match statistics
+     */
     public static TestResult runMatch(AIAgent redAgent, AIAgent blackAgent,
                                       int numGames, int boardSize, boolean extensivePrints) {
         int redWins = 0;
@@ -101,6 +130,11 @@ public class AITester {
         return result;
     }
 
+    /**
+     * Prints the MCTS pruning configuration of the given player.
+     * @param label the label for the player (e.g., "RED" or "BLACK")
+     * @param p the MCTSPlayer whose configuration to print
+     */
     private static void printMctsPruningConfig(String label, MCTSPlayer p) {
         double t  = p.getThreshold();
         double cw = p.getCentralityWeight();
@@ -118,6 +152,13 @@ public class AITester {
         }
     }
 
+    /**
+     * Plays a single game between two AI agents.
+     * @param redAgent the agent playing as RED
+     * @param blackAgent the agent playing as BLACK
+     * @param boardSize the size of the game board
+     * @return the winning Player, or null for a draw/unknown
+     */
     private static Player playGame(AIAgent redAgent, AIAgent blackAgent, int boardSize) {
         Board board = new Board(boardSize);
         AIBoardAdapter adapter = new BoardAdapter(board);
@@ -147,7 +188,11 @@ public class AITester {
         return null;
     }
 
-
+    /**
+     * Retrieves a human-readable name for the given AI agent.
+     * @param agent the AI agent
+     * @return the agent's name
+     */
     private static String getAgentName(AIAgent agent) {
         if (agent == null) {
             return "Unknown";
@@ -171,6 +216,14 @@ public class AITester {
         }
     }
 
+    /**
+     * Runs a tournament between two AI agents, with each playing both sides.
+     * @param agent1 the first AI agent
+     * @param agent2 the second AI agent
+     * @param gamesPerSide the number of games each agent plays as RED and BLACK
+     * @param boardSize the size of the game board
+     * @param extensivePrints whether to print detailed game results
+     */
     public static void runTournament(AIAgent agent1, AIAgent agent2,
                                      int gamesPerSide, int boardSize,
                                      boolean extensivePrints) {
