@@ -14,9 +14,21 @@ import UI.session.ScoreBoard;
 import UI.view.Buttons;
 import UI.view.HexBoardView;
 
+/**
+ * Builder for the Game screen.
+ */
 public final class GameScreenBuilder {
     private GameScreenBuilder() {}
 
+    /**
+     * Builds the Game screen.
+     *
+     * @param size         The size of the board.
+     * @param hexSize      The size of each hexagon.
+     * @param scoreBoard   The scoreboard to display scores.
+     * @param onBackToMenu The handler to invoke when returning to the main menu.
+     * @return The constructed GameScreen.
+     */
     public static GameScreen build(int size,
                                    double hexSize,
                                    ScoreBoard scoreBoard,
@@ -54,5 +66,12 @@ public final class GameScreenBuilder {
         return new GameScreen(root, controller, scoreLabel);
     }
 
+    /**
+     * Container for the Game screen components.
+     *
+     * @param root       The root node of the screen.
+     * @param controller The game controller.
+     * @param scoreLabel The label displaying the score.
+     */
     public record GameScreen(Parent root, GameController controller, Label scoreLabel) {}
 }

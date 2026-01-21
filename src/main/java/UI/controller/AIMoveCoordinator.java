@@ -14,23 +14,45 @@ import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.util.Duration;
 
+/**
+ * AIMoveCoordinator: manages AI agents, handles move requests on background threads,
+ * and ensures moves are applied on the JavaFX Application thread.
+ */
 public final class AIMoveCoordinator {
     private final Map<Player, AIAgent> aiAgents = new EnumMap<>(Player.class);
     private boolean aiThinking = false;
     private long revision = 0;
 
+    /**
+     * Checks if any AI agents are registered.
+     * @return true if there is at least one AI agent registered; false otherwise
+     */
     public boolean hasAnyAIAgent() {
         return !aiAgents.isEmpty();
     }
 
+    /**
+     * Checks if the specified player is controlled by an AI agent.
+     * @param player the player to check
+     * @return true if the player is controlled by an AI agent; false otherwise
+     */
     public boolean isAIControlled(Player player) {
         return aiAgents.containsKey(player);
     }
 
+    /**
+     * Checks if an AI agent is currently thinking.
+     * @return true if an AI agent is processing a move; false otherwise
+     */
     public boolean isThinking() {
         return aiThinking;
     }
 
+    /**
+     * Registers an AI agent for the specified player.
+     * @param player the player to be controlled by the AI agent
+     * @param agent the AI agent to register
+     */
     public void addAgent(Player player, AIAgent agent) {
         if (player == null) throw new IllegalArgumentException("Player cannot be null");
         if (agent == null) throw new IllegalArgumentException("Agent cannot be null");
@@ -38,11 +60,18 @@ public final class AIMoveCoordinator {
         agent.initialize();
     }
 
+    /**
+     * Removes the AI agent associated with the specified player.
+     * @param player the player whose AI agent should be removed
+     */
     public void removeAgent(Player player) {
         AIAgent agent = aiAgents.remove(player);
         if (agent != null) agent.cleanup();
     }
 
+    /**
+     * Removes all registered AI agents and cleans up resources.
+     */
     public void removeAllAgents() {
         for (AIAgent a : aiAgents.values()) {
             try { a.cleanup(); } catch (Exception ignored) {}
@@ -51,11 +80,26 @@ public final class AIMoveCoordinator {
         invalidate();
     }
 
+    /**
+     * Invalidates the current AI state, cancelling any ongoing computations.
+     */
     public void invalidate() {
         revision++;
         aiThinking = false;
     }
 
+    /**
+     * Requests a move from the AI agent controlling the specified player.
+     * <p>
+     * The AI computation is performed on a background thread, and the resulting move
+     * is delivered via the provided callback on the JavaFX Application thread.
+     * 
+     * @param player the player for whom to request a move
+     * @param snapshotSupplier a supplier that provides a snapshot of the current board state
+     * @param onMoveReady a callback to receive the computed move
+     * @param delayed if true, introduces a slight delay before starting computation
+     * @return true if an AI agent was found and the request was initiated; false otherwise
+     */
     public boolean requestMove(Player player,
                                Supplier<AIBoardAdapter> snapshotSupplier,
                                Consumer<Move> onMoveReady,
@@ -111,6 +155,11 @@ public final class AIMoveCoordinator {
         return true;
     }
 
+    /**
+     * Delivers the computed move to the provided callback on the JavaFX Application thread.
+     * @param onMoveReady the callback to receive the move
+     * @param move the computed move
+     */
     private void deliverMove(Consumer<Move> onMoveReady, Move move) {
         if (Platform.isFxApplicationThread()) {
             onMoveReady.accept(move);

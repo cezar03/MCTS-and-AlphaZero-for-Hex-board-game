@@ -26,16 +26,29 @@ import UI.session.ScoreBoard;
 import UI.view.AppStyles;
 import UI.view.CaseOpeningView;
 
+/**
+ * Service for navigating between different UI screens.
+ */
 public final class NavigationService {
 
     private final Stage stage;
     private final AgentRegistry agentRegistry;
 
+    // -----------------------------------------
+    // Navigation methods
+    // -----------------------------------------
+    /**
+     * Creates a NavigationService for the given stage.
+     * @param stage the primary Stage for the application
+     */
     public NavigationService(Stage stage) {
         this.stage = stage;
         this.agentRegistry = new AgentRegistry(buildAlphaZeroConfig());
     }
 
+    /**
+     * Shows the main menu screen.
+     */
     public void showMenu() {
         Parent root = MenuScreenBuilder.build(this);
         Scene scene = new Scene(root, 720, 480);
@@ -44,13 +57,23 @@ public final class NavigationService {
         stage.setScene(scene);
     }
 
-    // Human vs Human
+    /**
+     * Shows a new game screen for human vs human play.
+     * @param size the board size
+     * @param hexSize the hex cell size
+     */
     public void showGame(int size, double hexSize) {
         ScoreBoard scoreBoard = new ScoreBoard();
         showGameScreen(size, hexSize, scoreBoard, controller -> {});
     }
 
     // Human vs MCTS (old entry point)
+    /**
+     * Shows a new game screen for human vs MCTS AI play.
+     * @param size the board size
+     * @param hexSize  the hex cell size
+     * @param aiIterations the number of MCTS iterations for the AI, or null for default
+     */
     public void showGame(int size, double hexSize, Integer aiIterations) {
         int iters = (aiIterations == null ? UiDefaults.DEFAULT_MCTS_ITERATIONS : aiIterations);
         ScoreBoard scoreBoard = new ScoreBoard();
@@ -62,6 +85,11 @@ public final class NavigationService {
     }
 
     // Main route: play vs selected AI
+    /**
+     * Shows a new game screen for human vs selected AI play.
+     * @param agentType the type of AI agent to play against
+     * @param iterations the number of MCTS iterations for the AI (if applicable)
+     */
     public void showGameWithAI(String agentType, int iterations) {
         ScoreBoard scoreBoard = new ScoreBoard();
 
@@ -72,6 +100,9 @@ public final class NavigationService {
     }
 
     // AI testing dialog
+    /**
+     * Shows the AI testing dialog to select two AIs to compete against each other.
+     */
     public void showAITesting() {
         AITestScreenBuilder.showDialog(agentRegistry, selection -> {
             ScoreBoard scoreBoard = new ScoreBoard();
@@ -85,6 +116,9 @@ public final class NavigationService {
     }
 
     // Agent selection dialog (your existing UX)
+    /**
+     * Shows the agent selection dialog to choose an AI agent to play against.
+     */
     public void showAgentSelection() {
         AgentSelectionDialog.AgentSelection selection = AgentSelectionDialog.show(agentRegistry);
         if (selection == null) return;
@@ -95,6 +129,13 @@ public final class NavigationService {
     // Core session builder (single source of UI)
     // -----------------------------------------
 
+    /**
+     * Shows the game screen with the specified configuration.
+     * @param size the board size
+     * @param hexSize the hex cell size
+     * @param scoreBoard the ScoreBoard to track wins
+     * @param configure a consumer to configure the GameController
+     */
     private void showGameScreen(int size, double hexSize, ScoreBoard scoreBoard,
                                 Consumer<GameController> configure) {
         GameScreenBuilder.GameScreen screen = GameScreenBuilder.build(
@@ -131,6 +172,9 @@ public final class NavigationService {
     // Misc
     // -----------------------------------------
 
+    /**
+     * Shows the skins/case opening view.
+     */
     public void showSkins() {
         Parent root = new CaseOpeningView().createContent();
         Scene scene = new Scene(root, 832, 400);
@@ -139,6 +183,12 @@ public final class NavigationService {
         stage.setScene(scene);
     }
 
+    /**
+     * Opens the game rules PDF in the default system viewer.
+     * @param title the title of the info dialog
+     * @param header the header text of the info dialog
+     * @param content the content text of the info dialog
+     */
     public void info(String title, String header, String content) {
         try {
             var url = MainMenu.class.getResource("/HEX_RULES.pdf");
@@ -151,6 +201,13 @@ public final class NavigationService {
         }
     }
 
+    // --------------------------------------------------
+    // Config builders
+    // --------------------------------------------------
+    /**
+     * Builds the AlphaZero configuration with default UI settings.
+     * @return the AlphaZeroConfig instance
+     */
     private AlphaZeroConfig buildAlphaZeroConfig() {
         return new AlphaZeroConfig.Builder()
                 .boardSize(UiDefaults.BOARD_SIZE)

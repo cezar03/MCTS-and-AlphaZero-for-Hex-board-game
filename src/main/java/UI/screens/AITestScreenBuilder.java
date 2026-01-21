@@ -14,11 +14,26 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import UI.view.AppStyles;
 
+/**
+ * Builder for the AI Testing screen dialog.
+ */
 public final class AITestScreenBuilder {
     private AITestScreenBuilder() {}
 
+    /**
+     * Container for the AI test selection.
+     *
+     * @param redType   The selected AI type for the red player.
+     * @param blackType The selected AI type for the black player.
+     */
     public record AITestSelection(String redType, String blackType) {}
 
+    /**
+     * Displays the AI Testing dialog.
+     *
+     * @param registry The agent registry containing available AI agents.
+     * @param onStart  The handler to invoke when the user starts the test.
+     */
     public static void showDialog(AgentRegistry registry, Consumer<AITestSelection> onStart) {
         Objects.requireNonNull(registry, "AgentRegistry cannot be null");
         Objects.requireNonNull(onStart, "Start handler cannot be null");

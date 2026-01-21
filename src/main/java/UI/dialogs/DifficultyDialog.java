@@ -10,9 +10,16 @@ import javafx.scene.layout.VBox;
 import UI.config.UiDefaults;
 import UI.view.AppStyles;
 
+/**
+ * Dialog for selecting the difficulty level for MCTS AI.
+ */
 public final class DifficultyDialog {
     private DifficultyDialog() {}
 
+    /**
+     * Displays the difficulty selection dialog.
+     * @return the number of iterations for the selected difficulty, or null if cancelled
+     */
     public static Integer show() {
         Alert dialog = new Alert(Alert.AlertType.INFORMATION);
         dialog.setTitle("AI Difficulty");

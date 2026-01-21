@@ -1,5 +1,8 @@
 package UI.config;
 
+/**
+ * Default UI configuration constants.
+ */
 public final class UiDefaults {
     private UiDefaults() {}
 

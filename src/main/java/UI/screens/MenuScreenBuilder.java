@@ -15,9 +15,18 @@ import javafx.scene.text.Text;
 import UI.config.UiDefaults;
 import UI.nav.NavigationService;
 
+/**
+ * Builder for the Menu screen.
+ */
 public final class MenuScreenBuilder {
     private MenuScreenBuilder() {}
 
+    /**
+     * Builds the Menu screen.
+     *
+     * @param nav The navigation service for screen transitions.
+     * @return The constructed Menu screen as a Parent node.
+     */
     public static Parent build(NavigationService nav) {
         BorderPane root = new BorderPane();
         root.setPadding(new Insets(24));
@@ -54,6 +63,10 @@ public final class MenuScreenBuilder {
         return root;
     }
 
+    /**
+     * Creates a horizontal spacer region.
+     * @return The spacer region.
+     */
     private static Region spacer() {
         Region r = new Region(); HBox.setHgrow(r, Priority.ALWAYS); return r;
     }

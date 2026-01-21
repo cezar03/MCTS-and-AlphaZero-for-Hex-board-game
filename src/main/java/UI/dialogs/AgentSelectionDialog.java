@@ -11,11 +11,19 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import UI.view.AppStyles;
 
+/**
+ * Dialog for selecting an AI agent type and configuration.
+ */
 public final class AgentSelectionDialog {
     private AgentSelectionDialog() {}
 
     public record AgentSelection(String type, int iterations) {}
 
+    /**
+     * Displays the agent selection dialog.
+     * @param registry the AgentRegistry to retrieve available agent types
+     * @return the selected AgentSelection, or null if cancelled
+     */
     public static AgentSelection show(AgentRegistry registry) {
         Objects.requireNonNull(registry, "AgentRegistry cannot be null");
 
