@@ -9,10 +9,14 @@ import game.core.Color;
 
 public final class ShortestPath {
 
+<<<<<<< HEAD
     /** Utility class, no instances. */
     private ShortestPath() {
         // utility class, no instances
     }
+=======
+    private ShortestPath() {}
+>>>>>>> 1165bedc5af5867e936278ee2626c1ff7663bbd5
 
     /**
      * 0–1 BFS shortest path:
@@ -40,10 +44,10 @@ public final class ShortestPath {
 
         if (player == Color.RED) {
             for (int col = 0; col < n; col++) {
-                Color c = board.getCell(0, col);
-                if (c == player) {
+                Color cell = board.getCell(0, col);
+                if (cell == player) {
                     dist[0][col] = 0;
-                } else if (c == Color.EMPTY) {
+                } else if (cell == Color.EMPTY) {
                     dist[0][col] = 1;
                 } else {
                     continue;
@@ -52,10 +56,10 @@ public final class ShortestPath {
             }
         } else {
             for (int row = 0; row < n; row++) {
-                Color c = board.getCell(row, 0);
-                if (c == player) {
+                Color cell = board.getCell(row, 0);
+                if (cell == player) {
                     dist[row][0] = 0;
-                } else if (c == Color.EMPTY) {
+                } else if (cell == Color.EMPTY) {
                     dist[row][0] = 1;
                 } else {
                     continue;
@@ -66,11 +70,11 @@ public final class ShortestPath {
 
         while (head < queue.size()) {
             int[] cur = queue.get(head++);
-            int r = cur[0];
-            int c = cur[1];
-            int currentDist = dist[r][c];
+            int row = cur[0];
+            int column = cur[1];
+            int currentDist = dist[row][column];
 
-            for (int[] nb : board.neighbors(r, c)) {
+            for (int[] nb : board.neighbors(row, column)) {
                 int nr = nb[0];
                 int nc = nb[1];
                 Color cellColor = board.getCell(nr, nc);

@@ -109,21 +109,16 @@ public class MCTSPlayer implements AIAgent {
     @Override
     public Move getBestMove(AIBoardAdapter boardAdapter, Player currentPlayer) {
         Board board = BoardConverters.toBoard(boardAdapter);
-
         GameState gameState = new GameState(board, currentPlayer);
-
         if (gameState.getLegalMoves().isEmpty()) return null;
-
         GameState simState = gameState.copy();
         Node root = new Node(null, null, currentPlayer.other().id);
-
         Node bestNode = mcts.search(root, simState);
-        if (bestNode == null || bestNode.move == null) {
-            return gameState.getLegalMoves().get(0);
-        }
+        if (bestNode == null || bestNode.move == null) { return gameState.getLegalMoves().get(0);}
         return bestNode.move;
     }
 
+<<<<<<< HEAD
     /**
      * Returns the player controlled by this MCTS agent.
      * * @return the Player enum
@@ -138,6 +133,10 @@ public class MCTSPlayer implements AIAgent {
      */
     @Override
     public boolean controlsPlayer(Player player) { return this.mctsPlayer == player; }
+=======
+    @Override public Player getPlayer() { return mctsPlayer; }
+    @Override public boolean controlsPlayer(Player player) { return this.mctsPlayer == player; }
+>>>>>>> 1165bedc5af5867e936278ee2626c1ff7663bbd5
 
     /**
      * Gets the number of iterations configured for this agent.

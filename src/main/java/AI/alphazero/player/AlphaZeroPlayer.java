@@ -53,55 +53,18 @@ public class AlphaZeroPlayer implements AIAgent {
     public Move getBestMove(AIBoardAdapter boardAdapter, Player currentPlayer) {
         if (boardAdapter == null) throw new IllegalArgumentException("Board cannot be null");
         if (currentPlayer == null) throw new IllegalArgumentException("Current player cannot be null");
-        if (!controlsPlayer(currentPlayer)) {
-            throw new IllegalArgumentException("This agent does not control player: " + currentPlayer);
-        }
-
+        if (!controlsPlayer(currentPlayer)) { throw new IllegalArgumentException("This agent does not control player: " + currentPlayer);}
         Color color = currentPlayer.stone;
-
         Board gameBoard = BoardConverters.toBoard(boardAdapter);
-
-
-        // IMPORTANT: UI play => training=false (no Dirichlet noise)
         Node root = mcts.search(gameBoard, color, config.getMctsIterations(), false);
-
         double[] policy = mcts.getSearchPolicy(root, config.getTemperature());
-
         return selectBestLegalMove(policy, boardAdapter);
     }
 
-    /**
-     * Returns the player controlled by this agent.
-     * * @return the Player enum
-     */
-    @Override
-    public Player getPlayer() {
-        return player;
-    }
-
-    /**
-     * Checks if the agent controls the specified player.
-     * * @param p the player to check
-     * @return true if IDs match
-     */
-    @Override
-    public boolean controlsPlayer(Player p) {
-        return this.player == p;
-    }
-
-    /**
-     * Lifecycle method for initialization.
-     * Currently a no-op for this implementation.
-     */
-    @Override
-    public void initialize() {}
-
-    /**
-     * Lifecycle method for cleanup.
-     * Currently a no-op for this implementation.
-     */
-    @Override
-    public void cleanup() {}
+    @Override public Player getPlayer() { return player;}
+    @Override public boolean controlsPlayer(Player p) { return this.player == p;}
+    @Override public void initialize() {}
+    @Override public void cleanup() {}
 
     /**
      * Selects the best legal move based on the provided policy probabilities.
@@ -111,7 +74,6 @@ public class AlphaZeroPlayer implements AIAgent {
      */
     private Move selectBestLegalMove(double[] policy, AIBoardAdapter boardAdapter) {
         int n = boardAdapter.getSize();
-
         double best = Double.NEGATIVE_INFINITY;
         int bestR = -1, bestC = -1;
 
@@ -127,7 +89,7 @@ public class AlphaZeroPlayer implements AIAgent {
             }
         }
 
-        if (bestR == -1) return null; // no legal moves
+        if (bestR == -1) return null;
         return Move.get(bestR, bestC);
     }
 }

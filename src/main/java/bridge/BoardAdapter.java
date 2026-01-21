@@ -32,66 +32,42 @@ public final class BoardAdapter implements AIBoardAdapter {
      * AIBoardAdapter methods
      * @see AI.api.AIBoardAdapter
     */
-    @Override
-    public Color getCell(int row, int col) {
-        return board.getCell(row, col);
-    }
+    @Override public Color getCell(int row, int col) { return board.getCell(row, col); }
 
     /**
      * @see AI.api.AIBoardAdapter
      */
-    @Override
-    public int getSize() {
-        return board.getSize();
-    }
+    @Override public int getSize() { return board.getSize(); }
 
     /**
      * @see AI.api.AIBoardAdapter
      */
-    @Override
-    public boolean inBounds(int row, int col) {
-        return board.inBounds(row, col);
-    }
+    @Override public boolean inBounds(int row, int col) { return board.inBounds(row, col); }
 
     /**
      * @see AI.api.AIBoardAdapter
      */
-    @Override
-    public boolean isEmpty(int row, int col) {
-        return board.isEmpty(row, col);
-    }
+    @Override public boolean isEmpty(int row, int col) { return board.isEmpty(row, col);}
 
     /**  
      * @see AI.api.AIBoardAdapter
      */
-    @Override
-    public List<int[]> legalMoves() {
-        return board.legalMoves();
-    }
+    @Override public List<int[]> legalMoves() { return board.legalMoves(); }
 
     /**  
      * @see AI.api.AIBoardAdapter
      */
-    @Override
-    public boolean isTerminal() {
-        return board.isTerminal();
-    }
+    @Override public boolean isTerminal() { return board.isTerminal(); }
 
     /**  
      * @see AI.api.AIBoardAdapter
      */
-    @Override
-    public boolean redWins() {
-        return board.redWins();
-    }
+    @Override public boolean redWins() { return board.redWins(); }
 
     /**  
      * @see AI.api.AIBoardAdapter
      */
-    @Override
-    public boolean blackWins() {
-        return board.blackWins();
-    }
+    @Override public boolean blackWins() { return board.blackWins(); }
 
     /**
      * Creates a deep copy of this adapter and its underlying board.
@@ -147,9 +123,7 @@ public final class BoardAdapter implements AIBoardAdapter {
      * @see AI.api.AIBoardAdapter
      */
     @Override
-    public List<int[]> neighbors(int row, int col) {
-        return board.neighbors(row, col);
-    }
+    public List<int[]> neighbors(int row, int col) { return board.neighbors(row, col); }
 
     /**
      * Returns the current board state as a 2D integer array.
@@ -157,16 +131,12 @@ public final class BoardAdapter implements AIBoardAdapter {
      * 0 = Empty, 1 = Red, 2 = Black.
      * * @return the integer matrix
      */
-    public int[][] getMatrix() {
-        return matrix;
-    }
+    public int[][] getMatrix() { return matrix; }
 
     /**
      * @return the underlying Board instance
      */
-    public Board getBoard() {
-        return board;
-    }
+    public Board getBoard() { return board; }
 
     /**
      * Synchronizes the internal integer matrix to match the current state of the Board object.
@@ -174,9 +144,7 @@ public final class BoardAdapter implements AIBoardAdapter {
     public void updateMatrix() {
         int n = board.getSize();
         for (int r = 0; r < n; r++) {
-            for (int c = 0; c < n; c++) {
-                matrix[r][c] = colorToInt(board.getCell(r, c));
-            }
+            for (int c = 0; c < n; c++) { matrix[r][c] = colorToInt(board.getCell(r, c)); }
         }
     }
 
@@ -215,9 +183,7 @@ public final class BoardAdapter implements AIBoardAdapter {
      * Checks if the game has reached a terminal state.
      * * @return true if the game is over
      */
-    public boolean isGameOver() {
-        return board.isTerminal();
-    }
+    public boolean isGameOver() { return board.isTerminal(); }
 
     /**
      * Determines the winner of the game, if any.

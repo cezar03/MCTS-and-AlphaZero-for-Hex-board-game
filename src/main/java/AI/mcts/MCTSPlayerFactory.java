@@ -27,21 +27,17 @@ public class MCTSPlayerFactory implements AIAgentFactory {
      */
     @Override
     public AIAgent createAgent(AIAdaptationConfig config) {
-        if (config == null) {
-            throw new IllegalArgumentException("Configuration cannot be null");
-        }
+        if (config == null) { throw new IllegalArgumentException("Configuration cannot be null"); }
         
         Player player = config.getPlayer();
         int iterations = config.getIterations();
         
-        // If only basic parameters (all weights are 0), create simple MCTS
         if (config.getThreshold() == 0.0 && 
             config.getCentralityWeight() == 0.0 &&
             config.getConnectivityWeight() == 0.0) {
             return new MCTSPlayer(player, iterations);
         }
         
-        // Otherwise, create optimized MCTS with full configuration
         return new MCTSPlayer(
             player,
             iterations,
@@ -54,6 +50,7 @@ public class MCTSPlayerFactory implements AIAgentFactory {
         );
     }
     
+<<<<<<< HEAD
     /**
      * Returns the identifier for this agent type.
      * * @return "MCTS"
@@ -62,6 +59,9 @@ public class MCTSPlayerFactory implements AIAgentFactory {
     public String getAgentTypeName() {
         return "MCTS";
     }
+=======
+    @Override public String getAgentTypeName() { return "MCTS"; }
+>>>>>>> 1165bedc5af5867e936278ee2626c1ff7663bbd5
 }
 
 
