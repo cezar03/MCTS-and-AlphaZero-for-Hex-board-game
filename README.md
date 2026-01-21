@@ -49,7 +49,13 @@ THR, CENT, CONN, BIAS, SP.
 - For each simulation chooses **random value** in the given interval
 - Compares to the **previous configurations**
 - After **set number amount of simulations** return the best configuration with **highest winrate**
-
+### AlphaZero 
+- Implements the AlphaZero algorithm combining deep neural networks with Monte Carlo Tree Search
+- **Neural Network Architecture**: Convolutional input layer, residual tower for feature extraction, policy head (move probabilities), and value head (position evaluation from -1 to 1)
+- **Self-Play**: Generates training data by playing games against itself using MCTS guided by the current neural network
+- **Training**: Updates the network using supervised learning on self-play examples, optimizing policy (cross-entropy) and value (mean squared error) losses
+- **MCTS Integration**: Tree search uses neural network predictions for move selection and position evaluation instead of random rollouts
+- **Player**: Selects moves deterministically using MCTS with the trained network for gameplay
 ### Experiments
 - Comparison of different **c-values (0.5, 0.8, 1.0, sqrt(1.4), 2.0)** for different type of agents.
 - Comparison of **increasing number of iterations** againist a **Random baseline agent**
