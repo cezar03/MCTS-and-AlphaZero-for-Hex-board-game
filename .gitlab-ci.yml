@@ -4,9 +4,11 @@ pages:
   stage: deploy
   script:
     - mkdir public
-    - cp -r JavaDoc/apidocs/* public
+    # CORRECTED LINE: Remove 'team_04/' from the path
+    - cp -r JavaDoc/apidocs/* public/
   artifacts:
     paths:
       - public
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  only:
+    - main
+    - master
