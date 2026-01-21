@@ -57,6 +57,8 @@ THR, CENT, CONN, BIAS, SP.
 - Colors are alternated between games to reduce first-move advantage
 - For **Base vs Optimized** experiments both agents uses **same number of iterations**
 - **For each experiment we log results into CSV**
+- Comparison of **AlphaZero vs Optimized MCTS based on iterations**
+- Winrate of  **AlphaZero vs Random agent** 
 
 ## Usage
 To run the app (make sure installation is done), run the following in the terminal: " mvn clean javafx:run ". 
