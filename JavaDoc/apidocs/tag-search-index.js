@@ -1,0 +1,1 @@
+tagSearchIndex = [{"l":"Constant Field Values","h":"","u":"constant-values.html"},{"l":"Pie Rule","h":"class UI.session.GameSession","d":"Section","u":"UI/session/GameSession.html#pie-rule-heading"},{"l":"Responsibilities","h":"class UI.session.GameSession","d":"Section","u":"UI/session/GameSession.html#responsibilities-heading"}];updateSearchResults();

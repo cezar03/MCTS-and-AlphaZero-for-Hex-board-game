@@ -52,7 +52,6 @@ public final class MCTS {
 
     /**
      * Performs MCTS search from the given root node and returns the best move.
-     * <p>
      * Executes the complete MCTS algorithm for the specified number of iterations.
      * Each iteration consists of four phases:
      * <ol>
@@ -63,7 +62,6 @@ public final class MCTS {
      * </ol>
      * After all iterations complete, the child of the root with the highest visit
      * count is selected as the best move.
-     * </p>
      *
      * @param root the root node of the search tree
      * @param rootState the current game state corresponding to the root node
