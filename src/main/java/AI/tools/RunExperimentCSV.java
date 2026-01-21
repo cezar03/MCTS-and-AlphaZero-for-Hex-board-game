@@ -1,17 +1,17 @@
-package ai.tools;
+package AI.tools;
 
 import java.io.File;
 
-import ai.alphazero.batch.Batcher;
-import ai.alphazero.batch.DirectBatcher;
-import ai.alphazero.config.AlphaZeroConfig;
-import ai.alphazero.mcts.AlphaZeroMCTS;
-import ai.alphazero.net.AlphaZeroNet;
-import ai.alphazero.player.AlphaZeroPlayer;
-import ai.api.AIAgent;
-import ai.api.AIBoardAdapter;
-import ai.mcts.MCTSPlayer;
-import ai.random.RandomPlayer;
+import AI.alphazero.batch.Batcher;
+import AI.alphazero.batch.DirectBatcher;
+import AI.alphazero.config.AlphaZeroConfig;
+import AI.alphazero.mcts.AlphaZeroMCTS;
+import AI.alphazero.net.AlphaZeroNet;
+import AI.alphazero.player.AlphaZeroPlayer;
+import AI.api.AIAgent;
+import AI.api.AIBoardAdapter;
+import AI.mcts.MCTSPlayer;
+import AI.random.RandomPlayer;
 import bridge.BoardAdapter;
 import game.core.Board;
 import game.core.Move;

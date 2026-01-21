@@ -1,10 +1,10 @@
-package ai.alphazero.player;
+package AI.alphazero.player;
 
-import ai.alphazero.config.AlphaZeroConfig;
-import ai.alphazero.mcts.AlphaZeroMCTS;
-import ai.api.AIAgent;
-import ai.api.AIBoardAdapter;
-import ai.mcts.Node;
+import AI.alphazero.config.AlphaZeroConfig;
+import AI.alphazero.mcts.AlphaZeroMCTS;
+import AI.api.AIAgent;
+import AI.api.AIBoardAdapter;
+import AI.mcts.Node;
 import bridge.BoardConverters;
 import game.core.Board;
 import game.core.Color;

@@ -1,4 +1,4 @@
-package ai.alphazero.train;
+package AI.alphazero.train;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -9,13 +9,13 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.MultiDataSet;
 import org.nd4j.linalg.factory.Nd4j;
 
-import ai.alphazero.batch.MultiGpuBatcher;
-import ai.alphazero.config.AlphaZeroConfig;
-import ai.alphazero.mcts.AlphaZeroMCTS;
-import ai.alphazero.net.AlphaZeroNet;
-import ai.alphazero.net.BoardEncoder;
-import ai.alphazero.net.TrainingExampleData;
-import ai.mcts.Node;
+import AI.alphazero.batch.MultiGpuBatcher;
+import AI.alphazero.config.AlphaZeroConfig;
+import AI.alphazero.mcts.AlphaZeroMCTS;
+import AI.alphazero.net.AlphaZeroNet;
+import AI.alphazero.net.BoardEncoder;
+import AI.alphazero.net.TrainingExampleData;
+import AI.mcts.Node;
 import game.core.Board;
 import game.core.Color;
 import game.core.Move;

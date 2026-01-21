@@ -1,4 +1,4 @@
-package ai.mcts.Steps.Tuner;
+package AI.mcts.Steps.Tuner;
 
 /**
  * Represents a complete configuration of hyperparameters for MCTS with

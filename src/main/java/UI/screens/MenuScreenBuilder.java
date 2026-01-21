@@ -1,4 +1,4 @@
-package ui.screens;
+package UI.screens;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -12,8 +12,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import ui.config.UiDefaults;
-import ui.nav.NavigationService;
+import UI.config.UiDefaults;
+import UI.nav.NavigationService;
 
 public final class MenuScreenBuilder {
     private MenuScreenBuilder() {}

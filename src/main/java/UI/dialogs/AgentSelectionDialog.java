@@ -1,15 +1,15 @@
-package ui.dialogs;
+package UI.dialogs;
 
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
-import ai.registry.AgentRegistry;
+import AI.registry.AgentRegistry;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
-import ui.view.AppStyles;
+import UI.view.AppStyles;
 
 public final class AgentSelectionDialog {
     private AgentSelectionDialog() {}

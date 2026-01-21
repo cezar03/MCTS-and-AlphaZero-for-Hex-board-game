@@ -1,4 +1,4 @@
-package ai.alphazero.batch;
+package AI.alphazero.batch;
 
 import java.util.concurrent.CompletableFuture;
 

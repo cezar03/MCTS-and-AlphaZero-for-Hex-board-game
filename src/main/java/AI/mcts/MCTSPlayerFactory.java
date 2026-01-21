@@ -1,8 +1,8 @@
-package ai.mcts;
+package AI.mcts;
 
-import ai.api.AIAdaptationConfig;
-import ai.api.AIAgent;
-import ai.api.AIAgentFactory;
+import AI.api.AIAdaptationConfig;
+import AI.api.AIAgent;
+import AI.api.AIAgentFactory;
 import game.core.Player;
 
 /**

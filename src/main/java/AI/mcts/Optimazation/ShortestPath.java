@@ -1,4 +1,4 @@
-package ai.mcts.Optimazation;
+package AI.mcts.Optimazation;
 
 import java.util.ArrayList;
 import java.util.Arrays;

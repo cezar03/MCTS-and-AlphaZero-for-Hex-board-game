@@ -1,4 +1,4 @@
-package ui.dialogs;
+package UI.dialogs;
 
 import game.core.Player;
 import javafx.geometry.Insets;
@@ -10,9 +10,9 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.scene.Scene;
-import ui.session.ScoreBoard;
-import ui.view.AppStyles;
-import ui.view.Buttons;
+import UI.session.ScoreBoard;
+import UI.view.AppStyles;
+import UI.view.Buttons;
 
 /**
  * Dialog that appears after a game ends, showing the winner, score, and options to play again or return to menu.

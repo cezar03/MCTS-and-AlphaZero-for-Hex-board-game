@@ -1,11 +1,11 @@
-package ai.mcts.Steps;
+package AI.mcts.Steps;
 import java.util.*;
 
-import ai.mcts.Node;
-import ai.mcts.HexGame.GameState;
+import AI.mcts.Node;
+import AI.mcts.HexGame.GameState;
 import game.core.Move;
-import ai.mcts.Optimazation.*;
-import ai.mcts.Optimazation.Heuristic.*;
+import AI.mcts.Optimazation.*;
+import AI.mcts.Optimazation.Heuristic.*;
 import game.core.Player;
 
 /**

@@ -1,4 +1,4 @@
-package ui.view;
+package UI.view;
 
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
@@ -10,7 +10,7 @@ import javafx.scene.shape.Polyline;
 import bridge.BoardAdapter;
 import game.core.Color;
 import game.core.Player;
-import ui.controller.GameController;
+import UI.controller.GameController;
 
 public class HexBoardView extends Pane {
     private final int boardSize;

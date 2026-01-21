@@ -1,4 +1,4 @@
-package ai.alphazero.net;
+package AI.alphazero.net;
 
 public class TrainingExampleData {
     public float[] inputBoard;

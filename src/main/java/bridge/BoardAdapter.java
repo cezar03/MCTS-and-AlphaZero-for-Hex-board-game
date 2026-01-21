@@ -2,7 +2,7 @@ package bridge;
 
 import java.util.List;
 
-import ai.api.AIBoardAdapter;
+import AI.api.AIBoardAdapter;
 import game.core.Board;
 import game.core.Color;
 import game.core.Player;

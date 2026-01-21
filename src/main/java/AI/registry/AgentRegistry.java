@@ -1,17 +1,17 @@
-package ai.registry;
+package AI.registry;
 
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import ai.alphazero.config.AlphaZeroConfig;
-import ai.alphazero.player.AlphaZeroPlayerFactory;
-import ai.api.AIAdaptationConfig;
-import ai.api.AIAgent;
-import ai.api.AIAgentFactory;
-import ai.mcts.MCTSPlayerFactory;
-import ai.random.RandomPlayerFactory;
+import AI.alphazero.config.AlphaZeroConfig;
+import AI.alphazero.player.AlphaZeroPlayerFactory;
+import AI.api.AIAdaptationConfig;
+import AI.api.AIAgent;
+import AI.api.AIAgentFactory;
+import AI.mcts.MCTSPlayerFactory;
+import AI.random.RandomPlayerFactory;
 import game.core.Player;
 
 public final class AgentRegistry {

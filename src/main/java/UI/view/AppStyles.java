@@ -1,4 +1,4 @@
-package ui.view;
+package UI.view;
 
 import java.util.Objects;
 

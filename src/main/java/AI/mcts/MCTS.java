@@ -1,11 +1,11 @@
-package ai.mcts;
+package AI.mcts;
 
-import ai.mcts.HexGame.GameState;
-import ai.mcts.Steps.Backpropagation;
-import ai.mcts.Steps.Expansion;
-import ai.mcts.Steps.Selection;
-import ai.mcts.Steps.SimulationStep.*;
-import ai.mcts.Optimazation.*;
+import AI.mcts.HexGame.GameState;
+import AI.mcts.Steps.Backpropagation;
+import AI.mcts.Steps.Expansion;
+import AI.mcts.Steps.Selection;
+import AI.mcts.Steps.SimulationStep.*;
+import AI.mcts.Optimazation.*;
 
 /**
  * Monte Carlo Tree Search (MCTS) implementation for game tree exploration.

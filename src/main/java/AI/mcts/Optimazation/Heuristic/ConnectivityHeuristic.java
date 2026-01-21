@@ -1,6 +1,6 @@
-package ai.mcts.Optimazation.Heuristic;
+package AI.mcts.Optimazation.Heuristic;
 
-import ai.mcts.HexGame.GameState;
+import AI.mcts.HexGame.GameState;
 import game.core.Move;
 import game.core.Board;
 import game.core.Color;

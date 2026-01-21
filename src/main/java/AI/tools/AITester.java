@@ -1,9 +1,9 @@
-package ai.tools;
+package AI.tools;
 
-import ai.api.AIAgent;
-import ai.api.AIBoardAdapter;
-import ai.mcts.MCTSPlayer;
-import ai.random.RandomPlayer;
+import AI.api.AIAgent;
+import AI.api.AIBoardAdapter;
+import AI.mcts.MCTSPlayer;
+import AI.random.RandomPlayer;
 import bridge.BoardAdapter;
 import game.core.Board;
 import game.core.Move;

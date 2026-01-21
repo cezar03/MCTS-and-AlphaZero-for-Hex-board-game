@@ -1,70 +1,70 @@
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ai\mcts\Node.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\game\view\BoardStateView.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ui\controller\GameController.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ai\alphazero\AlphaZeroConfig.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ui\view\AppStyles.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ui\dialogs\PlayAgainDialog.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ai\mcts\Optimazation\MovePruner.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ai\registry\AgentRegistry.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ui\screens\MenuScreenBuilder.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ai\api\AIAgentFactory.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ai\mcts\Steps\Tuner\MCTSTuner.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ai\random\RandomPlayerFactory.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ui\screens\GameScreenBuilder.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ai\mcts\HexGame\GameState.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\game\core\Board.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ai\mcts\Steps\Tuner\PrunerConfig.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ai\alphazero\AlphaZeroPlayer.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\game\core\Color.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ai\alphazero\AlphaZeroRunner.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ai\alphazero\AlphaZeroMCTS.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ai\alphazero\DirectBatcher.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\bridge\BoardAdapter.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ai\mcts\Steps\Selection.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\game\core\Player.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ui\nav\NavigationService.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ui\dialogs\DifficultyDialog.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ai\mcts\Optimazation\Heuristic\CentralityHeuristic.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ai\alphazero\MultiGpuBatcher.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ai\tools\AITester.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ui\dialogs\AgentSelectionDialog.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ai\alphazero\NeuralNetBatcher.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ai\alphazero\AlphaZeroPlayerFactory.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ai\api\AIAgent.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ai\mcts\Optimazation\ShortestPath.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ai\alphazero\BoardEncoder.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ai\mcts\Steps\Tuner\TunerTester.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ai\mcts\Steps\Backpropagation.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ai\random\RandomPlayer.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ai\mcts\MCTSPlayer.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ai\mcts\Steps\SimulationStep\Simulation.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ui\session\GameSession.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ui\MainMenu.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ui\view\CaseOpeningView.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ai\api\AIBoardAdapter.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\game\core\MoveRegistration.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ui\screens\AITestScreenBuilder.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ai\mcts\MCTSPlayerFactory.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ai\alphazero\AlphaZeroNet.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\game\core\UnionFind.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ai\alphazero\Batcher.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ai\mcts\Steps\SimulationStep\BaseSimulation.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ui\view\Buttons.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\bridge\BoardConverters.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ai\alphazero\TrainingExampleData.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ui\config\UiDefaults.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ai\api\AIAdaptationConfig.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ui\view\HexBoardView.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ai\mcts\Optimazation\Heuristic\ConnectivityHeuristic.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ai\mcts\Steps\SimulationStep\OptimizedSimulation.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ai\mcts\Optimazation\Heuristic\ShortestPathHeuristic.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\game\core\Rules.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ai\mcts\MCTS.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ai\mcts\Optimazation\Heuristic\Heuristic.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ai\mcts\Optimazation\Heuristic\LinearCombinationHeuristic.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ui\controller\AIMoveCoordinator.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ai\tools\RunExperimentCSV.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ui\session\ScoreBoard.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\game\core\Move.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ai\mcts\Steps\Expansion.java
-C:\Users\parji\Documents\School\Project2-1\team_04\src\main\java\ai\alphazero\AlphaZeroTrainer.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/mcts/MCTS.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/alphazero/config/AlphaZeroConfig.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/mcts/Steps/Tuner/PrunerConfig.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/mcts/Node.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/UI/dialogs/DifficultyDialog.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/alphazero/net/AlphaZeroNet.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/mcts/Steps/SimulationStep/BaseSimulation.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/UI/MainMenu.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/UI/view/AppStyles.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/UI/controller/AIMoveCoordinator.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/alphazero/player/AlphaZeroRunner.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/alphazero/player/AlphaZeroPlayerFactory.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/UI/view/CaseOpeningView.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/alphazero/batch/Batcher.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/mcts/Steps/Backpropagation.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/api/AIAdaptationConfig.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/mcts/MCTSPlayer.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/game/core/Rules.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/api/AIAgent.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/game/core/Color.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/random/RandomPlayerFactory.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/game/core/UnionFind.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/UI/view/HexBoardView.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/tools/RunExperimentCSV.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/bridge/BoardAdapter.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/mcts/Steps/SimulationStep/Simulation.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/game/view/BoardStateView.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/alphazero/batch/DirectBatcher.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/mcts/Optimazation/MovePruner.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/UI/nav/NavigationService.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/UI/dialogs/PlayAgainDialog.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/mcts/Optimazation/ShortestPath.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/mcts/MCTSPlayerFactory.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/random/RandomPlayer.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/mcts/Optimazation/Heuristic/ConnectivityHeuristic.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/UI/session/GameSession.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/UI/dialogs/AgentSelectionDialog.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/mcts/Steps/Tuner/TunerTester.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/mcts/Steps/Selection.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/mcts/Steps/Expansion.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/UI/view/Buttons.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/alphazero/net/TrainingExampleData.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/game/core/Move.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/mcts/Optimazation/Heuristic/CentralityHeuristic.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/mcts/HexGame/GameState.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/alphazero/batch/NeuralNetBatcher.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/UI/session/ScoreBoard.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/bridge/BoardConverters.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/UI/controller/GameController.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/api/AIBoardAdapter.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/alphazero/train/AlphaZeroTrainer.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/mcts/Steps/SimulationStep/OptimizedSimulation.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/alphazero/net/BoardEncoder.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/alphazero/player/AlphaZeroPlayer.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/game/core/Board.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/mcts/Optimazation/Heuristic/ShortestPathHeuristic.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/registry/AgentRegistry.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/UI/screens/AITestScreenBuilder.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/mcts/Optimazation/Heuristic/Heuristic.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/mcts/Optimazation/Heuristic/LinearCombinationHeuristic.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/mcts/Steps/Tuner/MCTSTuner.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/UI/config/UiDefaults.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/alphazero/batch/MultiGpuBatcher.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/game/core/MoveRegistration.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/UI/screens/GameScreenBuilder.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/game/core/Player.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/tools/AITester.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/api/AIAgentFactory.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/UI/screens/MenuScreenBuilder.java
+/Users/noortjevanmaldegem/Documents/Universiteit/Jaar 2/Project 2-1/team_04/src/main/java/AI/alphazero/mcts/AlphaZeroMCTS.java

@@ -1,4 +1,4 @@
-import ai.mcts.Node;
+import AI.mcts.Node;
 import game.core.Move;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;

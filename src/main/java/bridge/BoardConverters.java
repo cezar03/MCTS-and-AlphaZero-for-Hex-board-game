@@ -2,7 +2,7 @@ package bridge;
 
 import game.core.Board;
 import game.core.Color;
-import ai.api.AIBoardAdapter;
+import AI.api.AIBoardAdapter;
 
 /**
  * Shared utilities for converting adapters to Board efficiently.

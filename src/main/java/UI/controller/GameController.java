@@ -1,13 +1,13 @@
-package ui.controller;
+package UI.controller;
 
-import ai.api.AIAdaptationConfig;
-import ai.api.AIAgent;
-import ai.api.AIAgentFactory;
+import AI.api.AIAdaptationConfig;
+import AI.api.AIAgent;
+import AI.api.AIAgentFactory;
 import bridge.BoardAdapter;
 import game.core.Move;
 import game.core.Player;
-import ui.session.GameSession;
-import ui.view.HexBoardView;
+import UI.session.GameSession;
+import UI.view.HexBoardView;
 
 /**
  * GameController: owns turn logic + mediates between ui.BoardView and bridge.BoardAdapter.

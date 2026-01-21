@@ -1,4 +1,4 @@
-package ui.dialogs;
+package UI.dialogs;
 
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -7,8 +7,8 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
-import ui.config.UiDefaults;
-import ui.view.AppStyles;
+import UI.config.UiDefaults;
+import UI.view.AppStyles;
 
 public final class DifficultyDialog {
     private DifficultyDialog() {}

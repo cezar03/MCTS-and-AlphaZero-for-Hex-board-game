@@ -1,4 +1,4 @@
-package ai.api;
+package AI.api;
 
 import game.core.Move;
 import game.core.Player;

@@ -1,8 +1,8 @@
-package ai.random;
+package AI.random;
 
-import ai.api.AIAdaptationConfig;
-import ai.api.AIAgent;
-import ai.api.AIAgentFactory;
+import AI.api.AIAdaptationConfig;
+import AI.api.AIAgent;
+import AI.api.AIAgentFactory;
 
 /**
  * Factory implementation for creating RandomPlayer agents.

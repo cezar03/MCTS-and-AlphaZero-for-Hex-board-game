@@ -1,15 +1,15 @@
-package ai.alphazero.mcts;
+package AI.alphazero.mcts;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.commons.math3.distribution.GammaDistribution;
 
-import ai.alphazero.batch.Batcher;
-import ai.alphazero.batch.NeuralNetBatcher;
-import ai.alphazero.config.AlphaZeroConfig;
-import ai.alphazero.net.BoardEncoder;
-import ai.mcts.Node;
+import AI.alphazero.batch.Batcher;
+import AI.alphazero.batch.NeuralNetBatcher;
+import AI.alphazero.config.AlphaZeroConfig;
+import AI.alphazero.net.BoardEncoder;
+import AI.mcts.Node;
 import game.core.Board;
 import game.core.Color;
 import game.core.Move;

@@ -1,9 +1,9 @@
-package ai.mcts.HexGame;
+package AI.mcts.HexGame;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import ai.mcts.Optimazation.ShortestPath;
+import AI.mcts.Optimazation.ShortestPath;
 import game.core.Board;
 import game.core.Color;
 import game.core.Move;

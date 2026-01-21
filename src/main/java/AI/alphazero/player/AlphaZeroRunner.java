@@ -1,6 +1,6 @@
-package ai.alphazero.player;
+package AI.alphazero.player;
 
-import ai.alphazero.train.AlphaZeroTrainer;
+import AI.alphazero.train.AlphaZeroTrainer;
 
 public class AlphaZeroRunner {
     public static void main(String[] args) {

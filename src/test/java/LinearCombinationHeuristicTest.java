@@ -1,6 +1,6 @@
 import game.core.Move;
-import ai.mcts.Optimazation.Heuristic.Heuristic;
-import ai.mcts.Optimazation.Heuristic.LinearCombinationHeuristic;
+import AI.mcts.Optimazation.Heuristic.Heuristic;
+import AI.mcts.Optimazation.Heuristic.LinearCombinationHeuristic;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 

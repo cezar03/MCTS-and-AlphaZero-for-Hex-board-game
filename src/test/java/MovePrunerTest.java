@@ -1,8 +1,8 @@
 
-import ai.mcts.HexGame.GameState;
+import AI.mcts.HexGame.GameState;
 import game.core.Move;
-import ai.mcts.Optimazation.MovePruner;
-import ai.mcts.Optimazation.Heuristic.Heuristic;
+import AI.mcts.Optimazation.MovePruner;
+import AI.mcts.Optimazation.Heuristic.Heuristic;
 import org.junit.jupiter.api.Test;
 import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;

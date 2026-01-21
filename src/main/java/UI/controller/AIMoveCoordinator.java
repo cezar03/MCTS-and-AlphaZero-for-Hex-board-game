@@ -1,12 +1,12 @@
-package ui.controller;
+package UI.controller;
 
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import ai.api.AIAgent;
-import ai.api.AIBoardAdapter;
+import AI.api.AIAgent;
+import AI.api.AIBoardAdapter;
 import game.core.Move;
 import game.core.Player;
 import javafx.animation.PauseTransition;

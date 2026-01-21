@@ -1,6 +1,6 @@
-import ai.mcts.HexGame.GameState;
+import AI.mcts.HexGame.GameState;
 import game.core.Move;
-import ai.mcts.Optimazation.Heuristic.ShortestPathHeuristic;
+import AI.mcts.Optimazation.Heuristic.ShortestPathHeuristic;
 import game.core.Board;
 import bridge.BoardAdapter;
 import game.core.Color;

@@ -1,8 +1,8 @@
-package ui;
+package UI;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import ui.nav.NavigationService;
+import UI.nav.NavigationService;
 
 public class MainMenu extends Application {
 

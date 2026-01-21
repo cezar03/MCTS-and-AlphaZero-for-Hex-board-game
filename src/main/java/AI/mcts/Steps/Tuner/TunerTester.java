@@ -1,4 +1,4 @@
-package ai.mcts.Steps.Tuner;
+package AI.mcts.Steps.Tuner;
 
 /**
  * Test driver for the MCTSTuner that demonstrates hyperparameter tuning

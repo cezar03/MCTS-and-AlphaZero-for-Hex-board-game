@@ -1,4 +1,4 @@
-package ai.alphazero.config;
+package AI.alphazero.config;
 
 /**
  * Configuration class for AlphaZero setup.

@@ -1,7 +1,7 @@
-package ai.random;
+package AI.random;
 
-import ai.api.AIAgent;
-import ai.api.AIBoardAdapter;
+import AI.api.AIAgent;
+import AI.api.AIBoardAdapter;
 import game.core.Color;
 import game.core.Move;
 import game.core.Player;

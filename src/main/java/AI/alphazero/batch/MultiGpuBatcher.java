@@ -1,4 +1,4 @@
-package ai.alphazero.batch;
+package AI.alphazero.batch;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.nd4j.linalg.factory.Nd4j;
 
-import ai.alphazero.net.AlphaZeroNet;
+import AI.alphazero.net.AlphaZeroNet;
 
 public class MultiGpuBatcher implements Runnable, Batcher {
     private final List<NeuralNetBatcher> workers = new ArrayList<>();

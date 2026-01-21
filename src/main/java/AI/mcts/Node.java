@@ -1,4 +1,4 @@
-package ai.mcts;
+package AI.mcts;
 import java.util.HashMap;
 import java.util.Map;
 

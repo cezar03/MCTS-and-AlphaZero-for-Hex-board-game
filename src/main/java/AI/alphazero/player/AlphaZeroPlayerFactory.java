@@ -1,13 +1,13 @@
-package ai.alphazero.player;
+package AI.alphazero.player;
 
-import ai.alphazero.batch.Batcher;
-import ai.alphazero.batch.DirectBatcher;
-import ai.alphazero.config.AlphaZeroConfig;
-import ai.alphazero.mcts.AlphaZeroMCTS;
-import ai.alphazero.net.AlphaZeroNet;
-import ai.api.AIAdaptationConfig;
-import ai.api.AIAgent;
-import ai.api.AIAgentFactory;
+import AI.alphazero.batch.Batcher;
+import AI.alphazero.batch.DirectBatcher;
+import AI.alphazero.config.AlphaZeroConfig;
+import AI.alphazero.mcts.AlphaZeroMCTS;
+import AI.alphazero.net.AlphaZeroNet;
+import AI.api.AIAdaptationConfig;
+import AI.api.AIAgent;
+import AI.api.AIAgentFactory;
 import game.core.Player;
 
 public class AlphaZeroPlayerFactory implements AIAgentFactory {

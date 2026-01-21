@@ -1,7 +1,7 @@
-package ai.mcts.Steps.SimulationStep;
+package AI.mcts.Steps.SimulationStep;
 
 import java.util.*;
-import ai.mcts.HexGame.GameState;
+import AI.mcts.HexGame.GameState;
 import game.core.Move;
 
 /**

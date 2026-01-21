@@ -1,4 +1,4 @@
-package ui.nav;
+package UI.nav;
 
 import java.awt.Desktop;
 import java.io.File;
@@ -10,21 +10,21 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
-import ai.alphazero.config.AlphaZeroConfig;
-import ai.api.AIAgent;
-import ai.registry.AgentRegistry;
+import AI.alphazero.config.AlphaZeroConfig;
+import AI.api.AIAgent;
+import AI.registry.AgentRegistry;
 import game.core.Player;
-import ui.MainMenu;
-import ui.config.UiDefaults;
-import ui.controller.GameController;
-import ui.dialogs.AgentSelectionDialog;
-import ui.dialogs.PlayAgainDialog;
-import ui.screens.AITestScreenBuilder;
-import ui.screens.GameScreenBuilder;
-import ui.screens.MenuScreenBuilder;
-import ui.session.ScoreBoard;
-import ui.view.AppStyles;
-import ui.view.CaseOpeningView;
+import UI.MainMenu;
+import UI.config.UiDefaults;
+import UI.controller.GameController;
+import UI.dialogs.AgentSelectionDialog;
+import UI.dialogs.PlayAgainDialog;
+import UI.screens.AITestScreenBuilder;
+import UI.screens.GameScreenBuilder;
+import UI.screens.MenuScreenBuilder;
+import UI.session.ScoreBoard;
+import UI.view.AppStyles;
+import UI.view.CaseOpeningView;
 
 public final class NavigationService {
 

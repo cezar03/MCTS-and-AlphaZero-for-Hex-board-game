@@ -1,4 +1,4 @@
-package ui.config;
+package UI.config;
 
 public final class UiDefaults {
     private UiDefaults() {}

@@ -1,4 +1,4 @@
-package ai.alphazero.batch;
+package AI.alphazero.batch;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +13,7 @@ import java.util.stream.IntStream;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
 
-import ai.alphazero.net.AlphaZeroNet;
+import AI.alphazero.net.AlphaZeroNet;
 
 public class NeuralNetBatcher implements Runnable, Batcher {
     private final AlphaZeroNet network;

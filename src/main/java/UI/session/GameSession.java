@@ -1,4 +1,4 @@
-package ui.session;
+package UI.session;
 
 import bridge.BoardAdapter;
 import game.core.Color;

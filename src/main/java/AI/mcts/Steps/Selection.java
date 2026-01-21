@@ -1,7 +1,7 @@
-package ai.mcts.Steps;
+package AI.mcts.Steps;
 
-import ai.mcts.Node;
-import ai.mcts.HexGame.GameState;
+import AI.mcts.Node;
+import AI.mcts.HexGame.GameState;
 
 /**
  * Implements the selection phase of Monte Carlo Tree Search (MCTS).

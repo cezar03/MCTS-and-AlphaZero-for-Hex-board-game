@@ -1,11 +1,11 @@
-package ai.alphazero.batch;
+package AI.alphazero.batch;
 
 import java.util.concurrent.CompletableFuture;
 
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
 
-import ai.alphazero.net.AlphaZeroNet;
+import AI.alphazero.net.AlphaZeroNet;
 
 public final class DirectBatcher implements Batcher {
     private final AlphaZeroNet net;

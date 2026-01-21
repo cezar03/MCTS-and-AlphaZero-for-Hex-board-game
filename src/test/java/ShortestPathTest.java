@@ -1,4 +1,4 @@
-import ai.mcts.Optimazation.ShortestPath;
+import AI.mcts.Optimazation.ShortestPath;
 import game.core.Board;
 import game.core.Color;
 import org.junit.jupiter.api.Test;

@@ -1,4 +1,4 @@
-package ai.alphazero.net;
+package AI.alphazero.net;
 
 import game.core.Board;
 import game.core.Color;

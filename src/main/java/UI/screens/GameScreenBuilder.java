@@ -1,4 +1,4 @@
-package ui.screens;
+package UI.screens;
 
 import bridge.BoardAdapter;
 import game.core.Board;
@@ -9,10 +9,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import ui.controller.GameController;
-import ui.session.ScoreBoard;
-import ui.view.Buttons;
-import ui.view.HexBoardView;
+import UI.controller.GameController;
+import UI.session.ScoreBoard;
+import UI.view.Buttons;
+import UI.view.HexBoardView;
 
 public final class GameScreenBuilder {
     private GameScreenBuilder() {}

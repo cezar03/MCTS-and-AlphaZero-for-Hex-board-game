@@ -1,4 +1,4 @@
-package ai.api;
+package AI.api;
 
 /**
  * Factory interface for creating AI agents.
