@@ -7,6 +7,10 @@ Team_04
 In this project, our team created multiple versions of the game Hex. First, a human vs human version of the game Hex was built.
 For the human vs computer version of the game, multiple AI agents are implemented; an agent that uses Monte Carlo Tree Search (MCTS) and an agent that uses the machine learning technique AlphaZero.
 
+## Documentation
+A lot of effort is put into documenting the code in this repository. Extensive JavaDoc documentation is provided, which can be viewed in a webbrowser. [Click here to open the JavaDoc Documentation](JavaDoc/apidocs/index.html)
+*(Note: This link will only open the index.html document when you click on it. Please navigate to the 'JavaDoc/apidocs' folder and double-click 'index.html' to view the JavaDoc documentation in your webbrowser.)*
+
 ## Visuals
 ### Main Menu
 ![alt text](MainPanel.png)
@@ -24,8 +28,8 @@ To run this application, ensure that the following are installed:
 Monte Carlo Tree Search (MCTS) and AlphaZero were used to create different human vs computer versions of the game Hex.
 
 ### Game setup
-- Hex is **n×n** board (Default 11x11).
-- Board is **1D array**(due to Union Find and ML algorithms).
+- Hex uses a **n×n** board (Default 11x11).
+- Board is a **1D array**(due to Union Find and ML algorithms).
 - **Union–Find** structure is used to check for winning conditions.
 - After each move, the current state becomes **the new MCTS root** and we reuse the existing subtree.
 
@@ -44,6 +48,7 @@ Instead of random moves, rollouts are biased by simple Hex heuristics
 (Thresholds, Centrality, Connectivity, Bias, Shortest-paths) with weights
 THR, CENT, CONN, BIAS, SP.
 - Achieving better accuracy and using game logic to win
+- See the report for more details.
 
 ### Tuner
 - For each simulation chooses **random value** in the given interval
