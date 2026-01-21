@@ -4,11 +4,8 @@
 Team_04
 
 ## Description
-In this project, our team aims to create two versions of the game Hex.
-In the first phase of this project, we built the version of the game Hex in which two human players can play against each other.
-In the second phase of the project our team will develop a version of Hex in which a human can play against the computer.
-For this, we will create an AI agent capable of playing Hex. We will research on which AI agent is more efficient to play the game.
-We will also research on which AI agent performs best on which board size of the game Hex.
+In this project, our team created multiple versions of the game Hex. First, a human vs human version of the game Hex was built.
+For the human vs computer version of the game, multiple AI agents are implemented; an agent that uses Monte Carlo Tree Search (MCTS) and an agent that uses the machine learning technique AlphaZero.
 
 ## Visuals
 ### Main Menu
@@ -24,7 +21,7 @@ To run this application, ensure that the following are installed:
 - **Maven**
 
 ## Methods
-We use Monte Carlo Tree Search (MCTS) to play Hex and compare two versions of the agent.
+Monte Carlo Tree Search (MCTS) and AlphaZero were used to create different human vs computer versions of the game Hex.
 
 ### Game setup
 - Hex is **n×n** board (Default 11x11).
@@ -63,8 +60,8 @@ THR, CENT, CONN, BIAS, SP.
 
 ## Usage
 To run the app (make sure installation is done), run the following in the terminal: " mvn clean javafx:run ". 
-This command will open our application and you will see the main menu of our application. This menu consists of the buttons 'Play' and 'About'. 
-To start playing the game, click the 'Play' button. If you do not know the rules of the game, the 'About' button will navigate you to the pdf document that contains the rules of the game Hex.
+This command will open our application and you will see the main menu of our application, where you can see multiple options to either play the game yourself, or watch a match between two AI agents.
+If you do not know the rules of the game, the 'About' button will navigate you to the pdf document that contains the rules of the game Hex.
 
 ## Support
 All project members could help you with support when necessary. Please do not hesitate to reach out to our team if you have questions.
