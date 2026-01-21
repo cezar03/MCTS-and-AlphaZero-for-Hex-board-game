@@ -32,7 +32,7 @@ public final class MenuScreenBuilder {
         root.setPadding(new Insets(24));
         root.setStyle("-fx-background-color: linear-gradient(to bottom, #1f3b7c, #111827);");
 
-        Text title = new Text("Connections");
+        Text title = new Text("Hex");
         title.setFill(javafx.scene.paint.Color.WHITE);
         title.setFont(Font.font("Inter", FontWeight.EXTRA_BOLD, 42));
 

@@ -53,7 +53,7 @@ public final class NavigationService {
         Parent root = MenuScreenBuilder.build(this);
         Scene scene = new Scene(root, 720, 480);
         AppStyles.apply(scene);
-        stage.setTitle("Connections Main Menu");
+        stage.setTitle("Hex Main Menu");
         stage.setScene(scene);
     }
 
