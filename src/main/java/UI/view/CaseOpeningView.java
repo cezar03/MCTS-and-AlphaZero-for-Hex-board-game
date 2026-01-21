@@ -45,6 +45,24 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.util.Duration;
 
+/**
+ * View for the Case Opening feature.
+ *
+ * <p>This view simulates a case opening experience where users can "spin"
+ * through a selection of items and receive a random reward based on item
+ * rarity.</p>
+ *
+ * <p>The main components include:</p>
+ * <ul>
+ *   <li>A scrolling track of item tiles</li>
+ *   <li>A pointer indicating the selected item</li>
+ *   <li>A button to initiate the spin</li>
+ *   <li>Visual effects such as confetti and highlighting</li>
+ * </ul>
+ *
+ * <p>The item selection is weighted by rarity, making common items more
+ * likely to be received than rare ones.</p>
+ */
 public class CaseOpeningView {
     // --- constants (copied from your CaseOpeningFX) ---
     private static final double TILE_W = 140;
@@ -67,7 +85,10 @@ public class CaseOpeningView {
     private List<Node> tileNodes;     // nodes in the track, parallel to repeated items
     private Timeline spinTl;          // main spin animation
 
-    // Public factory for embedding into a Scene or container
+    /**
+     * Creates the Case Opening view content.
+     * @return The constructed Parent node.
+     */
     public Parent createContent() {
         baseItems = createDefaultItems();
 
@@ -157,7 +178,7 @@ public class CaseOpeningView {
     }
 
     // --- Model --------------------------------------------------------------
-
+    // item rarity definitions and weights
     enum Rarity {
         COMMON("Common", Color.web("#9ca3af"), 60),
         UNCOMMON("Uncommon", Color.web("#34d399"), 25),
@@ -169,11 +190,18 @@ public class CaseOpeningView {
         Rarity(String display, Color color, int weight) { this.display = display; this.color = color; this.weight = weight; }
     }
 
+    /**
+     * Container for an item in the case opening.
+     */
     static class Item {
         final String name; final Rarity rarity;
         Item(String name, Rarity rarity) { this.name = name; this.rarity = rarity; }
     }
 
+    /**
+     * Creates the default set of items for the case opening.
+     * @return The list of default items.
+     */
     private List<Item> createDefaultItems() {
         return List.of(
                 new Item("Urban Camo", Rarity.COMMON),
@@ -191,11 +219,19 @@ public class CaseOpeningView {
         );
     }
 
+    /**
+     * Creates a shuffled copy of the provided item list.
+     * @param items The original list of items.
+     * @return A new list with the items shuffled.
+     */
     private List<Item> shuffledCopy(List<Item> items) {
         List<Item> copy = new ArrayList<>(items); Collections.shuffle(copy, rng); return copy; }
 
     // --- View helpers -------------------------------------------------------
-
+    /**
+     * Populates the track with repeated sets of the provided items.
+     * @param items The base set of items to populate the track.
+     */
     private void populateTrack(List<Item> items) {
         // Repeat the base set to create a long scrolling track
         for (int r = 0; r < REPEAT_SETS; r++) {
@@ -207,6 +243,11 @@ public class CaseOpeningView {
         }
     }
 
+    /**
+     * Builds a tile node for the given item.
+     * @param item The item to represent.
+     * @return The constructed tile node.
+     */
     private Node buildTile(Item item) {
         StackPane tile = new StackPane();
         tile.setPrefSize(TILE_W, TILE_H);
@@ -247,6 +288,11 @@ public class CaseOpeningView {
         return tile;
     }
 
+    /**
+     * Creates a vertical gradient fill based on the item's rarity.
+     * @param r The rarity of the item.
+     * @return The gradient paint for the tile background.
+     */
     private Paint gradientFor(Rarity r) {
         Color tint = r.color.deriveColor(0, 1, 1.0, 0.22);
         return new LinearGradient(0, 0, 0, 1, true,
@@ -285,6 +331,9 @@ public class CaseOpeningView {
         });
     }
 
+    /**
+     * Starts the spin animation to select a random item.
+     */
     private void startSpin() {
         if (spinTl != null && spinTl.getStatus() == Animation.Status.RUNNING) return;
 
@@ -339,7 +388,10 @@ public class CaseOpeningView {
         spinTl.playFromStart();
     }
 
-    /** Index of the tile currently under the pointer (within track.getChildren()). */
+    /**
+     * Calculates the index of the tile currently under the pointer.
+     * @return The index of the tile under the pointer.
+     */
     private int indexUnderPointer() {
         final double leftPadding = 10;
         final double step = TILE_W + TRACK_SPACING;
@@ -347,7 +399,10 @@ public class CaseOpeningView {
         return (int) Math.round(x / step);
     }
 
-    /** Node under the pointer, considering wrapping. */
+    /**
+     * Retrieves the tile node currently under the pointer.
+     * @return The node under the pointer.
+     */
     private Node nodeUnderPointer() {
         int idx = indexUnderPointer();
         int n = track.getChildren().size();
@@ -355,6 +410,11 @@ public class CaseOpeningView {
         return track.getChildren().get(idx);
     }
 
+    /**
+     * Picks an item from the list based on their rarity weights.
+     * @param items The list of items to choose from.
+     * @return The selected item.
+     */
     private Item weightedPick(List<Item> items) {
         int total = items.stream().mapToInt(i -> i.rarity.weight).sum();
         int r = rng.nextInt(total);
@@ -364,7 +424,11 @@ public class CaseOpeningView {
     }
 
     // --- Celebration & particles -------------------------------------------
-
+    /**
+     * Celebrates the winning item with visual effects.
+     * @param winningNode The node representing the winning item.
+     * @param win The winning item data.
+     */
     private void celebrate(Node winningNode, Item win) {
         // highlight the winning tile
         Glow glow = new Glow(0.0);
@@ -410,6 +474,10 @@ public class CaseOpeningView {
         ft.play();
     }
 
+    /**
+     * Emits confetti particles with the specified accent color.
+     * @param accent The accent color for the confetti.
+     */
     private void emitConfetti(Color accent) {
         int pieces = 120;
         double centerX = VIEWPORT_W / 2.0;

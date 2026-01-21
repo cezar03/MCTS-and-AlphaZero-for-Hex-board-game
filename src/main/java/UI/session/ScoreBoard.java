@@ -3,17 +3,45 @@ package UI.session;
 import game.core.Player;
 
 /**
- * Tracks the score/wins for players throughout multiple games.
+ * Maintains cumulative win statistics across multiple games.
+ *
+ * <p>The {@code ScoreBoard} tracks:</p>
+ * <ul>
+ *   <li>Total wins for the RED player</li>
+ *   <li>Total wins for the BLACK player</li>
+ *   <li>Total number of games played</li>
+ * </ul>
+ *
+ * <p>This class is typically used at the session level (e.g. during a match
+ * series or tournament) rather than for a single game instance.</p>
+ *
+ * <p>All counters are updated through {@link #recordWin(Player)} and can be
+ * reset using {@link #reset()}.</p>
+ *
  * @author Team 04
  */
 public class ScoreBoard {
+
+    /**
+     * Number of wins recorded for the RED player.
+     */
     private int redWins = 0;
+
+    /**
+     * Number of wins recorded for the BLACK player.
+     */
     private int blackWins = 0;
+
+    /**
+     * Total number of games played.
+     */
     private int totalGames = 0;
 
     /**
-     * Records a win for the specified player.
-     * @param winner The player who won
+     * Records a win for the specified player and increments
+     * the total number of games played.
+     *
+     * @param winner the player who won the game
      */
     public void recordWin(Player winner) {
         if (winner == Player.RED) {
@@ -25,31 +53,37 @@ public class ScoreBoard {
     }
 
     /**
-     * Gets the number of wins for RED player.
-     * @return Number of wins for RED
+     * Returns the number of wins for the RED player.
+     *
+     * @return the number of RED wins
      */
     public int getRedWins() {
         return redWins;
     }
 
     /**
-     * Gets the number of wins for BLACK player.
-     * @return Number of wins for BLACK
+     * Returns the number of wins for the BLACK player.
+     *
+     * @return the number of BLACK wins
      */
     public int getBlackWins() {
         return blackWins;
     }
 
     /**
-     * Gets the total number of games played.
-     * @return Total games
+     * Returns the total number of games played.
+     *
+     * @return the total number of games
      */
     public int getTotalGames() {
         return totalGames;
     }
 
     /**
-     * Resets the scoreboard to zero wins.
+     * Resets all counters to zero.
+     *
+     * <p>After calling this method, no games are considered to have been
+     * played and no wins are recorded.</p>
      */
     public void reset() {
         redWins = 0;
@@ -58,14 +92,18 @@ public class ScoreBoard {
     }
 
     /**
-     * Gets the score as a formatted string.
-     * @return Formatted score string
+     * Returns a human-readable summary of the current scoreboard state.
+     *
+     * @return a formatted string in the form
+     *         {@code "RED: x | BLACK: y | Games: z"}
      */
     @Override
     public String toString() {
-        return String.format("RED: %d | BLACK: %d | Games: %d", redWins, blackWins, totalGames);
+        return String.format("RED: %d | BLACK: %d | Games: %d",
+                redWins, blackWins, totalGames);
     }
 }
+
 
 
 
